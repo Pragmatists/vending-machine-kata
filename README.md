@@ -15,6 +15,4 @@ VendingMachineKata
 12. Jeżeli maszyna nie może wydać reszty wyświetla komunikat i zwraca wrzucone monety,
 13. Przy wydawaniu reszty maszyna może korzystać tylko z monet które posiada (nie drukujemy pieniędzy ;) )
 
-Podpowiedzi nazw dla klas: VendingMachine, Slot/Shelf, Display, Product/ProductInstance, ProductClass/ProductType, Price, PriceList, 
-Coin, CoinDispenser, Storage, ProductDispenser.	
 
