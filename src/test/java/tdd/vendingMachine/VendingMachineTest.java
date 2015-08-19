@@ -13,12 +13,14 @@ public class VendingMachineTest {
     private VendingMachine machine;
     private Display display;
     private Keyboard keyboard;
+    private CoinTray coinTray;
 
     @Before
     public void setUp() throws Exception {
         display = new Display();
         keyboard = new Keyboard();
-        machine = new VendingMachine(display, keyboard);
+        coinTray = new CoinTray();
+        machine = new VendingMachine(display, keyboard, coinTray);
     }
 
     @Test
@@ -56,5 +58,17 @@ public class VendingMachineTest {
 
         assertEquals(ProductUtils.BANANA_TYPE.getPrice(), new BigDecimal(display.getContent()));
 
+    }
+
+    @Test
+    public void afterSelectingProductAndInsertingCoinsDisplayShouldShowCorrectAmountLeft() throws Exception {
+        Product product = new Product(ProductUtils.BANANA_TYPE);
+
+        machine.addProductToShelf(1, product);
+        keyboard.select(1);
+
+        coinTray.putCoin(Coin.ONE);
+
+        assertEquals(ProductUtils.BANANA_TYPE.getPrice().subtract(Coin.ONE.getValue()), new BigDecimal(display.getContent()));
     }
 }

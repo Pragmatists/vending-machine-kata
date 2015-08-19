@@ -2,13 +2,18 @@ package tdd.vendingMachine;
 
 import com.sun.istack.internal.NotNull;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 public class VendingMachine {
+    private final Display display;
+    private final CoinTray coinTray;
     private Map<Integer, Shelf> shelves;
-    private Display display;
+    private Shelf selectedShelf;
 
-    public VendingMachine(Display display, Keyboard keyboard) {
+
+    public VendingMachine(Display display, Keyboard keyboard, CoinTray coinTray) {
+        this.coinTray = coinTray;
         this.shelves = new HashMap<Integer, Shelf>();
         this.display = display;
 
@@ -18,10 +23,30 @@ public class VendingMachine {
                 selectShelf((Integer) arg);
             }
         });
+
+        coinTray.addObserver(new Observer() {
+            @Override
+            public void update(Observable o, Object arg) {
+                if (selectedShelf != null) {
+                    updateDisplay();
+                } else {
+                    ((CoinTray) o).returnCoins();
+                }
+            }
+        });
+    }
+
+    private void updateDisplay() {
+        BigDecimal moneyLeftToPay = selectedShelf.getPrice().subtract(coinTray.getInsertedAmount());
+        display.setContent(String.valueOf(moneyLeftToPay));
     }
 
     public void selectShelf(int shelfNo) {
-        display.setContent(String.valueOf(getShelf(shelfNo).getPrice()));
+        selectedShelf = getShelf(shelfNo);
+
+        final BigDecimal moneyLeftToPay = selectedShelf.getPrice().subtract(coinTray.getInsertedAmount());
+
+        display.setContent(String.valueOf(moneyLeftToPay));
     }
 
     public void addProductToShelf(int shelfNo, Product product) {
