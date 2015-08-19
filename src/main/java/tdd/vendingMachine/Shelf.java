@@ -1,5 +1,6 @@
 package tdd.vendingMachine;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 
 /**
@@ -12,6 +13,14 @@ public class Shelf {
 
     public Shelf() {
         this.products = new LinkedList<Product>();
+    }
+
+    public BigDecimal getPrice() {
+        if (!products.isEmpty()) {
+            return products.peek().getPrice();
+        } else {
+            return null;
+        }
     }
 
     public void addProduct(Product product) {

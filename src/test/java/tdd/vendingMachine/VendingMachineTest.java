@@ -3,15 +3,22 @@ package tdd.vendingMachine;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.math.BigDecimal;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
 public class VendingMachineTest {
 
     private VendingMachine machine;
+    private Display display;
+    private Keyboard keyboard;
 
     @Before
     public void setUp() throws Exception {
-        machine = new VendingMachine();
+        display = new Display();
+        keyboard = new Keyboard();
+        machine = new VendingMachine(display, keyboard);
     }
 
     @Test
@@ -38,5 +45,16 @@ public class VendingMachineTest {
 
         machine.addProductToShelf(1, productA_0);
         machine.addProductToShelf(1, productA_1);
+    }
+
+    @Test
+    public void afterSelectingShelfNumberDisplayShouldShowPrice() throws Exception {
+        Product product = new Product(ProductUtils.BANANA_TYPE);
+
+        machine.addProductToShelf(1, product);
+        keyboard.select(1);
+
+        assertEquals(ProductUtils.BANANA_TYPE.getPrice(), new BigDecimal(display.getContent()));
+
     }
 }

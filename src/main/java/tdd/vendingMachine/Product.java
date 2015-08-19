@@ -14,6 +14,10 @@ public class Product {
         this.productType = productType;
     }
 
+    public BigDecimal getPrice() {
+        return productType.price;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -41,6 +45,10 @@ public class Product {
         public ProductType(String name, String price) {
             this.name = name;
             this.price = new BigDecimal(price);
+        }
+
+        public BigDecimal getPrice() {
+            return this.price;
         }
 
         @Override
