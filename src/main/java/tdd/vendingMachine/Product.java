@@ -30,6 +30,10 @@ public class Product {
         return productType.hashCode();
     }
 
+    public boolean hasSameTypeAs(Product other) {
+        return productType.equals(other.productType);
+    }
+
     public static class ProductType {
         private final String name;
         private final BigDecimal price;
