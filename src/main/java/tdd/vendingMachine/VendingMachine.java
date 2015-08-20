@@ -1,8 +1,5 @@
 package tdd.vendingMachine;
 
-import com.sun.istack.internal.NotNull;
-import org.mockito.Mock;
-
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -12,8 +9,6 @@ public class VendingMachine {
     private final CoinVault coinVault;
     private Map<Integer, Shelf> shelves;
     private Shelf selectedShelf;
-
-    @Mock
     private GivingTray givingTray;
 
     public VendingMachine(Display display, Keyboard keyboard, CoinTray coinTray, GivingTray givingTray, CoinVault coinVault) {
@@ -43,7 +38,6 @@ public class VendingMachine {
         getShelf(shelfNo).addProduct(product);
     }
 
-    @NotNull
     protected Shelf getShelf(int shelfNumber) {
         if (!shelves.containsKey(shelfNumber)) {
             shelves.put(shelfNumber, new Shelf());
