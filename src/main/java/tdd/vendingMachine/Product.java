@@ -38,6 +38,10 @@ public class Product {
         return productType.equals(other.productType);
     }
 
+    public String getName() {
+        return productType.name;
+    }
+
     public static class ProductType {
         private final String name;
         private final BigDecimal price;

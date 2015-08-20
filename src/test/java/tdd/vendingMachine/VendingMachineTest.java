@@ -2,33 +2,41 @@ package tdd.vendingMachine;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
+import java.util.List;
 
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class VendingMachineTest {
 
     private VendingMachine machine;
     private Display display;
     private Keyboard keyboard;
     private CoinTray coinTray;
+    private CoinVault coinVault;
+    private GivingTray givingTray;
 
     @Before
     public void setUp() throws Exception {
         display = new Display();
         keyboard = new Keyboard();
-        coinTray = new CoinTray();
-        machine = new VendingMachine(display, keyboard, coinTray);
-    }
+        coinVault = new CoinVault();
+        coinTray = Mockito.spy(new CoinTray());
+        givingTray = Mockito.spy(new GivingTray());
 
-    @Test
-    public void productsCouldBePlacedOnShelves() throws Exception {
-        Product product = new Product(ProductUtils.BANANA_TYPE);
-        machine.addProductToShelf(1, product);
-
-        assertSame(product, machine.getProductFromShelf(1));
+        machine = new VendingMachine(display, keyboard, coinTray, givingTray, coinVault);
     }
 
     @Test(expected = ManyProductsOnOneShelfException.class)
@@ -71,4 +79,42 @@ public class VendingMachineTest {
 
         assertEquals(ProductUtils.BANANA_TYPE.getPrice().subtract(Coin.ONE.getValue()), new BigDecimal(display.getContent()));
     }
+
+    @Test
+    public void afterSelectingProductAndInsertingFullAmountOfCoinsProductShouldBeGivenAndDisplayShouldBeEmpty() throws Exception {
+        Product product = new Product(ProductUtils.BANANA_TYPE);
+
+        machine.addProductToShelf(1, product);
+        keyboard.select(1);
+
+        coinTray.putCoin(Coin.ONE);
+        coinTray.putCoin(Coin.HALF);
+        coinTray.putCoin(Coin.ONE_FIFTH);
+
+        verify(givingTray, times(1)).giveProduct(eq(product));
+
+        assertEquals("", display.getContent());
+    }
+
+    @Test
+    public void afterSelectingProductAndInsertingTooMuchMoneyCorrectChangeShouldBeGiven() throws Exception {
+        Product product = new Product(new Product.ProductType("test", "2.0"));
+
+        machine.addProductToShelf(1, product);
+        keyboard.select(1);
+
+        coinTray.putCoin(Coin.ONE);
+        coinTray.putCoin(Coin.ONE_TENTH);
+        coinTray.putCoin(Coin.HALF);
+        coinTray.putCoin(Coin.ONE);
+
+        verify(givingTray, times(1)).giveProduct(eq(product));
+
+        ArgumentCaptor<List> argument = ArgumentCaptor.forClass(List.class);
+
+        verify(coinTray, times(1)).giveChange(argument.capture());
+
+        assertThat((List<Coin>) argument.getValue(), hasItems(Coin.ONE_TENTH, Coin.HALF));
+    }
+
 }

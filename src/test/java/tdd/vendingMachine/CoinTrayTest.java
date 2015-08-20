@@ -42,7 +42,7 @@ public class CoinTrayTest {
         coinTray.putCoin(Coin.ONE);
         coinTray.putCoin(Coin.ONE_FIFTH);
 
-        List<Coin> returnedCoins = coinTray.returnCoins();
+        List<Coin> returnedCoins = coinTray.returnInsertedCoins();
 
         assertThat(returnedCoins, hasItems(Coin.ONE, Coin.ONE_FIFTH));
         assertThat(coinTray.getInsertedAmount(), is(BigDecimal.ZERO));

@@ -1,9 +1,7 @@
 package tdd.vendingMachine;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
+import java.util.*;
 
 /**
  * @author macko
@@ -31,11 +29,22 @@ public class CoinTray extends Observable {
         return amount;
     }
 
-    public List<Coin> returnCoins() {
-        List<Coin> coins = insertedCoins;
-        insertedCoins = new ArrayList<Coin>();
+    public List<Coin> returnInsertedCoins() {
+        List<Coin> coins = takeAllInsertedCoins();
         setChanged();
         notifyObservers();
         return coins;
+    }
+
+    public List<Coin> takeAllInsertedCoins() {
+        List<Coin> coins = insertedCoins;
+        insertedCoins = new ArrayList<Coin>();
+        return coins;
+    }
+
+    public void giveChange(List<Coin> coins) {
+        for (Coin coin : coins) {
+            System.out.println("Giving change of: " + coin.getValue());
+        }
     }
 }
