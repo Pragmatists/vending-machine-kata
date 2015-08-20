@@ -56,6 +56,10 @@ public class VendingMachine {
         coinTray.giveChange(coins);
     }
 
+    private void unselectShelf() {
+        selectedShelf = null;
+    }
+
     private class CoinTrayObserver implements Observer {
         @Override
         public void update(Observable o, Object arg) {
@@ -65,13 +69,23 @@ public class VendingMachine {
                 if (moneyLeftToPay.signum() > 0) {
                     updateDisplay(moneyLeftToPay.toString());
                 } else {
+                    BigDecimal insertedMoney = coinTray.getInsertedAmount();
                     coinVault.add(coinTray.takeAllInsertedCoins());
-                    givingTray.giveProduct(selectedShelf.getProduct());
                     updateDisplay(null);
+
                     if (moneyLeftToPay.signum() < 0) {
-                        giveChange(moneyLeftToPay.negate());
+                        try {
+                            giveChange(moneyLeftToPay.negate());
+                            givingTray.giveProduct(selectedShelf.getProduct());
+                        } catch (NoCoinsToChangeException nce) {
+                            updateDisplay(nce.getMessage());
+                            giveChange(insertedMoney);
+                        }
+                    } else {
+                        givingTray.giveProduct(selectedShelf.getProduct());
                     }
-                    selectedShelf = null;
+
+                    unselectShelf();
                 }
 
             } else {
@@ -80,11 +94,16 @@ public class VendingMachine {
         }
     }
 
-
     private class KeyboardObserver implements Observer {
         @Override
         public void update(Observable o, Object arg) {
-            selectShelfAndUpdateDisplay((Integer) arg);
+            int key = (Integer) arg;
+            if (key == Keyboard.CANCEL_BUTTON) {
+                coinTray.returnInsertedCoins();
+                unselectShelf();
+            } else {
+                selectShelfAndUpdateDisplay((Integer) arg);
+            }
         }
     }
 

@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -13,7 +12,6 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -97,8 +95,8 @@ public class VendingMachineTest {
     }
 
     @Test
-    public void afterSelectingProductAndInsertingTooMuchMoneyCorrectChangeShouldBeGiven() throws Exception {
-        Product product = new Product(new Product.ProductType("test", "2.0"));
+    public void afterSelectingProductAndInsertingTooMuchMoneyCorrectChangeShouldBeGivenIfPossible() throws Exception {
+        Product product = new Product(new Product.ProductType("test2.0", "2.0"));
 
         machine.addProductToShelf(1, product);
         keyboard.select(1);
@@ -108,8 +106,6 @@ public class VendingMachineTest {
         coinTray.putCoin(Coin.HALF);
         coinTray.putCoin(Coin.ONE);
 
-        verify(givingTray, times(1)).giveProduct(eq(product));
-
         ArgumentCaptor<List> argument = ArgumentCaptor.forClass(List.class);
 
         verify(coinTray, times(1)).giveChange(argument.capture());
@@ -117,4 +113,50 @@ public class VendingMachineTest {
         assertThat((List<Coin>) argument.getValue(), hasItems(Coin.ONE_TENTH, Coin.HALF));
     }
 
+    @Test
+    public void afterSelectingProductAndInsertingTooMuchMoneyProductShouldBeNotGivenIfNotPossibleToGiveChange() throws Exception {
+        Product product = new Product(new Product.ProductType("test1.6", "1.6"));
+
+        machine.addProductToShelf(1, product);
+        keyboard.select(1);
+
+        coinTray.putCoin(Coin.ONE);
+        coinTray.putCoin(Coin.TWO);
+
+        verify(givingTray, never()).giveProduct(eq(product));
+
+        ArgumentCaptor<List> argument = ArgumentCaptor.forClass(List.class);
+        verify(coinTray).giveChange(argument.capture());
+
+        assertThat((List<Coin>) argument.getValue(), hasItems(Coin.ONE, Coin.TWO));
+    }
+
+    @Test
+    public void afterSelectingProductInsertingMoneyAndNoChangePossibleDisplayShouldTellIt() throws Exception {
+        Product product = new Product(new Product.ProductType("test1.5", "1.5"));
+
+        machine.addProductToShelf(1, product);
+        keyboard.select(1);
+
+        coinTray.putCoin(Coin.ONE);
+        coinTray.putCoin(Coin.TWO);
+
+        assertEquals(new NoCoinsToChangeException().getMessage(), display.getContent());
+    }
+
+    @Test
+    public void whenInsertedTooLittleCoinsAndPressedCancelButtonMoneyShouldBeReturned() throws Exception {
+        Product product = new Product(new Product.ProductType("test0.8", "0.8"));
+
+        machine.addProductToShelf(1, product);
+        keyboard.select(1);
+
+        coinTray.putCoin(Coin.ONE_TENTH);
+        coinTray.putCoin(Coin.ONE_TENTH);
+        coinTray.putCoin(Coin.ONE_FIFTH);
+
+        keyboard.select(Keyboard.CANCEL_BUTTON);
+
+        verify(coinTray, times(1)).returnInsertedCoins();
+    }
 }

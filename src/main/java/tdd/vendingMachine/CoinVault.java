@@ -1,7 +1,10 @@
 package tdd.vendingMachine;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author macko
@@ -28,10 +31,16 @@ public class CoinVault {
         List<Coin> coinsToReturn = new ArrayList<Coin>();
 
         for (Map.Entry<Coin, Integer> entry : coins.entrySet()) {
-            while (entry.getKey().getValue().compareTo(changeAmount) < 0 && entry.getValue() > 0) {
+            while (entry.getKey().getValue().compareTo(changeAmount) <= 0 && entry.getValue() > 0) {
+                changeAmount = changeAmount.subtract(entry.getKey().getValue());
                 coinsToReturn.add(entry.getKey());
                 entry.setValue(entry.getValue() - 1);
             }
+        }
+
+        if (changeAmount.signum() > 0) {
+            add(coinsToReturn);
+            throw new NoCoinsToChangeException();
         }
 
         return coinsToReturn;

@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.hasItems;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author macko
@@ -29,16 +29,14 @@ public class CoinVaultTest {
 
         List<Coin> coins = coinVault.getCoinsToChange(BigDecimal.valueOf(0.6));
 
-        assertThat(coins, hasItems(Coin.ONE_TENTH, Coin.ONE_FIFTH));
+        assertThat(coins, hasItems(Coin.ONE_TENTH, Coin.HALF));
     }
 
 
-    @Test
-    public void shouldCorrectlyFindChangeCoinsWhenNotHavingNeededCoins() throws Exception {
+    @Test(expected = NoCoinsToChangeException.class)
+    public void shouldThrowExceptionWhenNotHavingNeededCoins() throws Exception {
         coinVault.add(Arrays.asList(Coin.HALF, Coin.ONE_TENTH, Coin.ONE_TENTH));
 
-        List<Coin> coins = coinVault.getCoinsToChange(BigDecimal.valueOf(1.0));
-
-        assertThat(coins, hasItems(Coin.HALF, Coin.ONE_TENTH, Coin.ONE_TENTH));
+        coinVault.getCoinsToChange(BigDecimal.valueOf(1.0));
     }
 }
