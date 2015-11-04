@@ -2,19 +2,19 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>pragmatists.tdd-training</groupId>
-	<artifactId>VendingMachineKata</artifactId>
-	<version>1.0</version>
-	<packaging>jar</packaging>
+	<groupId>pl.codeweaver</groupId>
+	<artifactId>vending-machine-kata-solution</artifactId>
+	<version>1.0.0</version>
 
 	<name>VendingMachineKata</name>
-	<url>https://github.com/Pragmatists/vending-machine-kata</url>
+	<url>https://github.com/KrzysztofBogdan/vending-machine-kata</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.6</java.version>
-		<kotlin.version>1.0.0-beta-1038</kotlin.version>
+		<kotlin.version>1.0.0-beta-1103</kotlin.version>
 	</properties>
+
 	<build>
 		<sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
 		<testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
@@ -45,6 +45,11 @@
 		</plugins>
 	</build>
 	<dependencies>
+		<dependency>
+			<groupId>org.jetbrains.kotlin</groupId>
+			<artifactId>kotlin-stdlib</artifactId>
+			<version>${kotlin.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
