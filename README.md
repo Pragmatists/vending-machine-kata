@@ -14,9 +14,9 @@ Wymagania
 ---------
 
 * Rozwiązanie napisz w języku Java. Preferowane wersje Javy to 7 lub 8.
-* Do budowania projektu możesz użyć Maven lub Gradle. Jeśli bardzo Ci zależy, możesz użyć także
-  innego spradzonego rozwiązania, ale pamiętaj, że im trudniej będzie nam zbudować projekt
-  i uruchomić testy, tym gorzej dla Ciebie ;-)
+* Do budowania projektu możesz użyć Maven lub Gradle. Jeśli chcesz skorzystać z innego narzędzia,
+  dopisz w tym dokumencie, jakim poleceniem mamy uruchomić build z testami tak, aby nie wymagało to
+  od nas specjalnej konfiguracji systemu ;-)
 * Rozwiązanie przekaż nam jako pull request na GitHubie albo link do Twojego Git repozytorium,
   z które bez problemu sklonujemy kod.
  
