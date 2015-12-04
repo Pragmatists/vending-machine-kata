@@ -17,8 +17,8 @@ Wymagania
 * Do budowania projektu możesz użyć Maven lub Gradle. Jeśli chcesz skorzystać z innego narzędzia,
   dopisz w tym dokumencie, jakim poleceniem mamy uruchomić build z testami tak, aby nie wymagało to
   od nas specjalnej konfiguracji systemu ;-)
-* Rozwiązanie przekaż nam jako pull request na GitHubie albo link do Twojego Git repozytorium,
-  z które bez problemu sklonujemy kod.
+* Rozwiązanie przekaż nam jako pull request na GitHubie albo link do Twojego repozytorium Git,
+  z którego bez problemu sklonujemy kod.
  
 Kluczowe obszary
 ----------------
