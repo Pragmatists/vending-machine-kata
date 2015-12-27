@@ -5,6 +5,8 @@ import tdd.vendingMachine.domain.Coins;
 import tdd.vendingMachine.domain.Money;
 import tdd.vendingMachine.domain.ProductWithChange;
 
+import static tdd.vendingMachine.VendingMachineStateFactory.machineReadyInitialState;
+
 public class DispenseProductWithChangeState extends VendingMachineState {
 
     private static final String FINISHED_MESSAGE = "Zakończono pracę, odbierz produkt.";
@@ -33,7 +35,7 @@ public class DispenseProductWithChangeState extends VendingMachineState {
 
     private ProductWithChange returnProductWithChange(Coins bestFitOfCoinsToChange) {
         ProductWithChange productWithChange = new ProductWithChange(vendingMachine.shelfs.takeProduct(), bestFitOfCoinsToChange);
-        vendingMachine.currentState = new MachineReadyInitialState(vendingMachine);
+        vendingMachine.currentState = machineReadyInitialState(vendingMachine);
         return productWithChange;
     }
 

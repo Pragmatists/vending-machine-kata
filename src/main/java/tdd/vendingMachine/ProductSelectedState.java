@@ -3,6 +3,9 @@ package tdd.vendingMachine;
 import tdd.vendingMachine.domain.Coins;
 import tdd.vendingMachine.domain.Money;
 
+import static tdd.vendingMachine.VendingMachineStateFactory.dispenseProductWithChangeState;
+import static tdd.vendingMachine.VendingMachineStateFactory.notEnoughMoneyToChangeState;
+
 public class ProductSelectedState extends VendingMachineState {
 
     private static final String INSERT_COINS_MESSAGE = "Wrzuć monety...";
@@ -35,7 +38,7 @@ public class ProductSelectedState extends VendingMachineState {
         if (isCreditEnoughToBuyAProduct(moneyOfCreditCoins, productPrice)) {
             Money moneyToChange = vendingMachine.calculator.calculateMoneyToChange(vendingMachine.credit, productPrice);
             boolean isSufficientNumberCoinsToChange = vendingMachine.calculator.isSufficientNumberCoinsToChange(vendingMachine.coinBin, moneyToChange);
-            vendingMachine.currentState = (isSufficientNumberCoinsToChange) ? new DispenseProductWithChangeState(vendingMachine) : new NotEnoughMoneyToChangeState(vendingMachine);
+            vendingMachine.currentState = (isSufficientNumberCoinsToChange) ? dispenseProductWithChangeState(vendingMachine) : notEnoughMoneyToChangeState(vendingMachine);
         }
     }
 
