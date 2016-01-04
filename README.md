@@ -1,56 +1,47 @@
 vending-machine-kata
 ====================
 
-Przed Tobą zadanie vending-machine-kata &mdash; proste ćwiczenie, którego celem jest symulacja
- działania tytułowego&hellip; automatu sprzedającego 
- (ang. [vending machine]( https://en.wikipedia.org/wiki/Vending_machine ) ;-) )
- 
-Przygotowana jest już konfiguracja Mavena oraz dwie klasy: `VendingMachine`
- oraz `VendingMachineTest`. Ta druga zawiera jeden test, który możesz śmiało usunąć, gdyż nie jest
- on częścią rozwiązania. Możesz także zmienić nazwy przygotowanych klas czy też w ogóle je usunać.
- Poniżej umieszczone są wymagania, kluczowe obszary oraz, co najważniejsze, opis zadania.
- 
-Wymagania
+This is a simple exercise vending-machine-kata - in which you will simulate the...
+vending machine ( https://en.wikipedia.org/wiki/Vending_machine )
+
+The project is maven based. On opening you will also find two classes: `VendingMachine` and `VendingMachineTest`.
+The second one contains one test, which you can easily remove, since it is not part of the assignment.
+You can also rename or even remove provided classes.
+Below you will find requirements, key aspects and most importantly assignment itself.
+
+
+Requirements
 ---------
 
-* Rozwiązanie napisz w języku Java. Preferowane wersje Javy to 7 lub 8.
-* Do budowania projektu możesz użyć Maven lub Gradle. Jeśli chcesz skorzystać z innego narzędzia,
-  dopisz w tym dokumencie, jakim poleceniem mamy uruchomić build z testami tak, aby nie wymagało to
-  od nas specjalnej konfiguracji systemu ;-)
-* Rozwiązanie przekaż nam jako pull request na GitHubie albo link do Twojego repozytorium Git,
-  z którego bez problemu sklonujemy kod.
- 
-Kluczowe obszary
+* Please solve the exercise using Java language. We prefer Java 7 or 8.
+* We are providing Maven configuration, but if you want to switch to Gradle feel free to change that.
+If you want to use different build tool, then provide a way to execute build **with tests**.
+Take into account simplicity of provided solution, we would like to spent more time analyzing your code then configuring build environment.
+* Please send us solution as pull request on GitHub or link to your repository which we can clone.
+
+Key aspects
 ----------------
 
-* stosowanie Test-Driven Development
-* podejście obiektowe i domenowe do problemu (Object-Oriented Programmin, Domain-Driven Design)
-* czystość kodu produkcyjnego i testowego (Clean Code)
-* poprawność algorytmiczna rozwiązania
-* uzasadnione stosowanie wzorców projektowych (Design Patterns)
-* atomowość i czytelność commitów
- 
-Opis zadania
+* we would like to see how you are using Test-Driven Development
+* we will check your skills in object and domain design (Object-Oriented Programming, Domain-Driven Design)
+* we will check craftsmanship of production and test code (Clean Code)
+* we will check if the algorithm is correct
+* we will check usage of design patterns (we will be also interested in why you chose them)
+* we will check your commits for atomicity and readability
+
+The assignment
 ------------
 
-1. Maszyna zawiera produkty.
-2. Produkty mogą być różnych typów (np. napój Cola 0.25l, batonik czekoladowy,
- woda mineralna 0.33l itd.).
-3. Produkty są ułożone na półkach.
-4. Na jednej półce może być ułożony tylko jeden typ produktu.
-5. Każdy typ produktu ma określoną cenę.
-6. Maszyna posiada wyświetlacz.
-7. Jeżeli wybierzemy numer półki, na wyświetlaczu pojawia się cena produktu.
-8. Produkty można kupić, wrzucając do automatu monety (nominały: 5, 2, 1, 0.5, 0.2, 0.1).
-9. Po wrzuceniu każdej kolejnej monety na wyświetlaczu aktualizuje się kwota, którą należy
- jeszcze wrzucić.
-10. Jeżeli wybierzemy numer półki i wrzucimy kwotę nie mniejszą, niż cena produktu, to
- otrzymujemy produkt oraz resztę (pod warunkiem, że automat ma z czego tę resztę wydać).
-11. Jeżeli wybierzemy numer półki i wrzucimy kwotę mniejszą, niż cena produktu, to musimy
- wcisnąć “Anuluj”, aby otrzymać pieniądze z powrotem.
-12. Jeżeli maszyna nie może wydać reszty, wyświetla komunikat informujący o tym oraz zwraca
- wrzucone monety, nie wydając produktu.
-13. Przy wydawaniu reszty maszyna może korzystać tylko z monet, które posiada z poprzednich
- zakupów (nie drukujemy pieniędzy ;-) )
-
-
+1. Vending machine contains products.
+2. Products can be of different types (i.e. Cola drink 0.25l, chocolate bar, mineral water 0.33l and so on).
+3. Products are on shelves.
+4. One shelve can contain only one type of product (but multiple products).
+5. Each product type has its own price.
+6. Machine has a display.
+7. If we select shelve number, display should show product price.
+8. You can buy products by putting money into machine. Machine accepts denominations 5, 2, 1, 0.5, 0.2, 0.1.
+9. After inserting a coin, display shows amount that must be added to cover product price.
+10. After selecting a shelve and inserting enough money we will get the product and the change (but machine has to have money to be able to return the change).
+11. After selecting a shelve and inserting insufficient money to buy a product, user has to press "Cancel" to get their money back.
+12. If machine does not have enough money to give the change it must show a warning message and return the money user has put, and it should not give the product.
+13. Machine can return change using only money that was put into it (or by someone at start or by people who bought goods). Machine cannot create it's own money!
