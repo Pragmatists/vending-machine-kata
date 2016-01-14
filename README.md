@@ -9,6 +9,8 @@ The second one contains one test, which you can easily remove, since it is not p
 You can also rename or even remove provided classes.
 Below you will find requirements, key aspects and most importantly assignment itself.
 
+You are more than welcome to tell us (either in email or in the README) what you would do differently, if you had more time.
+
 
 Requirements
 ---------
