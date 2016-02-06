@@ -1,12 +1,28 @@
 package tdd.vendingMachine;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class VendingMachineTest {
 
-    @Test
-    public void just_a_stupid_passing_test_to_ensure_that_tests_are_run() {
-        Assertions.assertThat(new VendingMachine()).isNotNull();
+    @Test(expected = NullPointerException.class)
+    public void shouldThrowExceptionWhenShelvesAreNull() throws Exception{
+        new VendingMachine(null);
     }
+
+    @Test
+    public void shouldReturnShelves() throws Exception {
+        //given
+        List<Shelve> shelves = new ArrayList<>();
+        VendingMachine vendingMachine = new VendingMachine(shelves);
+        //when
+        List<Shelve> returnedShelves = vendingMachine.getShelves();
+        //then
+        assertEquals(shelves, returnedShelves);
+    }
+
 }
