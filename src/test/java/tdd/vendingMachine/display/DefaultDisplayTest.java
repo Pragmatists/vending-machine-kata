@@ -1,7 +1,7 @@
 package tdd.vendingMachine.display;
 
 import org.junit.Test;
-import tdd.vendingMachine.Product;
+import tdd.vendingMachine.product.Product;
 import tdd.vendingMachine.errors.ShelveNotFound;
 import tdd.vendingMachine.shelve.DefaultShelve;
 import tdd.vendingMachine.shelve.Shelve;

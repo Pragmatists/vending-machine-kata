@@ -7,6 +7,7 @@ import tdd.vendingMachine.display.Display;
 import tdd.vendingMachine.display.DisplayFactory;
 import tdd.vendingMachine.shelve.Shelve;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -16,6 +17,8 @@ public class VendingMachine {
     private final List<Shelve> shelves;
 
     private final Display display;
+
+    private BigDecimal selectedProductPrice;
 
     public VendingMachine(List<Shelve> shelves, DisplayFactory displayFactory, Function<? super Shelve, Integer> keyMapper) {
         checkNotNull(shelves, "Shelves can not be null");
@@ -30,5 +33,10 @@ public class VendingMachine {
 
     public Display getDisplay() {
         return display;
+    }
+
+    public BigDecimal selectShelve(Integer shelveNumber) {
+        selectedProductPrice = display.getProductPriceByShelveNumber(shelveNumber);
+        return selectedProductPrice;
     }
 }

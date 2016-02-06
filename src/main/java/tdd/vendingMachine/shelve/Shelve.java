@@ -1,6 +1,6 @@
 package tdd.vendingMachine.shelve;
 
-import tdd.vendingMachine.Product;
+import tdd.vendingMachine.product.Product;
 
 import java.math.BigDecimal;
 import java.util.List;

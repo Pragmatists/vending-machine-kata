@@ -1,4 +1,4 @@
-package tdd.vendingMachine;
+package tdd.vendingMachine.product;
 
 import java.math.BigDecimal;
 

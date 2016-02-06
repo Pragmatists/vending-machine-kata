@@ -1,6 +1,7 @@
 package tdd.vendingMachine;
 
 import org.junit.Test;
+import tdd.vendingMachine.product.Product;
 import tdd.vendingMachine.shelve.DefaultShelve;
 
 import java.math.BigDecimal;

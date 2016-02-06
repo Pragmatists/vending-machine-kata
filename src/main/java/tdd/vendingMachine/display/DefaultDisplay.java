@@ -27,6 +27,8 @@ public class DefaultDisplay implements Display {
         if(shelve == null){
             throw new ShelveNotFound(shelveNumber);
         }
-        return shelve.getProductPrice();
+        BigDecimal price = shelve.getProductPrice();
+        System.out.println("Price for product in shelve " + shelveNumber + " is " + price.toString());
+        return price;
     }
 }
