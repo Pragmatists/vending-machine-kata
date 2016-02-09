@@ -26,4 +26,11 @@ public class VendingMachineReturnItems {
     public Product getProduct() {
         return product;
     }
+
+    @Override
+    public String toString() {
+        return "VendingMachineReturnItems\n" +
+            "change=" + change +
+            ", product=" + product + "\n";
+    }
 }

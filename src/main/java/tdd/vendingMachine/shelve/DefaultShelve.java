@@ -17,7 +17,7 @@ public class DefaultShelve<T extends Product> implements Shelve {
     private final String productName;
 
     public DefaultShelve(List<T> products, BigDecimal productPrice, String productName) {
-        checkNotNull(productName, "Product nam can not be null");
+        checkNotNull(productName, "Product name can not be null");
         this.productName = productName;
         checkNotNull(products, "Products can not be null");
         this.products = products;
@@ -38,5 +38,12 @@ public class DefaultShelve<T extends Product> implements Shelve {
     @Override
     public String getProductName() {
         return productName;
+    }
+
+    @Override
+    public String toString() {
+        return "Shelve products=" + products.size() +
+            ", productPrice=" + productPrice +
+            ", productName='" + productName + '\'';
     }
 }

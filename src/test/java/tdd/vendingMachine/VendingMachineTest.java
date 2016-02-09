@@ -54,19 +54,6 @@ public class VendingMachineTest {
     }
 
     @Test
-    public void shouldReturnPriceForSelectedShelve() throws Exception {
-        //given
-        Cola cola = new Cola();
-        DefaultShelve<Cola> shelve = new DefaultShelve<>(Lists.newArrayList(cola), cola.getPrice(), cola.getName());
-        VendingMachine vendingMachine = new VendingMachine(Lists.newArrayList(shelve), new DefaultDisplayFactory(), new ShelveKeyMapper());
-        //when
-        BigDecimal selectedProductPrice = vendingMachine.selectShelve(1);
-        //then
-        assertNotNull(selectedProductPrice);
-        assertEquals(cola.getPrice(), selectedProductPrice);
-    }
-
-    @Test
     public void shouldReturnInsertedInvalidCoin() throws Exception {
         //given
         Cola cola = new Cola();
@@ -97,8 +84,8 @@ public class VendingMachineTest {
         //then
         assertNotNull(returned);
         assertNull(returned.getProduct());
-        assertEquals(1, returned.getChange().size());
-        assertEquals(inputCoin, returned.getChange().get(0));
+        assertEquals(2, returned.getChange().size());
+        assertEquals(inputCoin, returned.getChange().get(1));
     }
 
     @Test
