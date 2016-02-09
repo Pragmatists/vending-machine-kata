@@ -7,7 +7,7 @@ import com.google.common.base.Function;
  */
 public class ShelveKeyMapper implements Function<Shelve, Integer> {
 
-    private static Integer counter = 0;
+    private Integer counter = 0;
 
     @Override
     public Integer apply(Shelve shelve) {

@@ -1,6 +1,7 @@
 package tdd.vendingMachine;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import org.junit.Test;
 import tdd.vendingMachine.display.DefaultDisplayFactory;
 import tdd.vendingMachine.display.Display;
@@ -13,9 +14,9 @@ import tdd.vendingMachine.shelve.ShelveKeyMapper;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 public class VendingMachineTest {
@@ -31,9 +32,9 @@ public class VendingMachineTest {
         List<Shelve> shelves = new ArrayList<>();
         VendingMachine vendingMachine = new VendingMachine(shelves, mock(DisplayFactory.class), mock(Function.class));
         //when
-        List<Shelve> returnedShelves = vendingMachine.getShelves();
+        Map<Integer, Shelve> returnedShelves = vendingMachine.getShelves();
         //then
-        assertEquals(shelves, returnedShelves);
+        assertTrue(returnedShelves.values().isEmpty());
     }
 
     @Test(expected = NullPointerException.class)
@@ -55,18 +56,84 @@ public class VendingMachineTest {
     @Test
     public void shouldReturnPriceForSelectedShelve() throws Exception {
         //given
-        List<Shelve> shelves = new ArrayList<>();
-        List<Cola> products = new ArrayList<>();
         Cola cola = new Cola();
-        products.add(cola);
-        DefaultShelve<Cola> shelve = new DefaultShelve<>(products, cola.getPrice());
-        shelves.add(shelve);
-        VendingMachine vendingMachine = new VendingMachine(shelves, new DefaultDisplayFactory(), new ShelveKeyMapper());
+        DefaultShelve<Cola> shelve = new DefaultShelve<>(Lists.newArrayList(cola), cola.getPrice());
+        VendingMachine vendingMachine = new VendingMachine(Lists.newArrayList(shelve), new DefaultDisplayFactory(), new ShelveKeyMapper());
         //when
         BigDecimal selectedProductPrice = vendingMachine.selectShelve(1);
         //then
         assertNotNull(selectedProductPrice);
         assertEquals(cola.getPrice(), selectedProductPrice);
+    }
+
+    @Test
+    public void shouldReturnInsertedInvalidCoin() throws Exception {
+        //given
+        Cola cola = new Cola();
+        DefaultShelve<Cola> shelve = new DefaultShelve<>(Lists.newArrayList(cola), cola.getPrice());
+        VendingMachine vendingMachine = new VendingMachine(Lists.newArrayList(shelve), new DefaultDisplayFactory(), new ShelveKeyMapper());
+        //when
+        vendingMachine.selectShelve(1);
+        BigDecimal inputCoin = new BigDecimal("0.3");
+        VendingMachineReturnItems returned = vendingMachine.insertCoin(inputCoin);
+        //then
+        assertNotNull(returned);
+        assertNull(returned.getProduct());
+        assertEquals(1, returned.getChange().size());
+        assertEquals(inputCoin, returned.getChange().get(0));
+    }
+
+    @Test
+    public void shouldReturnInsertedInvalidSecondCoin() throws Exception {
+        //given
+        Cola cola = new Cola();
+        DefaultShelve<Cola> shelve = new DefaultShelve<>(Lists.newArrayList(cola), cola.getPrice());
+        VendingMachine vendingMachine = new VendingMachine(Lists.newArrayList(shelve), new DefaultDisplayFactory(), new ShelveKeyMapper());
+        //when
+        vendingMachine.selectShelve(1);
+        vendingMachine.insertCoin(new BigDecimal("1"));
+        BigDecimal inputCoin = new BigDecimal("0.3");
+        VendingMachineReturnItems returned = vendingMachine.insertCoin(inputCoin);
+        //then
+        assertNotNull(returned);
+        assertNull(returned.getProduct());
+        assertEquals(1, returned.getChange().size());
+        assertEquals(inputCoin, returned.getChange().get(0));
+    }
+
+    @Test
+    public void shouldReturnInsertedCoinAfterCancel() throws Exception {
+        //given
+        Cola cola = new Cola();
+        DefaultShelve<Cola> shelve = new DefaultShelve<>(Lists.newArrayList(cola), cola.getPrice());
+        VendingMachine vendingMachine = new VendingMachine(Lists.newArrayList(shelve), new DefaultDisplayFactory(), new ShelveKeyMapper());
+        //when
+        vendingMachine.selectShelve(1);
+        BigDecimal inputCoin = new BigDecimal("0.2");
+        vendingMachine.insertCoin(inputCoin);
+        VendingMachineReturnItems returned = vendingMachine.cancel();
+        //then
+        assertNotNull(returned);
+        assertNull(returned.getProduct());
+        assertEquals(1, returned.getChange().size());
+        assertEquals(inputCoin, returned.getChange().get(0));
+    }
+
+    @Test
+    public void shouldReturnInsertedCoinCauseNoPossibilityToChange() throws Exception {
+        //given
+        Cola cola = new Cola();
+        DefaultShelve<Cola> shelve = new DefaultShelve<>(Lists.newArrayList(cola), cola.getPrice());
+        VendingMachine vendingMachine = new VendingMachine(Lists.newArrayList(shelve), new DefaultDisplayFactory(), new ShelveKeyMapper());
+        //when
+        vendingMachine.selectShelve(1);
+        BigDecimal inputCoin = new BigDecimal("5");
+        VendingMachineReturnItems returned = vendingMachine.insertCoin(inputCoin);
+        //then
+        assertNotNull(returned);
+        assertNull(returned.getProduct());
+        assertEquals(1, returned.getChange().size());
+        assertEquals(inputCoin, returned.getChange().get(0));
     }
 
 }

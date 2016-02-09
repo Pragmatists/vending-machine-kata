@@ -6,5 +6,16 @@ import java.math.BigDecimal;
  * Created by okraskat on 06.02.16.
  */
 public interface Display {
-    BigDecimal getProductPriceByShelveNumber(Integer shelveNumber);
+
+    void showWarning(String warning);
+
+    void showProductPrice(BigDecimal selectedProductPrice);
+
+    void showChangeWarning();
+
+    void showCoverAmount(BigDecimal subtract);
+
+    void showEmptyShelve();
+
+    void showProductNotSelected();
 }
