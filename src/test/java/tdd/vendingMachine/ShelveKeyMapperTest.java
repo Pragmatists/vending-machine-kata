@@ -24,7 +24,7 @@ public class ShelveKeyMapperTest {
     @Test
     public void shouldMapShelvesToKeys() throws Exception {
         //given
-        Shelve shelve = new DefaultShelve<>(new ArrayList<>(), new BigDecimal("10.0"));
+        Shelve shelve = new DefaultShelve<>(new ArrayList<>(), new BigDecimal("10.0"), "");
         List<Shelve> shelves = Lists.newArrayList(shelve, shelve, shelve);
         //when
         Map<Integer, Shelve> resultMap = Maps.uniqueIndex(shelves, new ShelveKeyMapper());

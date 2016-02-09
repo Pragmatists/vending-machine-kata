@@ -57,7 +57,7 @@ public class VendingMachineTest {
     public void shouldReturnPriceForSelectedShelve() throws Exception {
         //given
         Cola cola = new Cola();
-        DefaultShelve<Cola> shelve = new DefaultShelve<>(Lists.newArrayList(cola), cola.getPrice());
+        DefaultShelve<Cola> shelve = new DefaultShelve<>(Lists.newArrayList(cola), cola.getPrice(), cola.getName());
         VendingMachine vendingMachine = new VendingMachine(Lists.newArrayList(shelve), new DefaultDisplayFactory(), new ShelveKeyMapper());
         //when
         BigDecimal selectedProductPrice = vendingMachine.selectShelve(1);
@@ -70,7 +70,7 @@ public class VendingMachineTest {
     public void shouldReturnInsertedInvalidCoin() throws Exception {
         //given
         Cola cola = new Cola();
-        DefaultShelve<Cola> shelve = new DefaultShelve<>(Lists.newArrayList(cola), cola.getPrice());
+        DefaultShelve<Cola> shelve = new DefaultShelve<>(Lists.newArrayList(cola), cola.getPrice(), cola.getName());
         VendingMachine vendingMachine = new VendingMachine(Lists.newArrayList(shelve), new DefaultDisplayFactory(), new ShelveKeyMapper());
         //when
         vendingMachine.selectShelve(1);
@@ -87,7 +87,7 @@ public class VendingMachineTest {
     public void shouldReturnInsertedInvalidSecondCoin() throws Exception {
         //given
         Cola cola = new Cola();
-        DefaultShelve<Cola> shelve = new DefaultShelve<>(Lists.newArrayList(cola), cola.getPrice());
+        DefaultShelve<Cola> shelve = new DefaultShelve<>(Lists.newArrayList(cola), cola.getPrice(), cola.getName());
         VendingMachine vendingMachine = new VendingMachine(Lists.newArrayList(shelve), new DefaultDisplayFactory(), new ShelveKeyMapper());
         //when
         vendingMachine.selectShelve(1);
@@ -105,7 +105,7 @@ public class VendingMachineTest {
     public void shouldReturnInsertedCoinAfterCancel() throws Exception {
         //given
         Cola cola = new Cola();
-        DefaultShelve<Cola> shelve = new DefaultShelve<>(Lists.newArrayList(cola), cola.getPrice());
+        DefaultShelve<Cola> shelve = new DefaultShelve<>(Lists.newArrayList(cola), cola.getPrice(), cola.getName());
         VendingMachine vendingMachine = new VendingMachine(Lists.newArrayList(shelve), new DefaultDisplayFactory(), new ShelveKeyMapper());
         //when
         vendingMachine.selectShelve(1);
@@ -123,7 +123,7 @@ public class VendingMachineTest {
     public void shouldReturnInsertedCoinCauseNoPossibilityToChange() throws Exception {
         //given
         Cola cola = new Cola();
-        DefaultShelve<Cola> shelve = new DefaultShelve<>(Lists.newArrayList(cola), cola.getPrice());
+        DefaultShelve<Cola> shelve = new DefaultShelve<>(Lists.newArrayList(cola), cola.getPrice(), cola.getName());
         VendingMachine vendingMachine = new VendingMachine(Lists.newArrayList(shelve), new DefaultDisplayFactory(), new ShelveKeyMapper());
         //when
         vendingMachine.selectShelve(1);

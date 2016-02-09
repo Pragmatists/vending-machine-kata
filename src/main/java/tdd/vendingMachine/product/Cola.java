@@ -12,4 +12,9 @@ public class Cola implements Product {
         return new BigDecimal("2.0");
     }
 
+    @Override
+    public String getName() {
+        return "Cola";
+    }
+
 }

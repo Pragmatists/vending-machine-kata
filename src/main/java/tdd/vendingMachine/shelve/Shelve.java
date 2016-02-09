@@ -11,4 +11,5 @@ import java.util.List;
 public interface Shelve<T extends Product> {
     List<T> getProducts();
     BigDecimal getProductPrice();
+    String getProductName();
 }

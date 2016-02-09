@@ -21,4 +21,12 @@ public class ColaTest {
         assertEquals(new BigDecimal("2.0"), price);
     }
 
+    @Test
+    public void shouldReturnNameCola() throws Exception {
+        //when
+        String name = new Cola().getName();
+        //then
+        assertEquals("Cola", name);
+    }
+
 }
