@@ -25,7 +25,7 @@ public class Application {
         Cola cola = new Cola();
         Shelve shelve2 = new DefaultShelve<>(Lists.newArrayList(cola, new Cola(), new Cola()), cola.getPrice(), cola.getName());
         List<Shelve> shelves = Lists.newArrayList(shelve1, shelve2);
-        VendingMachine vendingMachine = new VendingMachine(shelves, new DefaultDisplayFactory(), new ShelveKeyMapper());
+        VendingMachine vendingMachine = new VendingMachine(shelves, new DefaultDisplayFactory(), new ShelveKeyMapper(), new ChangeCalculator());
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String input;
         System.out.println("Starting vending machine");

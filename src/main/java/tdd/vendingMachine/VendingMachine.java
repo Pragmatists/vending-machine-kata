@@ -36,7 +36,11 @@ public class VendingMachine {
 
     private Shelve selectedShelve;
 
-    public VendingMachine(List<Shelve> shelvesList, DisplayFactory displayFactory, Function<? super Shelve, Integer> keyMapper) {
+    private final ChangeCalculator changeCalculator;
+
+    public VendingMachine(List<Shelve> shelvesList, DisplayFactory displayFactory, Function<? super Shelve, Integer> keyMapper, ChangeCalculator changeCalculator) {
+        checkNotNull(changeCalculator, "ChangeCalculator can not be null");
+        this.changeCalculator = changeCalculator;
         checkNotNull(displayFactory, "DisplayFactory can not be null");
         shelves = Maps.uniqueIndex(shelvesList, keyMapper);
         this.display = displayFactory.createDisplay();
@@ -69,17 +73,15 @@ public class VendingMachine {
     public VendingMachineReturnItems insertCoin(BigDecimal inputCoin) {
         Product product = null;
         List<BigDecimal> change = null;
-        if(inputCoinValid(inputCoin) && selectedShelve != null && selectedShelve.getProductPrice() != null){
+        if(inputCoinValid(inputCoin) && selectionIsValid()){
             insertedCoins.add(inputCoin);
             BigDecimal sumInsertedCoins = sumInsertedCoins();
-            if(sumInsertedCoins.compareTo(selectedShelve.getProductPrice()) >= 0){
+            if(insertedEnoughMoney(sumInsertedCoins)){
                 BigDecimal subtract = sumInsertedCoins.subtract(selectedShelve.getProductPrice());
-                if(canGiveAChange(subtract)) {
+                if(changeCalculator.canGiveAChange(subtract, coins)) {
                     product = (Product) selectedShelve.getProducts().remove(selectedShelve.getProducts().size() - 1);
-                    change = getChange(subtract);
-                    addCoinsToMachine();
-                    insertedCoins.clear();
-                    selectedShelve = null;
+                    change = changeCalculator.getChange(subtract, coins);
+                    restartMachineState();
                 } else {
                     display.showChangeWarning();
                     change = Lists.newArrayList(insertedCoins);
@@ -98,51 +100,25 @@ public class VendingMachine {
         return new VendingMachineReturnItems(change, product);
     }
 
+    private void restartMachineState() {
+        addCoinsToMachine();
+        insertedCoins.clear();
+        selectedShelve = null;
+    }
+
+    private boolean insertedEnoughMoney(BigDecimal sumInsertedCoins) {
+        return sumInsertedCoins.compareTo(selectedShelve.getProductPrice()) >= 0;
+    }
+
+    private boolean selectionIsValid() {
+        return selectedShelve != null && selectedShelve.getProductPrice() != null;
+    }
+
     public VendingMachineReturnItems cancel(){
         List<BigDecimal> change = Lists.newArrayList(insertedCoins);
         insertedCoins.clear();
         selectedShelve = null;
         return new VendingMachineReturnItems(change, null);
-    }
-
-    private List<BigDecimal> getChange(BigDecimal subtract) {
-        List<BigDecimal> change = new ArrayList<>();
-        BigDecimal rest = new BigDecimal(subtract.toBigInteger());
-        for (BigDecimal denomination : coins.keySet()) {
-            if(rest.compareTo(denomination) >= 0 && !coins.get(denomination).isEmpty()){
-                addToChange(change, rest, denomination);
-            }
-        }
-        for (BigDecimal coin : change) {
-            coins.get(coin).remove(coins.get(coin).size() - 1);
-        }
-        return change;
-    }
-
-    private void addToChange(List<BigDecimal> change, BigDecimal rest, BigDecimal denomination) {
-        for (BigDecimal coin : coins.get(denomination)) {
-            if(rest.subtract(coin).compareTo(BigDecimal.ZERO) >= 0){
-                rest = rest.subtract(coin);
-                change.add(coin);
-            }
-        }
-    }
-
-    private boolean canGiveAChange(BigDecimal subtract) {
-        BigDecimal rest = new BigDecimal(subtract.toBigInteger());
-        List<BigDecimal> keys = new ArrayList<>(coins.keySet());
-        Collections.sort(keys);
-        for (int i = keys.size() - 1; i >= 0; i--) {
-            BigDecimal denomination = keys.get(i);
-            if (rest.compareTo(denomination) >= 0 && !coins.get(denomination).isEmpty()) {
-                for (BigDecimal coin : coins.get(denomination)) {
-                    if (rest.subtract(coin).compareTo(BigDecimal.ZERO) >= 0) {
-                        rest = rest.subtract(coin);
-                    }
-                }
-            }
-        }
-        return rest.equals(BigDecimal.ZERO);
     }
 
     private void addCoinsToMachine() {
@@ -161,5 +137,9 @@ public class VendingMachine {
 
     private boolean inputCoinValid(BigDecimal inputCoin) {
         return ACCEPTED_DENOMINATIONS.contains(inputCoin);
+    }
+
+    public Map<BigDecimal, List<BigDecimal>> getCoins() {
+        return coins;
     }
 }
