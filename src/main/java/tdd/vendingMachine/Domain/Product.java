@@ -11,7 +11,7 @@ import lombok.Data;
 
 @Data
 public class Product {
-    private Integer pid = 0;
+    private Integer pid = 0;    //valid products (in catalog, in sotre) have pid>0
     private String name;
     private Integer price;
 

@@ -13,15 +13,15 @@ public class StorageRepo {
     Integer[] countAtShelf;
     List<String> internalLog;   //registers physical actions of the storage
     final int nShelves;
-    final int maxProducts;
+    final int maxItemsOnShelf;
 
-    public StorageRepo(int nShelves, int maxProducts) {
+    public StorageRepo(int nShelves, int maxItemsOnShelf) {
         this.nShelves = nShelves;
-        this.maxProducts = maxProducts;
+        this.maxItemsOnShelf = maxItemsOnShelf;
         pidAtShelf = new Integer[nShelves];
         countAtShelf = new Integer[nShelves];
         for (int i = 0; i < nShelves; i++) {
-            pidAtShelf[i] = null;
+            pidAtShelf[i] = 0;
             countAtShelf[i] = 0;
         }
         internalLog = new ArrayList<>();
@@ -33,11 +33,23 @@ public class StorageRepo {
      */
 
     public Integer getPidAtShelf(int shelf) {
+        if (!isShelfNumberValid(shelf))
+            throw new RuntimeException(Error.INVALID_SHELF_NUMBER.toString());
         return pidAtShelf[shelf];
     }
 
     public Integer getCountAtShelf(int shelf) {
+        if (!isShelfNumberValid(shelf))
+            throw new RuntimeException(Error.INVALID_SHELF_NUMBER.toString());
         return countAtShelf[shelf];
+    }
+
+    public int getnShelves() {
+        return nShelves;
+    }
+
+    public int getMaxItemsOnShelf() {
+        return maxItemsOnShelf;
     }
 
     /**
@@ -64,11 +76,12 @@ public class StorageRepo {
      * @param shelf selected shelf
      * @param productid (will not be checked for validity in ProductRepo)
      * @param count (must be valid; else RuntimeException thrown)
-     * @throws ArrayIndexOutOfBoundsException for invalid shelf number, and
+     * @throws RuntimeException for invalid shelf number, and
      *         RuntimeException if count of products is invalid.
      */
     public void setProductAtShelf(int shelf, int productid, int count) throws RuntimeException {
-        if (!isCountValid(count)) throw new RuntimeException();
+        if (!isCountValid(count)) throw new RuntimeException(Error.INVALID_NUMBER_OF_ITEMS_AT_SHELF.toString());
+        if (!isShelfNumberValid(shelf)) throw new RuntimeException(Error.INVALID_SHELF_NUMBER.toString());
         pidAtShelf[shelf] = productid;
         countAtShelf[shelf] = count;
     }
@@ -76,7 +89,11 @@ public class StorageRepo {
     //helpers
 
     private boolean isCountValid(int count) {
-        return count >= 0 && count <= maxProducts;
+        return count >= 0 && count <= maxItemsOnShelf;
+    }
+
+    private boolean isShelfNumberValid(int shelf) {
+        return shelf >= 0 && shelf < nShelves;
     }
 
 }
