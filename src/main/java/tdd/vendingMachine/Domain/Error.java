@@ -5,5 +5,6 @@ package tdd.vendingMachine.Domain;
  */
 public enum Error {
     INVALID_SHELF_NUMBER,
-    INVALID_NUMBER_OF_ITEMS_AT_SHELF
+    INVALID_NUMBER_OF_ITEMS_AT_SHELF,
+    CANNOT_ADD_TO_EMPTY_SHELF
 }
