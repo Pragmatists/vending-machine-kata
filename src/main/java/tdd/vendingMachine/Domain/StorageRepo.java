@@ -65,10 +65,16 @@ public class StorageRepo {
      * Adds products to selected shelf; implicitly these are the same type of products.
      *
      * @param shelf selected shelf
-     * @param newProductCount (can be negative)
+     * @param addedCount (can be negative)
      * @throws RuntimeException when count at `shelf` becomes invalid
      */
-    public void addProductsToShelf(int shelf, int newProductCount) throws RuntimeException {
+    public void addProductsToShelf(int shelf, int addedCount) throws RuntimeException {
+        if (!isShelfNumberValid(shelf)) throw new RuntimeException(Error.INVALID_SHELF_NUMBER.toString());
+        int countNow = countAtShelf[shelf];
+        if (countNow==0) throw new RuntimeException(Error.CANNOT_ADD_TO_EMPTY_SHELF.toString());
+        if (!isCountValid(countNow + addedCount))
+            throw new RuntimeException(Error.INVALID_NUMBER_OF_ITEMS_AT_SHELF.toString());
+        countAtShelf[shelf] += addedCount;
 
     }
 
