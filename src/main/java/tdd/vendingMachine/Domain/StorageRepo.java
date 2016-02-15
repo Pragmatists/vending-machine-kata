@@ -27,12 +27,17 @@ public class StorageRepo {
         internalLog = new ArrayList<>();
     }
 
+    /**
+     * Getters for state of the Storage; throw ArrayIndexOutOfBoundsException if
+     * `shelf` is not an allowed shelf number.
+     */
+
     public Integer getPidAtShelf(int shelf) {
-        return null;
+        return pidAtShelf[shelf];
     }
 
     public Integer getCountAtShelf(int shelf) {
-        return null;
+        return countAtShelf[shelf];
     }
 
     /**
@@ -59,16 +64,19 @@ public class StorageRepo {
      * @param shelf selected shelf
      * @param productid (will not be checked for validity in ProductRepo)
      * @param count (must be valid; else RuntimeException thrown)
-     * @throws RuntimeException
+     * @throws ArrayIndexOutOfBoundsException for invalid shelf number, and
+     *         RuntimeException if count of products is invalid.
      */
     public void setProductAtShelf(int shelf, int productid, int count) throws RuntimeException {
-
+        if (!isCountValid(count)) throw new RuntimeException();
+        pidAtShelf[shelf] = productid;
+        countAtShelf[shelf] = count;
     }
 
+    //helpers
 
-    //---------------
-    private boolean checkShelfNumber(int shelf) {
-        return shelf >= 0 && shelf < nShelves;
+    private boolean isCountValid(int count) {
+        return count >= 0 && count <= maxProducts;
     }
 
 }

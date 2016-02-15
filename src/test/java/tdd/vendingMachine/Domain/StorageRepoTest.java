@@ -17,7 +17,6 @@ public class StorageRepoTest {
         repo = new StorageRepo(5, 10);  //5shelves, 10items max
     }
 
-
     @Test
     public void simpleSetGetShelfContents() {
         repo.setProductAtShelf(0, 1, 5);
