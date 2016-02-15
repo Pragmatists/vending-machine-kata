@@ -47,7 +47,7 @@ public class ProductRepo {
 
     void delete(Product p) {
         if (p==null || p.getPid()<=0) return;
-        catalog.remove(p, Product.class);
+        catalog.remove(p.getPid());
     }
 
 }

@@ -25,12 +25,13 @@ public class ProductRepoTest {
 
         repo.save(cola);
         Integer colaId = cola.getPid();
-        assertThat(colaId==1);
-        assertThat(repo.count() == 1);
+        assertThat(colaId).isEqualTo(1);
+        assertThat(repo.count()).isEqualTo(1);
         repo.save(sprite);
         repo.save(snack);
-        assertThat(repo.count() == 3);
-        assertThat(snack.getPid() == 3);
+        //tests also the operation of the `pid` generator
+        assertThat(repo.count()).isEqualTo(3);
+        assertThat(snack.getPid()).isEqualTo(3);
     }
 
     @Test
@@ -41,17 +42,17 @@ public class ProductRepoTest {
         cola.setPrice(13);
         repo.save(cola);
         //id should not change on update
-        assertThat(cola.getPid().equals(id));
-        assertThat(repo.findOne(id).getPrice().equals(13));
-        assertThat(repo.count() == 1);
+        assertThat(cola.getPid()).isEqualTo(id);
+        assertThat(repo.findOne(id).getPrice()).isEqualTo(13);
+        assertThat(repo.count()).isEqualTo(1);
     }
 
     @Test
     public void findingProducts() {
         MockRepos.fillProductRepo(repo);
-        assertThat(repo.findByNameIgnoreCase("cola") != null);
+        assertThat(repo.findByNameIgnoreCase("cola")).isNotNull();
         repo.findAll().forEach((Product p)->{
-            assertThat(repo.findByNameIgnoreCase(p.getName().toUpperCase())==p);
+            assertThat(repo.findByNameIgnoreCase(p.getName().toUpperCase())).isEqualTo(p);
         });
     }
 
@@ -62,12 +63,12 @@ public class ProductRepoTest {
         Product cola = repo.findByNameIgnoreCase("cola");
         repo.delete(cola);
         okCount--;
-        assertThat(repo.count() == okCount);
+        assertThat(repo.count()).isEqualTo(okCount);
         repo.delete(cola);
-        assertThat(repo.count() == okCount);
+        assertThat(repo.count()).isEqualTo(okCount);
         Product egg = new Product("Egg", 1);
         repo.delete(egg);
-        assertThat(repo.count() == okCount);
+        assertThat(repo.count()).isEqualTo(okCount);
     }
 
 
