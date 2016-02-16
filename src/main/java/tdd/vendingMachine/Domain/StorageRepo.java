@@ -1,6 +1,5 @@
 package tdd.vendingMachine.Domain;
 
-import tdd.vendingMachine.Transaction.MachineException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,10 +53,10 @@ public class StorageRepo {
 
     /**
      * @param shelf: number of shelf from which the product should be served
-     * @throws MachineException if no products are present at this shelf
+     * @throws RuntimeException if no products are present at this shelf
      *        (or other not yet specified condition prevents discharge of the product)
      */
-    public void serveProduct(int shelf) throws MachineException {
+    public void serveProduct(int shelf) throws RuntimeException {
 
     }
 

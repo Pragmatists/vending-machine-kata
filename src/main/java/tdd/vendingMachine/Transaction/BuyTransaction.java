@@ -5,12 +5,18 @@ package tdd.vendingMachine.Transaction;
  * Should an MachineException occur, all registered rollback-abe actors will rollback, and
  * the transaction will be closed.
  */
-public class MachineTransactionManager implements TransactionAware {
+public class BuyTransaction {
+    boolean inTransaction;
+    int selecedShelf;
+    int selectedPid;
+    int selectedPrice;
+    int moneyInserted;
+
+
     //transactionstatus
     boolean isInTransaction() {
-        return false;
+        return inTransaction;
     }
-    //list of registered actors
 
 
     public void commit() {
