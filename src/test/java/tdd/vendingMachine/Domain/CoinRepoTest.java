@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -16,13 +17,8 @@ public class CoinRepoTest {
 
     @Before
     public void setUp() {
-        List<Integer> nom = new ArrayList<>();
-        nom.add(10);
-        nom.add(20);
-        nom.add(50);
-        nom.add(100);
-        nom.add(200);
-        nom.add(500);
+        Integer[] nn = new Integer[]{10, 20, 50, 100, 200, 500};
+        List<Integer> nom = Arrays.asList(nn);
         repo = new CoinRepo(nom);
     }
 
@@ -78,6 +74,28 @@ public class CoinRepoTest {
             ii.add(1);  //cannot repeat nominals
             new CoinRepo(ii);
         }).hasMessage(Error.INVALID_COIN_NOMINAL.toString());
+    }
+
+    @Test
+    public void disbursedCoinsMustBeInRepo() {
+        repo.addCoins(10, 5);
+        repo.addCoins(20, 5);
+        repo.addCoins(50, 5);
+        Integer[] cc = new Integer[]{10, 10, 10, 20, 20, 50};
+        repo.disburseCoins(Arrays.asList(cc));
+        Map<Integer,Integer> coins = repo.getCoins();
+        assertThat(coins.get(10)).isEqualTo(2);
+        assertThat(coins.get(20)).isEqualTo(3);
+        assertThat(coins.get(50)).isEqualTo(4);
+
+        assertThatThrownBy(() -> {
+            List<Integer> tooMany = new ArrayList<>();
+            tooMany.add(10);
+            tooMany.add(10);
+            tooMany.add(10);
+            repo.disburseCoins(tooMany);
+        }).hasMessage(Error.TOO_FEW_COINS_FOR_DISBURSE_ORDER.toString());
+
     }
 
 

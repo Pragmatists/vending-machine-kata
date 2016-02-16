@@ -51,8 +51,22 @@ public class CoinRepo {
         return coins;
     }
 
-    public void disburseCoins(List<Integer> coins) throws RuntimeException {
-        internalLog.add(Instant.now().toString());
+    public void disburseCoins(List<Integer> toGive) throws RuntimeException {
+        for(int i : toGive)
+            if (!coins.containsKey(i))
+                throw new RuntimeException(Error.INVALID_COIN_NOMINAL.toString());
+        Map<Integer, Integer> sorted = new HashMap<>();
+        for(int i : toGive) {
+            sorted.put(i, sorted.getOrDefault(i, 0) + 1);
+        }
+        for(int nom : sorted.keySet()) {
+            if (coins.getOrDefault(nom,0) < sorted.get(nom))
+                throw new RuntimeException(Error.TOO_FEW_COINS_FOR_DISBURSE_ORDER.toString());
+        }
+        for(int nom : sorted.keySet())
+            coins.put(nom, coins.get(nom) - sorted.get(nom));
+
+        internalLog.add(Instant.now().toString() + " disbursed coins:" + toGive);
     }
 
 
