@@ -9,10 +9,8 @@ import java.util.*;
  * This class deals with coin-storage, and the status of current "buy-transaction"
  */
 public class CoinRepo {
-    Map<Integer,Integer> coins;
-    List<String> internalLog;   //registers physical actions of the storage
-
-    CoinChanger changer;    //tells if a sum `sum` can be constructed (and how best)
+    private Map<Integer,Integer> coins;
+    private List<String> internalLog;   //registers physical actions of the storage
 
     public CoinRepo(Collection<Integer> nominals) throws RuntimeException {
         coins = new HashMap<>();
@@ -68,7 +66,5 @@ public class CoinRepo {
 
         internalLog.add(Instant.now().toString() + " disbursed coins:" + toGive);
     }
-
-
 
 }

@@ -1,5 +1,9 @@
 package tdd.vendingMachine.Service;
 
+import tdd.vendingMachine.Domain.CoinRepo;
+import tdd.vendingMachine.Domain.ProductRepo;
+import tdd.vendingMachine.Domain.StorageRepo;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +13,10 @@ import java.util.List;
  * the transaction will be closed.
  */
 public class TransactionServiceImpl implements TransactionService {
+    private ProductRepo productRepo;
+    private StorageRepo storageRepo;
+    private CoinRepo coinRepo;
+
     private boolean inTransaction;
     private int selecedShelf;
     private int selectedPid;
@@ -16,18 +24,11 @@ public class TransactionServiceImpl implements TransactionService {
     private int insertedMoney;
     private List<Integer> insertedCoins;        //should same coins be returned
 
-    public TransactionServiceImpl() {
+    public TransactionServiceImpl(ProductRepo productRepo, StorageRepo storageRepo, CoinRepo coinRepo) {
+        this.productRepo = productRepo;
+        this.storageRepo = storageRepo;
+        this.coinRepo = coinRepo;
         cleanUp();
-    }
-
-    @Override
-    public boolean isReadyForCommit() {
-        return false;
-    }
-
-    @Override
-    public void insertCoin(int nominal) {
-
     }
 
     @Override
@@ -56,8 +57,23 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    public void startTransaction(int selectedShelf) throws RuntimeException {
+
+    }
+
+    @Override
     public int stillNeededFunds() {
         return 0;
+    }
+
+    @Override
+    public void insertCoin(int nominal) throws RuntimeException {
+
+    }
+
+    @Override
+    public boolean isReadyForCommit() {
+        return false;
     }
 
     @Override

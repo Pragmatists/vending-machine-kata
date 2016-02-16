@@ -8,11 +8,11 @@ import java.util.List;
  * Repository responsible for management of the physical storage of products.
  */
 public class StorageRepo {
-    Integer[] pidAtShelf;
-    Integer[] countAtShelf;
-    List<String> internalLog;   //registers physical actions of the storage
-    final int nShelves;
-    final int maxItemsOnShelf;
+    private Integer[] pidAtShelf;
+    private Integer[] countAtShelf;
+    private List<String> internalLog;   //registers physical actions of the storage
+    private final int nShelves;
+    private final int maxItemsOnShelf;
 
     public StorageRepo(int nShelves, int maxItemsOnShelf) {
         this.nShelves = nShelves;

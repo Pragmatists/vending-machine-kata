@@ -14,26 +14,26 @@ public class ProductRepo {
     private Map<Integer, Product> catalog = new HashMap<>();
 
 
-    boolean contains(Integer id) {
+    public boolean contains(Integer id) {
         return catalog.containsKey(id);
     }
 
-    Product findOne(Integer id) {
+    public Product findOne(Integer id) {
         return catalog.get(id);
     }
 
-    Product findByNameIgnoreCase(String name) {
+    public Product findByNameIgnoreCase(String name) {
         for(Product p : catalog.values()) {
             if (p.getName().toLowerCase().equals(name.toLowerCase())) return p;
         }
         return null;
     }
 
-    Iterable<Product> findAll() {
+    public Iterable<Product> findAll() {
         return catalog.values();
     }
 
-    Product save(Product p) {
+    public Product save(Product p) {
         if (p.getPid()==0 || !catalog.containsKey(p.getPid())) {
             p.setPid(idGen.incrementAndGet());
         }
@@ -41,11 +41,11 @@ public class ProductRepo {
         return p;
     }
 
-    int count() {
+    public int count() {
         return catalog.size();
     }
 
-    void delete(Product p) {
+    public void delete(Product p) {
         if (p==null || p.getPid()<=0) return;
         catalog.remove(p.getPid());
     }
