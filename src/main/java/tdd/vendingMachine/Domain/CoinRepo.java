@@ -17,7 +17,10 @@ public class CoinRepo {
     public CoinRepo(Collection<Integer> nominals) throws RuntimeException {
         coins = new HashMap<>();
         for(Integer i : nominals) {
-
+            if (coins.containsKey(i))
+                throw new RuntimeException(Error.INVALID_COIN_NOMINAL.toString());
+            if (i<=0)
+                throw new RuntimeException(Error.INVALID_COIN_NOMINAL.toString());
             coins.put(i, 0);
         }
         this.internalLog = new ArrayList<>();
@@ -25,12 +28,18 @@ public class CoinRepo {
 
     //admin inserts `howMany` coins of selected nominal (can withdraw)
     public void addCoins(int nominal, int howMany) throws RuntimeException {
-        //transaction cannot be running
+        if (!coins.containsKey(nominal))
+            throw new RuntimeException(Error.INVALID_COIN_NOMINAL.toString());
+        if (coins.get(nominal)+howMany<0)
+            throw new RuntimeException(Error.NEGATIVE_NUMBER_OF_COINS.toString());
+        coins.put(nominal, coins.get(nominal) + howMany);
     }
 
     //client inserts single coin
     public void insertCoin(int nominal) throws RuntimeException {
-        //
+        if (!coins.containsKey(nominal))
+            throw new RuntimeException(Error.INVALID_COIN_NOMINAL.toString());
+        coins.put(nominal, coins.get(nominal) + 1);
     }
 
 

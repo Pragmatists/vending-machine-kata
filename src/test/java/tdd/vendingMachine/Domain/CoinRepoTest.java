@@ -33,17 +33,15 @@ public class CoinRepoTest {
         repo.addCoins(10, nTen);
         repo.addCoins(20, nTwenty);
         Map<Integer,Integer> coins = repo.getCoins();
-        for (int i = 0; i < nTen + nTwenty; i++) {
-            if (i<nTen) assertThat(coins.get(i)).isEqualTo(10);
-            else assertThat(coins.get(i)).isEqualTo(20);
-        }
+        assertThat(coins.get(10)).isEqualTo(nTen);
+        assertThat(coins.get(20)).isEqualTo(nTwenty);
         repo.insertCoin(50);
         repo.insertCoin(100);
         repo.insertCoin(10);
         coins = repo.getCoins();
-        assertThat(coins.get(coins.size() - 1)).isEqualTo(10);
-        assertThat(coins.get(coins.size() - 2)).isEqualTo(100);
-        assertThat(coins.get(coins.size() - 3)).isEqualTo(50);
+        assertThat(coins.get(50)).isEqualTo(1);
+        assertThat(coins.get(100)).isEqualTo(1);
+        assertThat(coins.get(10)).isEqualTo(nTen+1);
     }
 
     @Test
