@@ -28,26 +28,40 @@ public class SimpleView implements Runnable {
         System.out.println(usage);
         Scanner s = new Scanner(System.in);
         while(true) {
+            System.out.println("--> ");
             query = s.next();
             if (query.equals("L")) {
 //                Schematic response
-//                Response r = machine.getShelfContents();
+                Response r = machine.getShelfContents();
 //                if (!r.getStatus().equals(ResponseStatus.OK))
 //                    System.out.println(r.getComment());
 //                Iterable<ShelfTransferObject> content = (Iterable<ShelfTransferObject>) r.getResult();
 //                for(ShelfTransferObject obj : content) System.out.println(obj);
             } else if (query.equals("X")) {
-
+                Response r = machine.cancelTransaction();
             } else if (query.equals("Q")) {
                 break;
             } else if (query.startsWith("#")) {
-
+                String rest = query.substring(1);
+                Integer shelfNo = parseInt(rest);
+                if (shelfNo==null) continue;
+                //
             } else if (query.startsWith("*")) {
-
+                String rest = query.substring(1);
+                Integer coin = parseInt(rest);
+                if (coin==null) continue;
             } else System.out.println(usage);
         }
     }
 
     //---------
-
+    private Integer parseInt(String s) {
+        Integer res = null;
+        try {
+            res = Integer.valueOf(s);
+        } catch (Exception e) {
+            System.out.println("Error reading number!");
+        }
+        return res;
+    }
 }
