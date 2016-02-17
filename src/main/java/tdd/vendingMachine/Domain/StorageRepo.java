@@ -58,7 +58,10 @@ public class StorageRepo {
      *        (or other not yet specified condition prevents discharge of the product)
      */
     public void serveProduct(int shelf) throws RuntimeException {
-
+        if (countAtShelf[shelf]==0)
+            throw new RuntimeException(Error.ERROR_SERVING_PRODUCT__EMPTY_SHELF.toString());
+        countAtShelf[shelf]--;
+        internalLog.add("Served product from shelf " + shelf + " of pid=" + pidAtShelf[shelf]);
     }
 
     /**

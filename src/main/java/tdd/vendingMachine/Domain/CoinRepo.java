@@ -1,6 +1,7 @@
 package tdd.vendingMachine.Domain;
 
 import tdd.vendingMachine.Service.CoinChanger;
+import tdd.vendingMachine.Service.Utils;
 
 import java.time.Instant;
 import java.util.*;
@@ -42,10 +43,6 @@ public class CoinRepo {
         internalLog.add(Instant.now().toString() + " Accepted coin:" + nominal);
     }
 
-    public Set<Integer> getNominals() {
-        return coins.keySet();
-    }
-
     public Map<Integer,Integer> getCoins() {
         return coins;
     }
@@ -75,11 +72,10 @@ public class CoinRepo {
         //here it is guaranteed that whole operation will be possible
         for(int nom : toGiveAsMap.keySet())
             coins.put(nom, coins.get(nom) - toGiveAsMap.get(nom));
-
         internalLog.add(Instant.now().toString() + " disbursed coins:" + toGive);
     }
 
     public int getMoneySumStored(){
-        return 0;
+        return Utils.sumMap(coins);
     }
 }
