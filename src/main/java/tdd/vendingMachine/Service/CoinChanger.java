@@ -1,6 +1,7 @@
 package tdd.vendingMachine.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service dealing with the issue of change-calculation.
@@ -18,6 +19,6 @@ public interface CoinChanger {
      */
     //
     //null if sum cannot be paid with avilableCoins, else list of coins used
-    List<Integer> distribute(Iterable<Integer> avilableCoins, int sum);
+    List<Integer> distribute(Map<Integer,Integer> avilableCoins, int sum);
 
 }
