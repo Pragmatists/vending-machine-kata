@@ -9,7 +9,7 @@ package tdd.vendingMachine.Service;
  * loop
  *      insertCoin
  *      isReadyForCommit
- *      stillNeededFunds
+ *      getNeededFunds
  *
  * exits from loop: commit (product discharge) or rollback (inserted money back)
  *
@@ -31,9 +31,11 @@ public interface TransactionService {
 
     void startTransaction(int selectedShelf) throws RuntimeException;
 
-    int stillNeededFunds();
+    int getNeededFunds();
     void insertCoin(int nominal) throws RuntimeException;
     boolean isReadyForCommit();     //can discharge product and change
+
+    int getChangeSum();     //money to be paid as change (nominals not specified)
 
     //discharge the product
     void commit();

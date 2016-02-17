@@ -5,7 +5,7 @@ package tdd.vendingMachine.Service;
  */
 public interface MachineClientController {
     Response getShelfContents();
-    Response selectShelf();
+    Response selectShelf(int shelf);
     Response insertCoin(int nominal);
     Response cancelTransaction();
 }

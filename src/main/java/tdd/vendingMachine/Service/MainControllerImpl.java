@@ -4,20 +4,8 @@ package tdd.vendingMachine.Service;
  * The main implementation of this vending machine.
  * Allows Client- and Admin- operations.
  */
-public class MainControllerImpl implements MachineClientController, MachineAdminController {
+public class MainControllerImpl implements MachineClientController {
     TransactionServiceImpl transaction;
-
-    @Override
-    public Response addCoins(int nominal, int count) {
-        //must cancel transaction
-        return null;
-    }
-
-    @Override
-    public Response setShelfProducts(int productid, int count, int shelfPosition) {
-        //must cancel transaction
-        return null;
-    }
 
     @Override
     public Response insertCoin(int nominal) {
@@ -41,21 +29,20 @@ public class MainControllerImpl implements MachineClientController, MachineAdmin
         return null;
     }
 
+
     @Override
     public Response getShelfContents() {
-        //anytime
         return null;
     }
 
     @Override
-    public Response selectShelf() {
-        //must cancel transaction
+    public Response selectShelf(int shelf) {
         return null;
     }
 
     @Override
     public Response cancelTransaction() {
-        //must disburse inserted coins
         return null;
     }
 }
+

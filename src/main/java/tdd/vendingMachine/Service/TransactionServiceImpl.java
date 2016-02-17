@@ -31,6 +31,7 @@ public class TransactionServiceImpl implements TransactionService {
         cleanUp();
     }
 
+
     @Override
     public boolean isInTransaction() {
         return false;
@@ -62,7 +63,12 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public int stillNeededFunds() {
+    public int getChangeSum() {
+        return 0;
+    }
+
+    @Override
+    public int getNeededFunds() {
         return 0;
     }
 

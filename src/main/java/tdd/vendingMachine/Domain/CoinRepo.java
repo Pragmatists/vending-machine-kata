@@ -67,4 +67,7 @@ public class CoinRepo {
         internalLog.add(Instant.now().toString() + " disbursed coins:" + toGive);
     }
 
+    public int getMoneySumStored(){
+        return 0;
+    }
 }
