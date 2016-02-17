@@ -116,16 +116,35 @@ public class TransactionServiceTest {
         assertThat(coins.get(50)).isEqualTo(0);
     }
 
+
+    @Test
+    public void subsequentBuysAreIndependent() {
+        coinRepo.addCoins(10, 3);
+        tSrv.startTransaction(0); //take Sprite, price=30
+        tSrv.insertCoin(20);
+        tSrv.insertCoin(20);
+        assertThat(tSrv.isReadyForCommit()).isEqualTo(true);
+        assertThat(tSrv.getChangeSum()).isEqualTo(10);
+        tSrv.commit();
+
+        tSrv.startTransaction(0); //take Sprite, price=30
+        tSrv.insertCoin(20);
+        assertThat(tSrv.isReadyForCommit()).isEqualTo(false);
+        tSrv.insertCoin(20);
+        assertThat(tSrv.isReadyForCommit()).isEqualTo(true);
+        assertThat(tSrv.getChangeSum()).isEqualTo(10);
+        tSrv.commit();
+    }
+
+
+
     @Test
     public void buyTransactionLockOnRepos() {
-//        //LOCKS NOT YET IMPLEMENTED
-//        coinRepo.addCoins(10, 3);
-//        tSrv.startTransaction(0);
-//        tSrv.insertCoin(10);
-//        assertThat(tSrv.isInTransaction()).isEqualTo(true);
-//        assertThatThrownBy(() -> {
-//            coinRepo.addCoins(10, 5);
-//        }).hasMessage(SrvError.TRANSACTION_IN_PROGRESS_CANT_START_NEW_ONE.toString());
+        //THIS IS BEST IMPLEMENTED USING ASPECTS; WITHOUT THEM OBFUSCATION WOULD RESULT
+        /*
+         * Idea: once transaction is started, all access methods to coinRepo and storageRepo,
+         * except the ones allowed in transaction, should be forbidden.
+         */
     }
 
 

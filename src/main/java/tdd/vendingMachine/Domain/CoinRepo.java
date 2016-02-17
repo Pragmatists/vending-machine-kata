@@ -1,5 +1,6 @@
 package tdd.vendingMachine.Domain;
 
+import org.slf4j.Logger;
 import tdd.vendingMachine.Service.CoinChanger;
 import tdd.vendingMachine.Service.Utils;
 
@@ -11,7 +12,9 @@ import java.util.*;
  */
 public class CoinRepo {
     private Map<Integer,Integer> coins;
-    private List<String> internalLog;   //registers physical actions of the storage
+
+    //Registers physical actions of the coinRepo
+    private static Logger log = org.slf4j.LoggerFactory.getLogger(CoinRepo.class);
 
     public CoinRepo(Collection<Integer> nominals) throws RuntimeException {
         coins = new HashMap<>();
@@ -22,7 +25,6 @@ public class CoinRepo {
                 throw new RuntimeException(Error.INVALID_COIN_NOMINAL.toString());
             coins.put(i, 0);
         }
-        this.internalLog = new ArrayList<>();
     }
 
     //Admin operation: insert `howMany` coins of selected nominal (can withdraw).
@@ -32,7 +34,7 @@ public class CoinRepo {
         if (coins.get(nominal)+howMany<0)
             throw new RuntimeException(Error.NEGATIVE_NUMBER_OF_COINS.toString());
         coins.put(nominal, coins.get(nominal) + howMany);
-        internalLog.add(Instant.now().toString() + " Stored " + howMany + " coins of nominal:" + nominal);
+        log.info(" Stored " + howMany + " coins of nominal:" + nominal);
     }
 
     //Single coin inserted into the CoinRepo
@@ -40,7 +42,7 @@ public class CoinRepo {
         if (!coins.containsKey(nominal))
             throw new RuntimeException(Error.INVALID_COIN_NOMINAL.toString());
         coins.put(nominal, coins.get(nominal) + 1);
-        internalLog.add(Instant.now().toString() + " Accepted coin:" + nominal);
+        log.info(" Accepted coin:" + nominal);
     }
 
     public Map<Integer,Integer> getCoins() {
@@ -72,7 +74,7 @@ public class CoinRepo {
         //here it is guaranteed that whole operation will be possible
         for(int nom : toGiveAsMap.keySet())
             coins.put(nom, coins.get(nom) - toGiveAsMap.get(nom));
-        internalLog.add(Instant.now().toString() + " disbursed coins:" + toGive);
+        log.info("Disbursed coins:" + toGive);
     }
 
     public int getMoneySumStored(){

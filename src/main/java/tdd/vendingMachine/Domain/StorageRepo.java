@@ -1,6 +1,8 @@
 package tdd.vendingMachine.Domain;
 
 
+import org.slf4j.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +12,9 @@ import java.util.List;
 public class StorageRepo {
     private Integer[] pidAtShelf;
     private Integer[] countAtShelf;
-    private List<String> internalLog;   //registers physical actions of the storage
+    //Registers physical actions of the storageRepo
+    private static Logger log = org.slf4j.LoggerFactory.getLogger(StorageRepo.class);
+
     private final int nShelves;
     private final int maxItemsOnShelf;
 
@@ -23,7 +27,6 @@ public class StorageRepo {
             pidAtShelf[i] = 0;
             countAtShelf[i] = 0;
         }
-        internalLog = new ArrayList<>();
     }
 
     /**
@@ -61,7 +64,7 @@ public class StorageRepo {
         if (countAtShelf[shelf]==0)
             throw new RuntimeException(Error.ERROR_SERVING_PRODUCT__EMPTY_SHELF.toString());
         countAtShelf[shelf]--;
-        internalLog.add("Served product from shelf " + shelf + " of pid=" + pidAtShelf[shelf]);
+        log.info("Served product from shelf " + shelf + " of pid=" + pidAtShelf[shelf]);
     }
 
     /**
@@ -78,7 +81,7 @@ public class StorageRepo {
         if (!isCountValid(countNow + addedCount))
             throw new RuntimeException(Error.INVALID_NUMBER_OF_ITEMS_AT_SHELF.toString());
         countAtShelf[shelf] += addedCount;
-
+        log.info("Added " + addedCount + " items (pid=" + pidAtShelf[shelf] + ") to shelf " + shelf);
     }
 
     /**
@@ -93,6 +96,7 @@ public class StorageRepo {
         if (!isShelfNumberValid(shelf)) throw new RuntimeException(Error.INVALID_SHELF_NUMBER.toString());
         pidAtShelf[shelf] = productid;
         countAtShelf[shelf] = count;
+        log.info("Set pid=" + productid + " count=" + count + " at shelf=" + shelf);
     }
 
     //helpers

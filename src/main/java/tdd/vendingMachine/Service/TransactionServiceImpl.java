@@ -1,5 +1,6 @@
 package tdd.vendingMachine.Service;
 
+import org.slf4j.Logger;
 import tdd.vendingMachine.Domain.CoinRepo;
 import tdd.vendingMachine.Domain.Product;
 import tdd.vendingMachine.Domain.ProductRepo;
@@ -27,6 +28,9 @@ public class TransactionServiceImpl implements TransactionService {
     private int insertedMoney;
     private List<Integer> insertedCoins;        //should same coins be returned
     private List<Integer> change;   //computed only once in transaction, as insertedMony>=selectedPrice
+
+    //Registers all rollback and commit events
+    private static Logger log = org.slf4j.LoggerFactory.getLogger(TransactionServiceImpl.class);
 
     public TransactionServiceImpl(ProductRepo productRepo, StorageRepo storageRepo, CoinRepo coinRepo,
                                   CoinChanger changer) {
@@ -117,28 +121,34 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public void commit() throws RuntimeException {
+        log.info("Commit requested");
         if (!readyForCommit)
             throw new RuntimeException(SrvError.CANT_COMMIT_WHILE_NOT_READY.toString());
         coinRepo.disburseCoins(change);
         storageRepo.serveProduct(selecedShelf);
         cleanUp();
+        log.info("Commit success");
     }
 
     @Override
     public void rollback() {
+        log.info("Rollback requested");
         if (!inTransaction) return;
         coinRepo.disburseCoins(insertedCoins);
         cleanUp();
+        log.info("Rollback success");
     }
 
     //--------------
     private void cleanUp() {
         inTransaction = false;
+        readyForCommit = false;
         selecedShelf = -1;
         selectedPid = -1;
         selectedPrice = 0;
         insertedMoney = 0;
         insertedCoins = new ArrayList<>();
+        change = new ArrayList<Integer>();
     }
 
 }
