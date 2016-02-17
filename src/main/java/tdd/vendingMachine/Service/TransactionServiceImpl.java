@@ -1,6 +1,7 @@
 package tdd.vendingMachine.Service;
 
 import tdd.vendingMachine.Domain.CoinRepo;
+import tdd.vendingMachine.Domain.Product;
 import tdd.vendingMachine.Domain.ProductRepo;
 import tdd.vendingMachine.Domain.StorageRepo;
 
@@ -16,80 +17,115 @@ public class TransactionServiceImpl implements TransactionService {
     private ProductRepo productRepo;
     private StorageRepo storageRepo;
     private CoinRepo coinRepo;
+    private CoinChanger changer;
 
     private boolean inTransaction;
+    private boolean readyForCommit;
     private int selecedShelf;
     private int selectedPid;
     private int selectedPrice;
     private int insertedMoney;
     private List<Integer> insertedCoins;        //should same coins be returned
+    private List<Integer> change;   //computed only once in transaction, as insertedMony>=selectedPrice
 
-    public TransactionServiceImpl(ProductRepo productRepo, StorageRepo storageRepo, CoinRepo coinRepo) {
+    public TransactionServiceImpl(ProductRepo productRepo, StorageRepo storageRepo, CoinRepo coinRepo,
+                                  CoinChanger changer) {
         this.productRepo = productRepo;
         this.storageRepo = storageRepo;
         this.coinRepo = coinRepo;
+        this.changer = changer;
         cleanUp();
     }
 
 
     @Override
     public boolean isInTransaction() {
-        return false;
+        return inTransaction;
     }
 
     @Override
     public int getSelectedShelf() {
-        return 0;
+        return selecedShelf;
     }
 
     @Override
     public int getSelectedPid() {
-        return 0;
+        return selectedPid;
     }
 
     @Override
     public int getSelectedPrice() {
-        return 0;
+        return selectedPrice;
     }
 
     @Override
     public int getInsertedMoney() {
-        return 0;
+        int sum = 0;
+        for(int i : insertedCoins) sum += i;
+        return sum;
     }
 
     @Override
     public void startTransaction(int selectedShelf) throws RuntimeException {
-
+        if (isInTransaction())
+            throw new RuntimeException(SrvError.TRANSACTION_IN_PROGRESS.toString());
+        int pid = storageRepo.getPidAtShelf(selectedShelf);
+        if (pid==0) throw new RuntimeException(SrvError.SELECTING_EMPTY_SHELF.toString());
+        cleanUp();
+        Product p = productRepo.findOne(pid);
+        this.selectedPid = pid;
+        this.selectedPrice = p.getPrice();
+        this.selecedShelf = selectedShelf;
+        this.inTransaction = true;
     }
 
     @Override
     public int getChangeSum() {
-        return 0;
+        if (getNeededFunds()>0) return 0;
+        List<Integer> change = changer.distribute(coinRepo.getCoins(), insertedMoney - selectedPrice);
+        int sum = 0;
+        for(int i : change) sum += i;
+        return sum;
     }
 
     @Override
     public int getNeededFunds() {
-        return 0;
+        return selectedPrice - insertedMoney;
     }
 
     @Override
     public void insertCoin(int nominal) throws RuntimeException {
-
+        if (!inTransaction)
+            throw new RuntimeException(SrvError.CANT_INSERT_COINS_BEFORE_SELECTING_PRODUCT.toString());
+        coinRepo.insertCoin(nominal);   //throws on bad nominal
+        insertedCoins.add(nominal);
+        insertedMoney += nominal;
+        if (getNeededFunds()>0) return;
+        change = changer.distribute(coinRepo.getCoins(), getNeededFunds());
+        if (change==null) {
+            rollback();
+            throw new RuntimeException(SrvError.CANT_PAY_CHANGE.toString());
+        }
+        readyForCommit = true;
     }
 
     @Override
     public boolean isReadyForCommit() {
-        return false;
+        return readyForCommit;
     }
 
     @Override
-    public void commit() {
-
+    public void commit() throws RuntimeException {
+        if (!readyForCommit)
+            throw new RuntimeException(SrvError.CANT_COMMIT_WHILE_NOT_READY.toString());
+        coinRepo.disburseCoins(change);
     }
 
     @Override
     public void rollback() {
-
+        if (!inTransaction) return;
+        coinRepo.disburseCoins(insertedCoins);
+        cleanUp();
     }
 
     //--------------

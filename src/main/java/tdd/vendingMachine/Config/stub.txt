@@ -1,3 +1,0 @@
-
-
-This package will contain some configuration objects, at a later date...

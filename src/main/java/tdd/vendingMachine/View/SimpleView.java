@@ -28,25 +28,36 @@ public class SimpleView implements Runnable {
         System.out.println(usage);
         Scanner s = new Scanner(System.in);
         while(true) {
-            System.out.println("--> ");
+            System.out.println("your command? ");
             query = s.next();
             if (query.equals("L")) {
-//                Schematic response
                 Response r = machine.getShelfContents();
-//                if (!r.getStatus().equals(ResponseStatus.OK))
-//                    System.out.println(r.getComment());
-//                Iterable<ShelfTransferObject> content = (Iterable<ShelfTransferObject>) r.getResult();
-//                for(ShelfTransferObject obj : content) System.out.println(obj);
-            } else if (query.equals("X")) {
+                if (!r.getStatus().equals(ResponseStatus.OK)) {
+                    System.out.println(r.getComment());
+                    continue;
+                }
+                Iterable<ShelfTransferObject> content = (Iterable<ShelfTransferObject>) r.getResult();
+                for(ShelfTransferObject to : content) {
+                    System.out.format("Shelf: %d\t Product:%s\t Price:%d\n",
+                        to.getShelfnumber(), to.getProductname(), to.getPrice());
+                }
+            }
+            else if (query.equals("X")) {
                 Response r = machine.cancelTransaction();
-            } else if (query.equals("Q")) {
+                printResponse(r);
+            }
+            else if (query.equals("Q")) {
                 break;
-            } else if (query.startsWith("#")) {
+            }
+            else if (query.startsWith("#")) {
                 String rest = query.substring(1);
                 Integer shelfNo = parseInt(rest);
                 if (shelfNo==null) continue;
-                //
-            } else if (query.startsWith("*")) {
+                Response r = machine.selectShelf(shelfNo);
+                printResponse(r);
+
+            }
+            else if (query.startsWith("*")) {
                 String rest = query.substring(1);
                 Integer coin = parseInt(rest);
                 if (coin==null) continue;
@@ -63,5 +74,14 @@ public class SimpleView implements Runnable {
             System.out.println("Error reading number!");
         }
         return res;
+    }
+
+    //--------
+    private void printResponse(Response r) {
+        if (!r.getStatus().equals(ResponseStatus.OK)) {
+            System.out.println(r.getComment());
+        } else {
+            System.out.println(r.getResult());
+        }
     }
 }

@@ -31,6 +31,7 @@ public class StorageRepo {
      * `shelf` is not an allowed shelf number.
      */
 
+    //Returns 0 if shelf contains no product
     public Integer getPidAtShelf(int shelf) {
         if (!isShelfNumberValid(shelf))
             throw new RuntimeException(Error.INVALID_SHELF_NUMBER.toString());
