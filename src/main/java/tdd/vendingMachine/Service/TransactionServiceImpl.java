@@ -106,6 +106,7 @@ public class TransactionServiceImpl implements TransactionService {
             rollback();
             throw new RuntimeException(SrvError.CANT_PAY_CHANGE.toString());
         }
+        System.out.println("COMMIT-READY");
         readyForCommit = true;
     }
 
@@ -119,6 +120,7 @@ public class TransactionServiceImpl implements TransactionService {
         if (!readyForCommit)
             throw new RuntimeException(SrvError.CANT_COMMIT_WHILE_NOT_READY.toString());
         coinRepo.disburseCoins(change);
+        cleanUp();
     }
 
     @Override

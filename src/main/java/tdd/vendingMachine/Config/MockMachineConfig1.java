@@ -6,6 +6,7 @@ import tdd.vendingMachine.Domain.Product;
 import tdd.vendingMachine.Domain.ProductRepo;
 import tdd.vendingMachine.Domain.StorageRepo;
 import tdd.vendingMachine.Service.CoinChanger;
+import tdd.vendingMachine.Service.CoinChangerImpl;
 
 import java.util.Arrays;
 
@@ -38,5 +39,6 @@ public class MockMachineConfig1 implements MachineConfig {
         coinRepo.addCoins(50, 2);
         coinRepo.addCoins(200, 2);
         coinRepo.addCoins(500, 2);
+        coinChanger = new CoinChangerImpl(10);
     }
 }

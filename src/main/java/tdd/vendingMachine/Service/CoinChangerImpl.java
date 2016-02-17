@@ -24,6 +24,7 @@ public class CoinChangerImpl implements CoinChanger {
 
     @Override
     public List<Integer> distribute(Map<Integer, Integer> avilableCoins, int sum) {
+        if (sum==0) return new ArrayList<>();
         if (sum % dmoney != 0)
             throw new RuntimeException(SrvError.SUM_NOT_DIVISIBLE_BY_DMONEY.toString());
 
