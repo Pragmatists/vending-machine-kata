@@ -1,16 +1,37 @@
 package tdd.vendingMachine.Service;
 
+import tdd.vendingMachine.Config.MachineConfig;
+import tdd.vendingMachine.Domain.CoinRepo;
+import tdd.vendingMachine.Domain.ProductRepo;
+import tdd.vendingMachine.Domain.StorageRepo;
+
 /**
  * The main implementation of this vending machine.
  * Allows Client- and Admin- operations.
  */
 public class MainControllerImpl implements MachineClientController {
     TransactionServiceImpl transaction;
+    ProductRepo productRepo;
+    StorageRepo storageRepo;
+    CoinRepo coinRepo;
+
+    public MainControllerImpl(ProductRepo productRepo, StorageRepo storageRepo, CoinRepo coinRepo) {
+        this.productRepo = productRepo;
+        this.storageRepo = storageRepo;
+        this.coinRepo = coinRepo;
+        transaction = new TransactionServiceImpl(productRepo, storageRepo, coinRepo);
+    }
+
+    public MainControllerImpl(MachineConfig cfg) {
+        this.productRepo = cfg.getProductRepo();
+        this.storageRepo = cfg.getStorageRepo();
+        this.coinRepo = cfg.getCoinRepo();
+        transaction = new TransactionServiceImpl(productRepo, storageRepo, coinRepo);
+    }
 
     @Override
     public Response insertCoin(int nominal) {
         //must be in transaction
-
         //Stub of implementation
 //        if (!transaction.isInTransaction())
 //            return new Response(ResponseMessage.PRODUCT_NOT_SELECTED.toString());
