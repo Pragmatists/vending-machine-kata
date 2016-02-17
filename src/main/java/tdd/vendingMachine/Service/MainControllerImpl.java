@@ -50,7 +50,8 @@ public class MainControllerImpl implements MachineClientController {
             return r;
         }
         Response r = new Response();
-        r.setResult(ResponseMessage.COIN_INSERTED_MORE_NEEDED);
+        int needed = transSrv.getNeededFunds();
+        r.setResult(ResponseMessage.COIN_INSERTED_MORE_NEEDED.toString() + " (need: " + needed + ")");
         return r;
     }
 

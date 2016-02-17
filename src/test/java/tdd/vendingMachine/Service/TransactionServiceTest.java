@@ -39,7 +39,7 @@ public class TransactionServiceTest {
         List<Integer> nom = Arrays.asList(nn);
         coinRepo = new CoinRepo(nom);
 
-        tSrv = new TransactionServiceImpl(productRepo, storageRepo, coinRepo);
+        tSrv = new TransactionServiceImpl(productRepo, storageRepo, coinRepo, new CoinChangerImpl(10));
     }
 
     @Test

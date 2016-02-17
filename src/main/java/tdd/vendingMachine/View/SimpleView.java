@@ -61,6 +61,8 @@ public class SimpleView implements Runnable {
                 String rest = query.substring(1);
                 Integer coin = parseInt(rest);
                 if (coin==null) continue;
+                Response r = machine.insertCoin(coin);
+                printResponse(r);
             } else System.out.println(usage);
         }
     }
