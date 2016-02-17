@@ -27,6 +27,7 @@ public class MockMachineConfig1 implements MachineConfig {
         productRepo.save(new Product("Coca-Cola", 100));
         productRepo.save(new Product("Brand new crown cork", 10));
         productRepo.save(new Product("Super-durable plastic bottle", 20));
+
         storageRepo = new StorageRepo(5, 5);
         storageRepo.setProductAtShelf(0, 1, 5);
         storageRepo.setProductAtShelf(1, 1, 1);

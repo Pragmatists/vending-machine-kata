@@ -121,7 +121,7 @@ public class TransactionServiceTest {
         assertThat(tSrv.isInTransaction()).isEqualTo(true);
         assertThatThrownBy(() -> {
             coinRepo.addCoins(10, 5);
-        }).hasMessage(SrvError.TRANSACTION_IN_PROGRESS.toString());
+        }).hasMessage(SrvError.TRANSACTION_IN_PROGRESS_CANT_START_NEW_ONE.toString());
     }
 
 

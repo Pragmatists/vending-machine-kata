@@ -68,24 +68,15 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public void startTransaction(int selectedShelf) throws RuntimeException {
         if (isInTransaction())
-            throw new RuntimeException(SrvError.TRANSACTION_IN_PROGRESS.toString());
+            throw new RuntimeException(SrvError.TRANSACTION_IN_PROGRESS_CANT_START_NEW_ONE.toString());
         int pid = storageRepo.getPidAtShelf(selectedShelf);
-        if (pid==0) throw new RuntimeException(SrvError.SELECTING_EMPTY_SHELF.toString());
-        cleanUp();
+        if (pid==0) throw new RuntimeException(SrvError.SELECTING_EMPTY_SHELF_NOT_ALLOWED.toString());
+        cleanUp();  //insertedMoney=0, insertedCoins={}
         Product p = productRepo.findOne(pid);
         this.selectedPid = pid;
         this.selectedPrice = p.getPrice();
         this.selecedShelf = selectedShelf;
         this.inTransaction = true;
-    }
-
-    @Override
-    public int getChangeSum() {
-        if (getNeededFunds()>0) return 0;
-        List<Integer> change = changer.distribute(coinRepo.getCoins(), insertedMoney - selectedPrice);
-        int sum = 0;
-        for(int i : change) sum += i;
-        return sum;
     }
 
     @Override
@@ -113,6 +104,16 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public boolean isReadyForCommit() {
         return readyForCommit;
+    }
+
+    @Override
+    public List<Integer> getChange() {
+        return change;
+    }
+
+    @Override
+    public int getChangeSum() {
+        return Utils.sumList(change);
     }
 
     @Override

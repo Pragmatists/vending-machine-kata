@@ -33,13 +33,14 @@ public class CoinChangerImpl implements CoinChanger {
         int nstep = sum / dmoney + 1;
         double[] cost = new double[nstep];
         int[] prev = new int[nstep];
-        //`sum` at (nstep-1)
         for (int i = 0; i < nstep; i++) {
             cost[i] = 1e10;
             prev[i] = -1;
         }
 
-        //larger penalty --> coins of this type will less likely be used in change
+        /**
+         * Larger penalty --> coins of this type will less likely be used in change
+         */
         double[] penalty = new double[LARGESTCOIN];
         for (int i = 0; i < penalty.length; i++) {
             penalty[i] = 1.0;

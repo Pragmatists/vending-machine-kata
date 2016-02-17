@@ -1,5 +1,7 @@
 package tdd.vendingMachine.Service;
 
+import java.util.List;
+
 /**
  * Operations needed for proper business logic of buying process.
  *
@@ -17,29 +19,35 @@ package tdd.vendingMachine.Service;
  *
  */
 public interface TransactionService {
-
-    /**
-     * Variables storing the parameters of current transaction, i.e. the buy order.
-     * They do reflect the result of all legal actions taken by the client since choosing
-     * the product.
-     */
     boolean isInTransaction();
+
+    void startTransaction(int selectedShelf) throws RuntimeException;
+
+    /*
+     * Methods with meaningful return value only in transaction.
+     * [Else: they return default values]
+     */
     int getSelectedShelf();
     int getSelectedPid();
     int getSelectedPrice();
     int getInsertedMoney();
-
-    void startTransaction(int selectedShelf) throws RuntimeException;
-
     int getNeededFunds();
-    void insertCoin(int nominal) throws RuntimeException;
-    boolean isReadyForCommit();     //can discharge product and change
 
-    int getChangeSum();     //money to be paid as change (nominals not specified)
+    void insertCoin(int nominal) throws RuntimeException;   // "not in transaction"
 
-    //discharge the product
+    //can discharge product and change
+    boolean isReadyForCommit();
+
+    /*
+     * Methods with meaningful return value only after isReadyForCommit()==true.
+     * [Else: they return {}, or 0 respectively]
+     */
+    List<Integer> getChange();
+    int getChangeSum();
+
+    //Discharge the product, discharge the change
     void commit();
 
-    //cancel the transaction; return the inserted money
+    //Cancel the transaction; discharge inserted money
     void rollback();
 }
