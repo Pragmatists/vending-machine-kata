@@ -3,8 +3,6 @@ package tdd.vendingMachine.Domain;
 
 import org.slf4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Repository responsible for management of the physical storage of products.

@@ -148,7 +148,7 @@ public class TransactionServiceImpl implements TransactionService {
         selectedPrice = 0;
         insertedMoney = 0;
         insertedCoins = new ArrayList<>();
-        change = new ArrayList<Integer>();
+        change = new ArrayList<>();
     }
 
 }

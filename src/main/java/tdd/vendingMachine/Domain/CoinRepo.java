@@ -1,10 +1,8 @@
 package tdd.vendingMachine.Domain;
 
 import org.slf4j.Logger;
-import tdd.vendingMachine.Service.CoinChanger;
 import tdd.vendingMachine.Service.Utils;
 
-import java.time.Instant;
 import java.util.*;
 
 /**
