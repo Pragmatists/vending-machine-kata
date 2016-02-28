@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import tdd.vendingMachine.external_interface.CoinTray;
 import tdd.vendingMachine.external_interface.Display;
+import tdd.vendingMachine.external_interface.ProductTray;
 
 import java.util.Arrays;
 
@@ -31,12 +32,17 @@ public class VendingMachineTest {
 
     private CoinTray coinTrayMock;
 
+    private ProductTray productTrayMock;
+
+    private Coin[] insertedCoins;
+
     @Before
     public void setUp() throws Exception {
         displayMock = mock(Display.class);
         coinTrayMock = mock(CoinTray.class);
+        productTrayMock = mock(ProductTray.class);
         Money[] pricesPerShelves = {createMoney("1.50"), createMoney("3.00")};
-        machine = new VendingMachine(displayMock, coinTrayMock, pricesPerShelves);
+        machine = new VendingMachine(displayMock, coinTrayMock, productTrayMock, pricesPerShelves);
     }
 
     @Test
@@ -107,12 +113,32 @@ public class VendingMachineTest {
 
     @Test
     public void should_return_previously_inserted_money_when_cancelled() throws Exception {
-        Coin[] insertedCoins = {Coin.COIN_1, Coin.COIN_0_5};
+        insertedCoins = new Coin[]{Coin.COIN_0_5, Coin.COIN_1};
 
         machine.acceptChoice(SECOND_SHELF);
         callForEachArgument(coin -> machine.acceptCoin(coin), insertedCoins);
         machine.cancel();
 
         Mockito.verify(coinTrayMock, only()).disposeInsertedCoins(Arrays.asList(insertedCoins));
+    }
+
+    @Test
+    public void should_return_product_when_user_inserts_exact_amount_of_money() throws Exception {
+        insertedCoins = new Coin[]{Coin.COIN_1, Coin.COIN_0_5};
+
+        machine.acceptChoice(FIRST_SHELF);
+        callForEachArgument(coin -> machine.acceptCoin(coin), insertedCoins);
+
+        Mockito.verify(productTrayMock, only()).disposeProduct(FIRST_SHELF);
+    }
+
+    @Test
+    public void should_display_welcome_message_when_product_is_disposed() throws Exception {
+        insertedCoins = new Coin[]{Coin.COIN_1, Coin.COIN_0_5};
+
+        machine.acceptChoice(FIRST_SHELF);
+        callForEachArgument(coin -> machine.acceptCoin(coin), insertedCoins);
+
+        Mockito.verify(displayMock, times(2)).displayMessage(WELCOME_MESSAGE);
     }
 }

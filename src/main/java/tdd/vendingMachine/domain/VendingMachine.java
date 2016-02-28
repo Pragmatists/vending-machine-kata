@@ -3,64 +3,71 @@ package tdd.vendingMachine.domain;
 
 import tdd.vendingMachine.external_interface.CoinTray;
 import tdd.vendingMachine.external_interface.Display;
+import tdd.vendingMachine.external_interface.ProductTray;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static tdd.vendingMachine.domain.Money.createMoney;
-
 public class VendingMachine {
+
+    public static final String WELCOME_MESSAGE = "Welcome! Please choose product:";
 
     private Display display;
 
     private CoinTray coinTray;
 
+    private ProductTray productTray;
+
     private Money[] pricesPerShelves;
 
-    private Money chosenProductPrice;
-
-    private Money remainingCharge;
+    private PaymentRegistrar paymentRegistrar;
 
     private List<Coin> acceptedCoins = new ArrayList<>();
 
-    public VendingMachine(Display display, CoinTray coinTray, Money[] pricesPerShelves) {
+    private Integer chosenShelfNumber;
+
+    public VendingMachine(Display display, CoinTray coinTray, ProductTray productTray, Money[] pricesPerShelves) {
         this.display = display;
         this.coinTray = coinTray;
+        this.productTray = productTray;
         this.pricesPerShelves = pricesPerShelves;
-        this.display.displayMessage("Welcome! Please choose product:");
+        this.paymentRegistrar = new PaymentRegistrar();
+        this.display.displayMessage(WELCOME_MESSAGE);
     }
 
     public void acceptChoice(int shelfNumber) {
-        if (shelfNumber == 0 || shelfNumber > pricesPerShelves.length) {
+        this.chosenShelfNumber = shelfNumber;
+        if (this.chosenShelfNumber == 0 || shelfNumber > pricesPerShelves.length) {
             display.displayMessage("Invalid shelf choice. Please try again.");
         } else {
-            display.displayMessage("Price: " + pricesPerShelves[shelfNumber - 1]);
-            chosenProductPrice = pricesPerShelves[shelfNumber - 1];
+            Money productPrice = pricesPerShelves[shelfNumber - 1];
+            display.displayMessage("Price: " + productPrice);
+            paymentRegistrar.setAmountToBeCollected(productPrice);
         }
     }
 
     public void acceptCoin(Coin coin) {
+        if(chosenShelfNumber == null) return;
+
         acceptedCoins.add(coin);
+        paymentRegistrar.register(coin.getDenomination());
+        display.displayMessage("Remaining: " + paymentRegistrar.tellHowMuchMoreNeedsToBeCollected().toString());
 
-        if (chosenProductPrice == null) return;
-
-        if (remainingCharge == null) {
-            remainingCharge = chosenProductPrice;
+        if (paymentRegistrar.hasSufficientMoneyBeenCollected()) {
+            sellProduct();
         }
-        recalculateRemainingCharge(coin.getDenomination());
-        display.displayMessage("Remaining: " + remainingCharge.toString());
     }
 
-    private void recalculateRemainingCharge(Money coinValue) {
-        remainingCharge = remainingCharge.subtract(coinValue);
-        if (remainingCharge.isLessThan(createMoney("0"))) {
-            remainingCharge = createMoney("0");
-        }
+    private void sellProduct() {
+        productTray.disposeProduct(chosenShelfNumber);
+        display.displayMessage(WELCOME_MESSAGE);
+        paymentRegistrar.reset();
+        acceptedCoins = new ArrayList<>();
     }
 
     public void cancel() {
         coinTray.disposeInsertedCoins(new ArrayList<>(acceptedCoins));
         acceptedCoins = new ArrayList<>();
-        display.displayMessage("Welcome! Please choose product:");
+        display.displayMessage(WELCOME_MESSAGE);
     }
 }

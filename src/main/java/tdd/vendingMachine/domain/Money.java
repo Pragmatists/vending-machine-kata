@@ -27,7 +27,27 @@ public class Money {
         return new Money(this.value.subtract(otherMoney.value));
     }
 
-    public boolean isLessThan(Money money) {
-        return this.value.compareTo(money.value) == -1;
+    public boolean isGreaterOrEqualTo(Money otherMoney) {
+        return this.value.compareTo(otherMoney.value) != -1;
+    }
+
+    public Money add(Money otherMoney) {
+        return new Money(this.value.add(otherMoney.value));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Money money = (Money) o;
+
+        return value != null ? value.equals(money.value) : money.value == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return value != null ? value.hashCode() : 0;
     }
 }
