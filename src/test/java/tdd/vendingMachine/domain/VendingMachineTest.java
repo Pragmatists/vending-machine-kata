@@ -14,10 +14,16 @@ import java.util.Arrays;
 import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.*;
 import static tdd.vendingMachine.domain.Money.createMoney;
-
+import static tdd.vendingMachine.test_infrastructure.MethodCaller.callForEachArgument;
 
 @RunWith(JUnitParamsRunner.class)
 public class VendingMachineTest {
+
+    private static final String WELCOME_MESSAGE = "Welcome! Please choose product:";
+
+    private static final int FIRST_SHELF = 1;
+
+    private static final int SECOND_SHELF = 2;
 
     private VendingMachine machine;
 
@@ -35,7 +41,7 @@ public class VendingMachineTest {
 
     @Test
     public void should_display_welcome_message() throws Exception {
-        Mockito.verify(displayMock, only()).displayMessage("Welcome! Please choose product:");
+        Mockito.verify(displayMock, only()).displayMessage(WELCOME_MESSAGE);
     }
 
     @Test
@@ -58,12 +64,19 @@ public class VendingMachineTest {
         machine.acceptChoice(shelfChoice);
 
         Mockito.verify(displayMock).displayMessage("Invalid shelf choice. Please try again.");
+    }
+
+    @Test
+    public void should_never_show_product_price_if_choice_is_invalid() throws Exception {
+        machine.acceptChoice(0);
+
         Mockito.verify(displayMock, never()).displayMessage(startsWith("Price"));
+
     }
 
     @Test
     public void should_show_remaining_amount_of_money_needed_after_inserting_a_coin() throws Exception {
-        machine.acceptChoice(1);
+        machine.acceptChoice(FIRST_SHELF);
         machine.acceptCoin(Coin.COIN_1);
 
         Mockito.verify(displayMock).displayMessage("Remaining: 0.50");
@@ -71,9 +84,8 @@ public class VendingMachineTest {
 
     @Test
     public void should_show_that_zero_is_remaining_if_sufficient_or_more_money_has_been_paid() throws Exception {
-        machine.acceptChoice(1);
-        machine.acceptCoin(Coin.COIN_1);
-        machine.acceptCoin(Coin.COIN_5);
+        machine.acceptChoice(FIRST_SHELF);
+        callForEachArgument(coin -> machine.acceptCoin(coin), Coin.COIN_1, Coin.COIN_5);
 
         Mockito.verify(displayMock).displayMessage("Remaining: 0.00");
     }
@@ -82,24 +94,23 @@ public class VendingMachineTest {
     public void should_show_welcome_message_if_coins_inserted_without_selecting_shelf() throws Exception {
         machine.acceptCoin(Coin.COIN_2);
 
-        Mockito.verify(displayMock, only()).displayMessage("Welcome! Please choose product:");
+        Mockito.verify(displayMock, only()).displayMessage(WELCOME_MESSAGE);
     }
 
     @Test
     public void should_show_welcome_message_if_purchase_is_canceled() throws Exception {
-        machine.acceptChoice(1);
+        machine.acceptChoice(FIRST_SHELF);
         machine.cancel();
 
-        Mockito.verify(displayMock, times(2)).displayMessage("Welcome! Please choose product:");
+        Mockito.verify(displayMock, times(2)).displayMessage(WELCOME_MESSAGE);
     }
 
     @Test
     public void should_return_previously_inserted_money_when_cancelled() throws Exception {
         Coin[] insertedCoins = {Coin.COIN_1, Coin.COIN_0_5};
 
-        machine.acceptChoice(2);
-        machine.acceptCoin(insertedCoins[0]);
-        machine.acceptCoin(insertedCoins[1]);
+        machine.acceptChoice(SECOND_SHELF);
+        callForEachArgument(coin -> machine.acceptCoin(coin), insertedCoins);
         machine.cancel();
 
         Mockito.verify(coinTrayMock, only()).disposeInsertedCoins(Arrays.asList(insertedCoins));
