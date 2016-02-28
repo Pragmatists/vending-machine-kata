@@ -5,8 +5,6 @@ import junitparams.Parameters;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import tdd.vendingMachine.external_interface.Display;
 
@@ -18,10 +16,8 @@ import static tdd.vendingMachine.domain.Money.createMoney;
 @RunWith(JUnitParamsRunner.class)
 public class VendingMachineTest {
 
-    @InjectMocks
     private VendingMachine machine;
 
-    @Mock
     private Display displayMock;
 
     @Before
