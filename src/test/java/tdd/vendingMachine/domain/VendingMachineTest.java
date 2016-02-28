@@ -6,7 +6,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import tdd.vendingMachine.external_interface.CoinTray;
 import tdd.vendingMachine.external_interface.Display;
+
+import java.util.Arrays;
 
 import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.*;
@@ -20,11 +23,14 @@ public class VendingMachineTest {
 
     private Display displayMock;
 
+    private CoinTray coinTrayMock;
+
     @Before
     public void setUp() throws Exception {
         displayMock = mock(Display.class);
+        coinTrayMock = mock(CoinTray.class);
         Money[] pricesPerShelves = {createMoney("1.50"), createMoney("3.00")};
-        machine = new VendingMachine(displayMock, pricesPerShelves);
+        machine = new VendingMachine(displayMock, coinTrayMock, pricesPerShelves);
     }
 
     @Test
@@ -77,5 +83,25 @@ public class VendingMachineTest {
         machine.acceptCoin(Coin.COIN_2);
 
         Mockito.verify(displayMock, only()).displayMessage("Welcome! Please choose product:");
+    }
+
+    @Test
+    public void should_show_welcome_message_if_purchase_is_canceled() throws Exception {
+        machine.acceptChoice(1);
+        machine.cancel();
+
+        Mockito.verify(displayMock, times(2)).displayMessage("Welcome! Please choose product:");
+    }
+
+    @Test
+    public void should_return_previously_inserted_money_when_cancelled() throws Exception {
+        Coin[] insertedCoins = {Coin.COIN_1, Coin.COIN_0_5};
+
+        machine.acceptChoice(2);
+        machine.acceptCoin(insertedCoins[0]);
+        machine.acceptCoin(insertedCoins[1]);
+        machine.cancel();
+
+        Mockito.verify(coinTrayMock, only()).disposeInsertedCoins(Arrays.asList(insertedCoins));
     }
 }
