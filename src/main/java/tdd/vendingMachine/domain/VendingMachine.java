@@ -29,13 +29,13 @@ public class VendingMachine {
         }
     }
 
-    public void acceptCoin(Money coinValue) {
+    public void acceptCoin(Coin coin) {
         if (chosenProductPrice == null) return;
 
         if (remainingCharge == null) {
             remainingCharge = chosenProductPrice;
         }
-        recalculateRemainingCharge(coinValue);
+        recalculateRemainingCharge(coin.getDenomination());
         display.displayMessage("Remaining: " + remainingCharge.toString());
     }
 

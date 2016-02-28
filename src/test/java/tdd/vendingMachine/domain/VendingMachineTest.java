@@ -62,7 +62,7 @@ public class VendingMachineTest {
     @Test
     public void should_show_remaining_amount_of_money_needed_after_inserting_a_coin() throws Exception {
         machine.acceptChoice(1);
-        machine.acceptCoin(createMoney("1"));
+        machine.acceptCoin(Coin.COIN_1);
 
         Mockito.verify(displayMock).displayMessage("Remaining: 0.50");
     }
@@ -70,15 +70,15 @@ public class VendingMachineTest {
     @Test
     public void should_show_that_zero_is_remaining_if_sufficient_or_more_money_has_been_paid() throws Exception {
         machine.acceptChoice(1);
-        machine.acceptCoin(createMoney("1"));
-        machine.acceptCoin(createMoney("1"));
+        machine.acceptCoin(Coin.COIN_1);
+        machine.acceptCoin(Coin.COIN_5);
 
         Mockito.verify(displayMock).displayMessage("Remaining: 0.00");
     }
 
     @Test
     public void should_show_welcome_message_if_coins_inserted_without_selecting_shelf() throws Exception {
-        machine.acceptCoin(createMoney("1"));
+        machine.acceptCoin(Coin.COIN_2);
 
         Mockito.verify(displayMock, only()).displayMessage("Welcome! Please choose product:");
     }
