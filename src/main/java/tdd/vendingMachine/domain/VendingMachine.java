@@ -3,6 +3,8 @@ package tdd.vendingMachine.domain;
 
 import tdd.vendingMachine.external_interface.HardwareInterface;
 
+import java.util.Map;
+
 public class VendingMachine {
 
     private static final String WELCOME_MESSAGE = "Welcome! Please choose product:";
@@ -15,10 +17,13 @@ public class VendingMachine {
 
     private Integer chosenShelfNumber;
 
-    public VendingMachine(HardwareInterface hardwareInterface, Money[] pricesPerShelves) {
+    private CoinDispenser coinDispenser;
+
+    public VendingMachine(HardwareInterface hardwareInterface, Money[] pricesPerShelves, CoinDispenser coinDispenser) {
         this.hardwareInterface = hardwareInterface;
         this.pricesPerShelves = pricesPerShelves;
         this.paymentRegistrar = new PaymentRegistrar();
+        this.coinDispenser = coinDispenser;
         this.hardwareInterface.displayMessage(WELCOME_MESSAGE);
     }
 
@@ -47,7 +52,14 @@ public class VendingMachine {
     private void sellProduct() {
         hardwareInterface.disposeProduct(chosenShelfNumber);
         hardwareInterface.displayMessage(WELCOME_MESSAGE);
+        returnChange(paymentRegistrar.getCollectedAmount(), paymentRegistrar.getAmountToBeCollected());
         paymentRegistrar.reset();
+    }
+
+    private void returnChange(Money collected, Money productPrice) {
+        Map<Coin, Integer> change = coinDispenser.calculateChange(collected.subtract(productPrice));
+        coinDispenser.decreaseCoinsCountersAccordingToChange(change);
+        hardwareInterface.disposeChange(change);
     }
 
     public void cancel() {

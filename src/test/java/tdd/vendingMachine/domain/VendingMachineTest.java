@@ -5,13 +5,21 @@ import junitparams.Parameters;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import tdd.vendingMachine.external_interface.HardwareInterface;
+import tdd.vendingMachine.test_infrastructure.CoinMapAssertions;
 import tdd.vendingMachine.test_infrastructure.HardwareInteractionAssertions;
 import tdd.vendingMachine.test_infrastructure.TestMessages;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 import static tdd.vendingMachine.domain.Money.createMoney;
 import static tdd.vendingMachine.test_infrastructure.MethodCaller.callForEachArgument;
 
@@ -24,15 +32,21 @@ public class VendingMachineTest {
 
     private VendingMachine machine;
 
+    private Coin[] insertedCoins;
+
+    @Mock
     private HardwareInterface hardwareInterfaceMock;
 
-    private Coin[] insertedCoins;
+    @Captor
+    private ArgumentCaptor<Map<Coin, Integer>> changeCaptor;
+
+    private Money[] pricesPerShelves;
 
     @Before
     public void setUp() throws Exception {
-        hardwareInterfaceMock = mock(HardwareInterface.class);
-        Money[] pricesPerShelves = {createMoney("1.50"), createMoney("3.00")};
-        machine = new VendingMachine(hardwareInterfaceMock, pricesPerShelves);
+        initMocks(this);
+        pricesPerShelves = new Money[]{createMoney("1.50"), createMoney("3.00")};
+        machine = new VendingMachine(hardwareInterfaceMock, pricesPerShelves, new CoinDispenser(new HashMap<>()));
     }
 
     @Test
@@ -145,4 +159,25 @@ public class VendingMachineTest {
 
         Mockito.verify(hardwareInterfaceMock, times(2)).displayMessage(TestMessages.WELCOME_MESSAGE);
     }
+
+    @Test
+    public void should_return_change_if_product_has_been_sold() throws Exception {
+        machine = new VendingMachine(hardwareInterfaceMock, pricesPerShelves, new CoinDispenser(createCoinSupply()));
+
+        machine.acceptChoice(FIRST_SHELF);
+        machine.acceptCoin(Coin.COIN_5);
+
+        Mockito.verify(hardwareInterfaceMock).disposeChange(changeCaptor.capture());
+        CoinMapAssertions.assertThat(changeCaptor.getValue()).totalValueEquals(createMoney("3.5"));
+    }
+
+    private Map<Coin, Integer> createCoinSupply() {
+        Map<Coin, Integer> coinSupply = new HashMap<>();
+        coinSupply.put(Coin.COIN_2, 1);
+        coinSupply.put(Coin.COIN_1, 1);
+        coinSupply.put(Coin.COIN_0_5, 1);
+        return coinSupply;
+    }
+
+
 }

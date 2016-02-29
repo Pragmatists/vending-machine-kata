@@ -27,6 +27,10 @@ public class Money {
         return new Money(this.value.subtract(otherMoney.value));
     }
 
+    public Money multiply(int times) {
+        return new Money(this.value.multiply(new BigDecimal(times)));
+    }
+
     public boolean isGreaterOrEqualTo(Money otherMoney) {
         return this.value.compareTo(otherMoney.value) != -1;
     }

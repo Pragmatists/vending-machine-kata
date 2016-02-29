@@ -1,8 +1,14 @@
 package tdd.vendingMachine.external_interface;
 
+import tdd.vendingMachine.domain.Coin;
+
+import java.util.Map;
+
 public interface HardwareInterface {
 
     void disposeInsertedCoins();
+
+    void disposeChange(Map<Coin, Integer> returnedCoins);
 
     void disposeProduct(int shelfNumber);
 
