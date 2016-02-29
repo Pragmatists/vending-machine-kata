@@ -3,20 +3,15 @@ package tdd.vendingMachine.domain;
 
 import tdd.vendingMachine.external_interface.HardwareInterface;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class VendingMachine {
 
-    private  static final String WELCOME_MESSAGE = "Welcome! Please choose product:";
+    private static final String WELCOME_MESSAGE = "Welcome! Please choose product:";
 
     private HardwareInterface hardwareInterface;
 
     private Money[] pricesPerShelves;
 
     private PaymentRegistrar paymentRegistrar;
-
-    private List<Coin> acceptedCoins = new ArrayList<>();
 
     private Integer chosenShelfNumber;
 
@@ -41,7 +36,6 @@ public class VendingMachine {
     public void acceptCoin(Coin coin) {
         if (chosenShelfNumber == null) return;
 
-        acceptedCoins.add(coin);
         paymentRegistrar.register(coin.getDenomination());
         hardwareInterface.displayMessage("Remaining: " + paymentRegistrar.tellHowMuchMoreNeedsToBeCollected().toString());
 
@@ -54,12 +48,11 @@ public class VendingMachine {
         hardwareInterface.disposeProduct(chosenShelfNumber);
         hardwareInterface.displayMessage(WELCOME_MESSAGE);
         paymentRegistrar.reset();
-        acceptedCoins = new ArrayList<>();
     }
 
     public void cancel() {
-        hardwareInterface.disposeInsertedCoins(new ArrayList<>(acceptedCoins));
-        acceptedCoins = new ArrayList<>();
+        hardwareInterface.disposeInsertedCoins();
         hardwareInterface.displayMessage(WELCOME_MESSAGE);
+        paymentRegistrar.reset();
     }
 }

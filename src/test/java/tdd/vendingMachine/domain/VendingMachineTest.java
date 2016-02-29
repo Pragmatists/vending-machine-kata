@@ -7,9 +7,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import tdd.vendingMachine.external_interface.HardwareInterface;
+import tdd.vendingMachine.test_infrastructure.HardwareInteractionAssertions;
 import tdd.vendingMachine.test_infrastructure.TestMessages;
-
-import java.util.Arrays;
 
 import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.*;
@@ -102,14 +101,29 @@ public class VendingMachineTest {
     }
 
     @Test
-    public void should_return_previously_inserted_money_when_cancelled() throws Exception {
+    public void should_dispose_previously_inserted_money_when_cancelled() throws Exception {
         insertedCoins = new Coin[]{Coin.COIN_0_5, Coin.COIN_1};
 
         machine.acceptChoice(SECOND_SHELF);
         callForEachArgument(coin -> machine.acceptCoin(coin), insertedCoins);
         machine.cancel();
 
-        Mockito.verify(hardwareInterfaceMock).disposeInsertedCoins(Arrays.asList(insertedCoins));
+        Mockito.verify(hardwareInterfaceMock).disposeInsertedCoins();
+    }
+
+    @Test
+    public void should_not_add_previously_inserted_coins_value_after_cancellation() throws Exception {
+        machine.acceptChoice(FIRST_SHELF);
+        machine.acceptCoin(Coin.COIN_0_2);
+        machine.cancel();
+        machine.acceptChoice(FIRST_SHELF);
+        machine.acceptCoin(Coin.COIN_0_1);
+
+        HardwareInteractionAssertions.assertCorrectMessageOrder(hardwareInterfaceMock,
+            TestMessages.PRICE_MESSAGE + "1.50",
+            TestMessages.REMAINING_MONEY_MESSAGE + "1.30",
+            TestMessages.REMAINING_MONEY_MESSAGE + "1.40"
+        );
     }
 
     @Test
