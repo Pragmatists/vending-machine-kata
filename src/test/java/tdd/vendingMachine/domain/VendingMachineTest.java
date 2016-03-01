@@ -9,6 +9,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import tdd.vendingMachine.domain.parts.money.Coin;
+import tdd.vendingMachine.domain.parts.money.Money;
+import tdd.vendingMachine.domain.parts.ChangeCalculator;
+import tdd.vendingMachine.domain.parts.CoinDispenser;
 import tdd.vendingMachine.external_interface.HardwareInterface;
 import tdd.vendingMachine.test_infrastructure.CoinMapAssertions;
 import tdd.vendingMachine.test_infrastructure.HardwareInteractionAssertions;
@@ -21,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static tdd.vendingMachine.domain.Money.createMoney;
+import static tdd.vendingMachine.domain.parts.money.Money.createMoney;
 import static tdd.vendingMachine.test_infrastructure.MethodCaller.callForEachArgument;
 
 @RunWith(JUnitParamsRunner.class)
@@ -30,7 +34,6 @@ public class VendingMachineTest {
     private static final int FIRST_SHELF = 1;
 
     private static final int SECOND_SHELF = 2;
-
 
     private VendingMachine machine;
 
@@ -102,7 +105,7 @@ public class VendingMachineTest {
     }
 
     @Test
-    public void should_show_welcome_message_if_coins_inserted_without_selecting_shelf() throws Exception {
+    public void should_show_only_welcome_message_if_coins_inserted_without_selecting_shelf() throws Exception {
         machine.acceptCoin(Coin.COIN_2);
 
         Mockito.verify(hardwareInterfaceMock, only()).displayMessage(TestMessages.WELCOME_MESSAGE);
@@ -216,18 +219,39 @@ public class VendingMachineTest {
     @Test
     public void should_return_change_only_from_coins_previously_inserted_to_machine() throws Exception {
         machine.acceptChoice(FIRST_SHELF);
-        machine.acceptCoin(Coin.COIN_1);
-        machine.acceptCoin(Coin.COIN_0_5);
+        callForEachArgument(coin -> machine.acceptCoin(coin), Coin.COIN_1, Coin.COIN_0_5);
 
         machine.acceptChoice(FIRST_SHELF);
-        machine.acceptCoin(Coin.COIN_1);
-        machine.acceptCoin(Coin.COIN_2);
+        callForEachArgument(coin -> machine.acceptCoin(coin), Coin.COIN_1, Coin.COIN_2);
 
         Mockito.verify(hardwareInterfaceMock).disposeChange(changeCaptor.capture());
-        Map<Coin, Integer> capturedChange = changeCaptor.getValue();
 
+        Map<Coin, Integer> capturedChange = changeCaptor.getValue();
         assertThat(capturedChange.get(Coin.COIN_0_5)).isEqualTo(1);
         assertThat(capturedChange.get(Coin.COIN_1)).isEqualTo(1);
         CoinMapAssertions.assertThat(capturedChange).totalValueEquals(createMoney("1.5"));
+    }
+
+    @Test
+    public void should_display_messages_in_correct_order_when_cannot_return_change() throws Exception {
+        machine.acceptChoice(FIRST_SHELF);
+        machine.acceptCoin(Coin.COIN_2);
+        machine.cancel();
+
+        HardwareInteractionAssertions.assertCorrectMessageOrder(hardwareInterfaceMock,
+            TestMessages.WELCOME_MESSAGE,
+            TestMessages.PRICE_MESSAGE + "1.50",
+            TestMessages.REMAINING_MONEY_MESSAGE + "0.00",
+            TestMessages.CANNOT_GIVE_THE_CHANGE_MESSAGE,
+            TestMessages.WELCOME_MESSAGE
+        );
+    }
+
+    @Test
+    public void should_accept_money_and_shelf_choice_in_any_order() throws Exception {
+        callForEachArgument(coin -> machine.acceptCoin(coin), Coin.COIN_1, Coin.COIN_0_5);
+        machine.acceptChoice(FIRST_SHELF);
+
+        Mockito.verify(hardwareInterfaceMock).disposeProduct(FIRST_SHELF);
     }
 }

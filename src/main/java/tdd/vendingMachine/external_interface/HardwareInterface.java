@@ -1,6 +1,6 @@
 package tdd.vendingMachine.external_interface;
 
-import tdd.vendingMachine.domain.Coin;
+import tdd.vendingMachine.domain.parts.money.Coin;
 
 import java.util.Map;
 

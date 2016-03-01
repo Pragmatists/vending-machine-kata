@@ -2,8 +2,8 @@ package tdd.vendingMachine.test_infrastructure;
 
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.Assertions;
-import tdd.vendingMachine.domain.Coin;
-import tdd.vendingMachine.domain.Money;
+import tdd.vendingMachine.domain.parts.money.Coin;
+import tdd.vendingMachine.domain.parts.money.Money;
 
 import java.util.Map;
 

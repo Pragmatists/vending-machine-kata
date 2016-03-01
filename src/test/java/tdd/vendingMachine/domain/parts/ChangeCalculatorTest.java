@@ -1,14 +1,15 @@
-package tdd.vendingMachine.domain;
+package tdd.vendingMachine.domain.parts;
 
 import org.junit.Before;
 import org.junit.Test;
+import tdd.vendingMachine.domain.parts.money.Coin;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static tdd.vendingMachine.domain.Money.createMoney;
+import static tdd.vendingMachine.domain.parts.money.Money.createMoney;
 
 public class ChangeCalculatorTest {
 

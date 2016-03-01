@@ -1,4 +1,4 @@
-package tdd.vendingMachine.domain;
+package tdd.vendingMachine.domain.parts.money;
 
 import java.math.BigDecimal;
 

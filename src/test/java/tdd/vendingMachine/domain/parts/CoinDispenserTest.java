@@ -1,7 +1,8 @@
-package tdd.vendingMachine.domain;
+package tdd.vendingMachine.domain.parts;
 
 import org.junit.Before;
 import org.junit.Test;
+import tdd.vendingMachine.domain.parts.money.Coin;
 
 import java.util.Arrays;
 import java.util.HashMap;

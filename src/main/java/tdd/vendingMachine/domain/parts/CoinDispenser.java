@@ -1,6 +1,7 @@
-package tdd.vendingMachine.domain;
+package tdd.vendingMachine.domain.parts;
 
-import java.util.Arrays;
+import tdd.vendingMachine.domain.parts.money.Coin;
+
 import java.util.List;
 import java.util.Map;
 

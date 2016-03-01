@@ -1,10 +1,13 @@
-package tdd.vendingMachine.domain;
+package tdd.vendingMachine.domain.parts;
+
+import tdd.vendingMachine.domain.parts.money.Coin;
+import tdd.vendingMachine.domain.parts.money.Money;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static tdd.vendingMachine.domain.Money.createMoney;
+import static tdd.vendingMachine.domain.parts.money.Money.createMoney;
 
 public class ChangeCalculator {
 
