@@ -4,6 +4,7 @@ package tdd.vendingMachine.domain;
 import tdd.vendingMachine.external_interface.HardwareInterface;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class VendingMachine {
 
@@ -45,20 +46,38 @@ public class VendingMachine {
         hardwareInterface.displayMessage("Remaining: " + paymentRegistrar.tellHowMuchMoreNeedsToBeCollected().toString());
 
         if (paymentRegistrar.hasSufficientMoneyBeenCollected()) {
-            sellProduct();
+            finalizeTransaction();
         }
     }
 
-    private void sellProduct() {
-        hardwareInterface.disposeProduct(chosenShelfNumber);
-        hardwareInterface.displayMessage(WELCOME_MESSAGE);
-        returnChange(paymentRegistrar.getCollectedAmount(), paymentRegistrar.getAmountToBeCollected());
+    private void finalizeTransaction() {
+        Money collectedMoney = paymentRegistrar.getCollectedAmount();
+        Money productPrice = paymentRegistrar.getAmountToBeCollected();
+        Optional<Map<Coin, Integer>> change = coinDispenser.calculateChange(collectedMoney.subtract(productPrice));
+
+        if (change.isPresent()) {
+            sellProduct(change);
+        } else {
+            giveBackMoney();
+        }
+
         paymentRegistrar.reset();
     }
 
-    private void returnChange(Money collected, Money productPrice) {
-        Map<Coin, Integer> change = coinDispenser.calculateChange(collected.subtract(productPrice));
-        coinDispenser.decreaseCoinsCountersAccordingToChange(change);
+    private void giveBackMoney() {
+        hardwareInterface.displayMessage("Cannot give the change. Returning money.");
+        hardwareInterface.disposeInsertedCoins();
+        hardwareInterface.displayMessage(WELCOME_MESSAGE);
+    }
+
+    private void sellProduct(Optional<Map<Coin, Integer>> change) {
+        hardwareInterface.disposeProduct(chosenShelfNumber);
+        hardwareInterface.displayMessage(WELCOME_MESSAGE);
+        returnChange(change.get());
+    }
+
+    private void returnChange(Map<Coin, Integer> change) {
+        coinDispenser.decreaseCoinCountersAccordingToChange(change);
         hardwareInterface.disposeChange(change);
     }
 

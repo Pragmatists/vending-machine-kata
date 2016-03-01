@@ -30,6 +30,7 @@ public class VendingMachineTest {
 
     private static final int SECOND_SHELF = 2;
 
+
     private VendingMachine machine;
 
     private Coin[] insertedCoins;
@@ -164,8 +165,7 @@ public class VendingMachineTest {
     public void should_return_change_if_product_has_been_sold() throws Exception {
         machine = new VendingMachine(hardwareInterfaceMock, pricesPerShelves, new CoinDispenser(createCoinSupply()));
 
-        machine.acceptChoice(FIRST_SHELF);
-        machine.acceptCoin(Coin.COIN_5);
+        whenUserPaidMoreThanNeeded();
 
         Mockito.verify(hardwareInterfaceMock).disposeChange(changeCaptor.capture());
         CoinMapAssertions.assertThat(changeCaptor.getValue()).totalValueEquals(createMoney("3.5"));
@@ -179,5 +179,36 @@ public class VendingMachineTest {
         return coinSupply;
     }
 
+    @Test
+    public void should_not_dispose_change_if_there_was_no_coins_in_machine() throws Exception {
+        whenUserPaidMoreThanNeeded();
 
+        Mockito.verify(hardwareInterfaceMock, never()).disposeChange(any());
+    }
+
+    @Test
+    public void should_not_dispose_product_if_machine_cannot_return_change() throws Exception {
+        whenUserPaidMoreThanNeeded();
+
+        Mockito.verify(hardwareInterfaceMock, never()).disposeProduct(anyInt());
+    }
+
+    @Test
+    public void should_display_a_warning_message_if_machine_cannot_return_change() throws Exception {
+        whenUserPaidMoreThanNeeded();
+
+        Mockito.verify(hardwareInterfaceMock).displayMessage(TestMessages.CANNOT_GIVE_THE_CHANGE_MESSAGE);
+    }
+
+    @Test
+    public void should_dispose_inserted_coins_if_machine_cannot_return_change() throws Exception {
+        whenUserPaidMoreThanNeeded();
+
+        Mockito.verify(hardwareInterfaceMock).disposeInsertedCoins();
+    }
+
+    private void whenUserPaidMoreThanNeeded() {
+        machine.acceptChoice(FIRST_SHELF);
+        machine.acceptCoin(Coin.COIN_5);
+    }
 }
