@@ -1,7 +1,5 @@
 package tdd.vendingMachine.domain;
 
-import static tdd.vendingMachine.domain.Money.createMoney;
-
 public enum Coin {
 
     COIN_0_1("0.1"),
@@ -14,7 +12,7 @@ public enum Coin {
     private final Money denomination;
 
     Coin(String money) {
-        this.denomination = createMoney(money);
+        this.denomination = Money.createMoney(money);
     }
 
     public Money getDenomination() {

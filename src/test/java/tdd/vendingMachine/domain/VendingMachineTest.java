@@ -47,7 +47,7 @@ public class VendingMachineTest {
     public void setUp() throws Exception {
         initMocks(this);
         pricesPerShelves = new Money[]{createMoney("1.50"), createMoney("3.00")};
-        machine = new VendingMachine(hardwareInterfaceMock, pricesPerShelves, new CoinDispenser(new HashMap<>()));
+        machine = new VendingMachine(hardwareInterfaceMock, pricesPerShelves, new CoinDispenser(new HashMap<>()), new ChangeCalculator());
     }
 
     @Test
@@ -163,7 +163,7 @@ public class VendingMachineTest {
 
     @Test
     public void should_return_change_if_product_has_been_sold() throws Exception {
-        machine = new VendingMachine(hardwareInterfaceMock, pricesPerShelves, new CoinDispenser(createCoinSupply()));
+        machine = new VendingMachine(hardwareInterfaceMock, pricesPerShelves, new CoinDispenser(createCoinSupply()), new ChangeCalculator());
 
         whenUserPaidMoreThanNeeded();
 

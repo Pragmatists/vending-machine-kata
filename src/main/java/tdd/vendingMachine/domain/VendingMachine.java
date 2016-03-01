@@ -20,11 +20,15 @@ public class VendingMachine {
 
     private CoinDispenser coinDispenser;
 
-    public VendingMachine(HardwareInterface hardwareInterface, Money[] pricesPerShelves, CoinDispenser coinDispenser) {
+    private ChangeCalculator changeCalculator;
+
+    public VendingMachine(HardwareInterface hardwareInterface, Money[] pricesPerShelves, CoinDispenser coinDispenser, ChangeCalculator changeCalculator) {
         this.hardwareInterface = hardwareInterface;
         this.pricesPerShelves = pricesPerShelves;
         this.paymentRegistrar = new PaymentRegistrar();
         this.coinDispenser = coinDispenser;
+        this.changeCalculator = changeCalculator;
+
         this.hardwareInterface.displayMessage(WELCOME_MESSAGE);
     }
 
@@ -53,7 +57,9 @@ public class VendingMachine {
     private void finalizeTransaction() {
         Money collectedMoney = paymentRegistrar.getCollectedAmount();
         Money productPrice = paymentRegistrar.getAmountToBeCollected();
-        Optional<Map<Coin, Integer>> change = coinDispenser.calculateChange(collectedMoney.subtract(productPrice));
+
+        Map<Coin, Integer> coinsInsideDispenser = coinDispenser.getCoinsInside();
+        Optional<Map<Coin, Integer>> change = changeCalculator.calculateChange(collectedMoney.subtract(productPrice), coinsInsideDispenser);
 
         if (change.isPresent()) {
             sellProduct(change);

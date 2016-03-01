@@ -2,6 +2,8 @@ package tdd.vendingMachine.domain;
 
 import org.junit.Before;
 import org.junit.Test;
+import tdd.vendingMachine.domain.PaymentRegistrar;
+import tdd.vendingMachine.domain.Money;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static tdd.vendingMachine.domain.Money.createMoney;
