@@ -17,6 +17,7 @@ import tdd.vendingMachine.test_infrastructure.TestMessages;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -210,5 +211,23 @@ public class VendingMachineTest {
     private void whenUserPaidMoreThanNeeded() {
         machine.acceptChoice(FIRST_SHELF);
         machine.acceptCoin(Coin.COIN_5);
+    }
+
+    @Test
+    public void should_return_change_only_from_coins_previously_inserted_to_machine() throws Exception {
+        machine.acceptChoice(FIRST_SHELF);
+        machine.acceptCoin(Coin.COIN_1);
+        machine.acceptCoin(Coin.COIN_0_5);
+
+        machine.acceptChoice(FIRST_SHELF);
+        machine.acceptCoin(Coin.COIN_1);
+        machine.acceptCoin(Coin.COIN_2);
+
+        Mockito.verify(hardwareInterfaceMock).disposeChange(changeCaptor.capture());
+        Map<Coin, Integer> capturedChange = changeCaptor.getValue();
+
+        assertThat(capturedChange.get(Coin.COIN_0_5)).isEqualTo(1);
+        assertThat(capturedChange.get(Coin.COIN_1)).isEqualTo(1);
+        CoinMapAssertions.assertThat(capturedChange).totalValueEquals(createMoney("1.5"));
     }
 }

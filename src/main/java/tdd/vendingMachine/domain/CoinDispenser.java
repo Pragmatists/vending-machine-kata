@@ -1,5 +1,7 @@
 package tdd.vendingMachine.domain;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class CoinDispenser {
@@ -20,5 +22,10 @@ public class CoinDispenser {
 
     public Map<Coin, Integer> getCoinsInside() {
         return coinsInside;
+    }
+
+    public void takeCoins(List<Coin> coinsToTake) {
+        coinsToTake.stream()
+            .forEach(coin -> coinsInside.put(coin, coinsInside.getOrDefault(coin, 0) + 1));
     }
 }

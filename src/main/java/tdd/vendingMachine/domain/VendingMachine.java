@@ -3,6 +3,8 @@ package tdd.vendingMachine.domain;
 
 import tdd.vendingMachine.external_interface.HardwareInterface;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -10,22 +12,25 @@ public class VendingMachine {
 
     private static final String WELCOME_MESSAGE = "Welcome! Please choose product:";
 
-    private HardwareInterface hardwareInterface;
-
     private Money[] pricesPerShelves;
 
-    private PaymentRegistrar paymentRegistrar;
-
     private Integer chosenShelfNumber;
+
+    private List<Coin> acceptedCoins;
+
+    private HardwareInterface hardwareInterface;
+
+    private PaymentRegistrar paymentRegistrar;
 
     private CoinDispenser coinDispenser;
 
     private ChangeCalculator changeCalculator;
 
     public VendingMachine(HardwareInterface hardwareInterface, Money[] pricesPerShelves, CoinDispenser coinDispenser, ChangeCalculator changeCalculator) {
-        this.hardwareInterface = hardwareInterface;
         this.pricesPerShelves = pricesPerShelves;
+        this.hardwareInterface = hardwareInterface;
         this.paymentRegistrar = new PaymentRegistrar();
+        this.acceptedCoins = new ArrayList<>();
         this.coinDispenser = coinDispenser;
         this.changeCalculator = changeCalculator;
 
@@ -45,6 +50,7 @@ public class VendingMachine {
 
     public void acceptCoin(Coin coin) {
         if (chosenShelfNumber == null) return;
+        acceptedCoins.add(coin);
 
         paymentRegistrar.register(coin.getDenomination());
         hardwareInterface.displayMessage("Remaining: " + paymentRegistrar.tellHowMuchMoreNeedsToBeCollected().toString());
@@ -62,7 +68,9 @@ public class VendingMachine {
         Optional<Map<Coin, Integer>> change = changeCalculator.calculateChange(collectedMoney.subtract(productPrice), coinsInsideDispenser);
 
         if (change.isPresent()) {
-            sellProduct(change);
+            sellProduct();
+            returnChange(change.get());
+            coinDispenser.takeCoins(acceptedCoins);
         } else {
             giveBackMoney();
         }
@@ -73,23 +81,26 @@ public class VendingMachine {
     private void giveBackMoney() {
         hardwareInterface.displayMessage("Cannot give the change. Returning money.");
         hardwareInterface.disposeInsertedCoins();
+        acceptedCoins = new ArrayList<>();
         hardwareInterface.displayMessage(WELCOME_MESSAGE);
     }
 
-    private void sellProduct(Optional<Map<Coin, Integer>> change) {
+    private void sellProduct() {
         hardwareInterface.disposeProduct(chosenShelfNumber);
         hardwareInterface.displayMessage(WELCOME_MESSAGE);
-        returnChange(change.get());
     }
 
     private void returnChange(Map<Coin, Integer> change) {
         coinDispenser.decreaseCoinCountersAccordingToChange(change);
-        hardwareInterface.disposeChange(change);
+        if(!change.isEmpty()) {
+            hardwareInterface.disposeChange(change);
+        }
     }
 
     public void cancel() {
         hardwareInterface.disposeInsertedCoins();
         hardwareInterface.displayMessage(WELCOME_MESSAGE);
         paymentRegistrar.reset();
+        acceptedCoins = new ArrayList<>();
     }
 }

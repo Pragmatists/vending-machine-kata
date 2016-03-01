@@ -3,6 +3,7 @@ package tdd.vendingMachine.domain;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,5 +37,15 @@ public class CoinDispenserTest {
 
         assertThat(dispenser.getCoinsCount(Coin.COIN_1)).isEqualTo(0);
         assertThat(dispenser.getCoinsCount(Coin.COIN_0_5)).isEqualTo(0);
+    }
+
+    @Test
+    public void should_take_coins() throws Exception {
+        Coin[] coinsToTake = {Coin.COIN_0_5, Coin.COIN_0_2, Coin.COIN_0_5};
+        CoinDispenser dispenser = new CoinDispenser(coins);
+        dispenser.takeCoins(Arrays.asList(coinsToTake));
+
+        assertThat(dispenser.getCoinsCount(Coin.COIN_0_2)).isEqualTo(1);
+        assertThat(dispenser.getCoinsCount(Coin.COIN_0_5)).isEqualTo(2);
     }
 }
