@@ -37,5 +37,13 @@ public class VendingMachineTest implements WithBDDMockito, WithAssertions {
         assertThat(readShelf).isEmpty();
     }
 
-
+    @Test
+    public void should_call_proceed_on_state_when_starting_machine() throws Exception {
+        // given
+        VendingMachineState stateMock = mock(VendingMachineState.class);
+        // when
+        vendingMachine.start(stateMock);
+        // then
+        verify(stateMock).proceed(eq(vendingMachine));
+    }
 }
