@@ -52,9 +52,9 @@ public class VendingMachine {
     public void displayProducts() {
         for (int i = 1; i <= shelfCount; i++) {
             if (productMap.containsKey(i)) {
-                display("%s -> %s", i, productMap.get(i).getName());
+                display("%s -> %s\n", i, productMap.get(i).getName());
             } else {
-                display("%s -> empty", i);
+                display("%s -> empty\n", i);
             }
         }
     }

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum Product {
     DIET_COKE("Diet Coke 0.25L"),
+    KITKAT("Kitkat chocolate bar"),
     ;
 
     private final String name;
