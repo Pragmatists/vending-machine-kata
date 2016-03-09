@@ -5,6 +5,8 @@ import java.util.Optional;
 import org.assertj.core.api.WithAssertions;
 import org.junit.Before;
 import org.junit.Test;
+import tdd.vendingMachine.io.Display;
+import tdd.vendingMachine.io.Keyboard;
 import tdd.vendingMachine.state.VendingMachineState;
 
 public class VendingMachineTest implements WithBDDMockito, WithAssertions {
@@ -15,7 +17,7 @@ public class VendingMachineTest implements WithBDDMockito, WithAssertions {
     @Before
     public void setUp() throws Exception {
         keyboardMock = mock(Keyboard.class);
-        vendingMachine = new VendingMachine(20, keyboardMock);
+        vendingMachine = new VendingMachine(20, keyboardMock, mock(Display.class));
     }
 
     @Test

@@ -6,6 +6,8 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import tdd.vendingMachine.io.Display;
+import tdd.vendingMachine.io.Keyboard;
 import tdd.vendingMachine.state.VendingMachineState;
 
 @Accessors(chain = true)
@@ -14,6 +16,7 @@ public class VendingMachine {
 
     private final int shelfCount;
     private final Keyboard keyboard;
+    private final Display display;
 
     private Map<Integer, ProductStack> productMap = new HashMap<>();
 
@@ -29,7 +32,7 @@ public class VendingMachine {
     }
 
     public VendingMachine putProductsOnShelf(int shelfNumber, Product product, int count) {
-        if (shelfNumber < 1 || shelfNumber > shelfCount) {
+        if (!correctShelfNumber(shelfNumber)) {
             throw new IllegalArgumentException("Illegal shelf number: " + shelfNumber);
         }
 
@@ -44,6 +47,20 @@ public class VendingMachine {
         }
 
         return Optional.empty();
+    }
+
+    public void displayProducts() {
+        for (int i = 1; i <= shelfCount; i++) {
+            if (productMap.containsKey(i)) {
+                display("%s -> %s", i, productMap.get(i).getName());
+            } else {
+                display("%s -> empty", i);
+            }
+        }
+    }
+
+    public void display(String message, Object... args) {
+        display.display(message, args);
     }
 
     private boolean correctShelfNumber(int number) {
