@@ -8,14 +8,22 @@ import java.io.InputStreamReader;
  * @author Mateusz Urbański <matek2305@gmail.com>
  */
 public class StdInputKeyboard implements Keyboard {
+
     @Override
     public int readNumber() {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String input = readInput();
         try {
-            String input = reader.readLine();
             return Integer.parseInt(input);
         } catch (NumberFormatException ex) {
             return -1;
+        }
+    }
+
+    @Override
+    public String readInput() {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            return reader.readLine();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

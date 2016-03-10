@@ -27,7 +27,7 @@ public class ShelfSelectStateTest implements WithBDDMockito {
         // when
         shelfSelectState.proceed(vendingMachineMock);
         // then
-        verify(vendingMachineMock).setState(any(VendingMachineState.class));
+        verify(vendingMachineMock).setState(isA(CoinsInsertState.class));
         verify(vendingMachineMock).proceed();
     }
 
@@ -41,7 +41,5 @@ public class ShelfSelectStateTest implements WithBDDMockito {
         // then
         verify(vendingMachineMock, never()).setState(any(VendingMachineState.class));
         verify(vendingMachineMock).proceed();
-
-
     }
 }

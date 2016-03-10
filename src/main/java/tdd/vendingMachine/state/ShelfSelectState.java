@@ -13,7 +13,7 @@ public class ShelfSelectState implements VendingMachineState {
         vendingMachine.display("Select product: ");
 
         vendingMachine.getSelectedProduct()
-            .ifPresent(p -> vendingMachine.setState(m -> System.out.println("selected: " + p.getName())));
+            .ifPresent(p -> vendingMachine.setState(new CoinsInsertState(p)));
 
         vendingMachine.proceed();
     }

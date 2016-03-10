@@ -6,4 +6,6 @@ package tdd.vendingMachine.io;
 public interface Keyboard {
 
     int readNumber();
+
+    String readInput();
 }

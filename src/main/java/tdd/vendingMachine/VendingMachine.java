@@ -15,6 +15,7 @@ import tdd.vendingMachine.state.VendingMachineState;
 public class VendingMachine {
 
     private final int shelfCount;
+
     private final Keyboard keyboard;
     private final Display display;
 
@@ -52,7 +53,8 @@ public class VendingMachine {
     public void displayProducts() {
         for (int i = 1; i <= shelfCount; i++) {
             if (productMap.containsKey(i)) {
-                display("%s -> %s\n", i, productMap.get(i).getName());
+                ProductStack productStack = productMap.get(i);
+                display("%s -> %s (%s PLN)\n", i, productStack.getName(), productStack.getPrice());
             } else {
                 display("%s -> empty\n", i);
             }
@@ -61,6 +63,10 @@ public class VendingMachine {
 
     public void display(String message, Object... args) {
         display.display(message, args);
+    }
+
+    public String readInput() {
+        return keyboard.readInput();
     }
 
     private boolean correctShelfNumber(int number) {
