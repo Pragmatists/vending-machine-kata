@@ -23,7 +23,7 @@ public class CoinsInsertStateTest implements WithBDDMockito {
     @Before
     public void setUp() throws Exception {
         vendingMachineMock = mock(VendingMachine.class);
-        coinsInsertState = new CoinsInsertState(Product.KITKAT);
+        coinsInsertState = new CoinsInsertState(1, Product.KITKAT);
     }
 
     @Test

@@ -16,6 +16,7 @@ public class CoinsInsertState implements VendingMachineState {
 
     private static final String ABORT = "c";
 
+    private final int selectedShelfNumber;
     private final Product selectedProduct;
     private BigDecimal insertedAmount = BigDecimal.ZERO;
 
@@ -47,7 +48,7 @@ public class CoinsInsertState implements VendingMachineState {
         }
 
         if (insertedAmount.compareTo(selectedProduct.getPrice()) == 0) {
-            vendingMachine.setState(new ProvideProductState());
+            vendingMachine.setState(new ProvideProductState(selectedShelfNumber));
         } else if (insertedAmount.compareTo(selectedProduct.getPrice()) == 1) {
             vendingMachine.setState(new ChangeCheckState());
         }

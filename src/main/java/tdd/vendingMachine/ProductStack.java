@@ -1,12 +1,10 @@
 package tdd.vendingMachine;
 
+import java.util.Stack;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
-
-import java.util.Optional;
-import java.util.Stack;
 
 /**
  * @author Mateusz Urbański <matek2305@gmail.com>
@@ -25,8 +23,4 @@ public class ProductStack extends Stack<Product> {
     @Getter
     @Delegate
     private final Product product;
-
-    public Optional<Product> popOptional() {
-        return isEmpty() ? Optional.empty() : Optional.of(pop());
-    }
 }

@@ -49,6 +49,10 @@ public class VendingMachine {
         return this;
     }
 
+    public void popProduct(int shelfNumber) {
+        productMap.get(shelfNumber).pop();
+    }
+
     public Optional<Product> getProductInfo(int shelfNumber) {
         if (productMap.containsKey(shelfNumber)) {
             return Optional.of(productMap.get(shelfNumber).getProduct());
@@ -73,7 +77,7 @@ public class VendingMachine {
 
     public void displayProducts() {
         for (int i = 1; i <= shelfCount; i++) {
-            if (productMap.containsKey(i)) {
+            if (productMap.containsKey(i) && productMap.get(i).size() > 0) {
                 ProductStack productStack = productMap.get(i);
                 display("%s -> %s (%s PLN) x%s\n", i, productStack.getName(), productStack.getPrice(), productStack.size());
             } else {

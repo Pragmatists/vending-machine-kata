@@ -16,6 +16,6 @@ public class ProductSelectState implements VendingMachineState {
         int selectedShelfNumber = vendingMachine.selectProductShelf();
         Product selectedProduct = vendingMachine.getProductInfo(selectedShelfNumber).get();
 
-        vendingMachine.setState(new CoinsInsertState(selectedProduct)).proceed();
+        vendingMachine.setState(new CoinsInsertState(selectedShelfNumber, selectedProduct)).proceed();
     }
 }
