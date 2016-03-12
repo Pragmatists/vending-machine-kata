@@ -11,13 +11,13 @@ import java.util.Optional;
 /**
  * @author Mateusz Urbański <matek2305@gmail.com>
  */
-public class ShelfSelectStateTest implements WithBDDMockito {
+public class ProductSelectStateTest implements WithBDDMockito {
 
-    private ShelfSelectState shelfSelectState;
+    private ProductSelectState productSelectState;
 
     @Before
     public void setUp() throws Exception {
-        shelfSelectState = new ShelfSelectState();
+        productSelectState = new ProductSelectState();
     }
 
     @Test
@@ -27,7 +27,7 @@ public class ShelfSelectStateTest implements WithBDDMockito {
         given(vendingMachineMock.selectProductShelf()).willReturn(1);
         given(vendingMachineMock.getProductInfo(eq(1))).willReturn(Optional.of(Product.DIET_COKE));
         // when
-        shelfSelectState.proceed(vendingMachineMock);
+        productSelectState.proceed(vendingMachineMock);
         // then
         verify(vendingMachineMock).setState(isA(CoinsInsertState.class));
         verify(vendingMachineMock).proceed();
@@ -40,7 +40,7 @@ public class ShelfSelectStateTest implements WithBDDMockito {
         given(vendingMachineMock.selectProductShelf()).willReturn(1);
         given(vendingMachineMock.getProductInfo(eq(1))).willReturn(Optional.empty());
         // when
-        shelfSelectState.proceed(vendingMachineMock);
+        productSelectState.proceed(vendingMachineMock);
         // then
         verify(vendingMachineMock, never()).setState(any(VendingMachineState.class));
         verify(vendingMachineMock).proceed();

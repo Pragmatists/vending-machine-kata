@@ -23,7 +23,7 @@ public class CoinsInsertState implements VendingMachineState {
 
         String input = vendingMachine.readInput();
         if (ABORT.equals(input)) {
-            vendingMachine.setState(new ShelfSelectState()).proceed();
+            vendingMachine.setState(new ProductSelectState()).proceed();
         }
 
         Optional<Coin> insertedCoin = Coin.fromDenomination(input);

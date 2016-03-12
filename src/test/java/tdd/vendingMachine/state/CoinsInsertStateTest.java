@@ -29,7 +29,7 @@ public class CoinsInsertStateTest implements WithBDDMockito {
     public void should_return_to_shelf_select_state_when_abort() throws Exception {
         // given
         given(vendingMachineMock.readInput()).willReturn("c");
-        given(vendingMachineMock.setState(isA(ShelfSelectState.class))).willReturn(vendingMachineMock);
+        given(vendingMachineMock.setState(isA(ProductSelectState.class))).willReturn(vendingMachineMock);
         // expect
         coinsInsertState.proceed(vendingMachineMock);
     }
