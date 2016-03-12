@@ -1,5 +1,6 @@
 package tdd.vendingMachine.state;
 
+import tdd.vendingMachine.Product;
 import tdd.vendingMachine.VendingMachine;
 
 /**
@@ -13,8 +14,8 @@ public class ProductSelectState implements VendingMachineState {
         vendingMachine.display("Select product: ");
 
         int selectedShelfNumber = vendingMachine.selectProductShelf();
-        vendingMachine.getProductInfo(selectedShelfNumber)
-            .ifPresent(p -> vendingMachine.setState(new CoinsInsertState(p)));
-        vendingMachine.proceed();
+        Product selectedProduct = vendingMachine.getProductInfo(selectedShelfNumber).get();
+
+        vendingMachine.setState(new CoinsInsertState(selectedProduct)).proceed();
     }
 }

@@ -24,11 +24,13 @@ public class VendingMachine {
     @Delegate
     private final Display display;
 
-    private Map<Integer, ProductStack> productMap = new HashMap<>();
+    @Delegate
+    private CoinWallet coinWallet = new CoinWallet();
 
     @Setter
     private VendingMachineState state;
 
+    private Map<Integer, ProductStack> productMap = new HashMap<>();
 
     public void start(VendingMachineState state) {
         setState(state).proceed();

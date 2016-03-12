@@ -26,23 +26,10 @@ public class ProductSelectStateTest implements WithBDDMockito {
         VendingMachine vendingMachineMock = mock(VendingMachine.class);
         given(vendingMachineMock.selectProductShelf()).willReturn(1);
         given(vendingMachineMock.getProductInfo(eq(1))).willReturn(Optional.of(Product.DIET_COKE));
+        given(vendingMachineMock.setState(isA(CoinsInsertState.class))).willReturn(vendingMachineMock);
         // when
         productSelectState.proceed(vendingMachineMock);
         // then
-        verify(vendingMachineMock).setState(isA(CoinsInsertState.class));
-        verify(vendingMachineMock).proceed();
-    }
-
-    @Test
-    public void should_stay_in_state_if_selected_product_is_not_available() {
-        // given
-        VendingMachine vendingMachineMock = mock(VendingMachine.class);
-        given(vendingMachineMock.selectProductShelf()).willReturn(1);
-        given(vendingMachineMock.getProductInfo(eq(1))).willReturn(Optional.empty());
-        // when
-        productSelectState.proceed(vendingMachineMock);
-        // then
-        verify(vendingMachineMock, never()).setState(any(VendingMachineState.class));
         verify(vendingMachineMock).proceed();
     }
 }

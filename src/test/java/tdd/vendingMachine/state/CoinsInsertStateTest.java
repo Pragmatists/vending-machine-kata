@@ -7,6 +7,7 @@ import junitparams.naming.TestCaseName;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import tdd.vendingMachine.Coin;
 import tdd.vendingMachine.Product;
 import tdd.vendingMachine.VendingMachine;
 
@@ -22,7 +23,7 @@ public class CoinsInsertStateTest implements WithBDDMockito {
     @Before
     public void setUp() throws Exception {
         vendingMachineMock = mock(VendingMachine.class);
-        coinsInsertState = new CoinsInsertState(Product.DIET_COKE);
+        coinsInsertState = new CoinsInsertState(Product.KITKAT);
     }
 
     @Test
@@ -45,5 +46,37 @@ public class CoinsInsertStateTest implements WithBDDMockito {
         // then
         verify(vendingMachineMock, never()).setState(any(VendingMachineState.class));
         verify(vendingMachineMock).proceed();
+    }
+
+    @Test
+    public void should_put_inserted_coin_to_machine_wallet() {
+        // given
+        given(vendingMachineMock.readInput()).willReturn("1");
+        // when
+        coinsInsertState.proceed(vendingMachineMock);
+        // then
+        verify(vendingMachineMock).putCoin(eq(Coin.COIN_1));
+    }
+
+    @Test
+    public void should_provide_product_if_inserted_amount_equals_product_price() {
+        // given
+        given(vendingMachineMock.readInput()).willReturn("2");
+        // when
+        coinsInsertState.proceed(vendingMachineMock);
+        // then
+        verify(vendingMachineMock).putCoin(eq(Coin.COIN_2));
+        verify(vendingMachineMock).setState(isA(ProvideProductState.class));
+    }
+
+    @Test
+    public void should_check_for_change_if_inserted_amount_is_greater_than_price() {
+        // given
+        given(vendingMachineMock.readInput()).willReturn("5");
+        // when
+        coinsInsertState.proceed(vendingMachineMock);
+        // then
+        verify(vendingMachineMock).putCoin(eq(Coin.COIN_5));
+        verify(vendingMachineMock).setState(isA(ChangeCheckState.class));
     }
 }
