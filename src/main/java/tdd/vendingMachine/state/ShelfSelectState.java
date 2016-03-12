@@ -12,9 +12,9 @@ public class ShelfSelectState implements VendingMachineState {
         vendingMachine.displayProducts();
         vendingMachine.display("Select product: ");
 
-        vendingMachine.getSelectedProduct()
+        int selectedShelfNumber = vendingMachine.selectProductShelf();
+        vendingMachine.getProductInfo(selectedShelfNumber)
             .ifPresent(p -> vendingMachine.setState(new CoinsInsertState(p)));
-
         vendingMachine.proceed();
     }
 }

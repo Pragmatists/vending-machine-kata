@@ -1,14 +1,20 @@
 package tdd.vendingMachine;
 
 import info.solidsoft.mockito.java8.api.WithBDDMockito;
-import java.util.Optional;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
+import junitparams.naming.TestCaseName;
 import org.assertj.core.api.WithAssertions;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import tdd.vendingMachine.io.Display;
 import tdd.vendingMachine.io.Keyboard;
 import tdd.vendingMachine.state.VendingMachineState;
 
+import java.util.Optional;
+
+@RunWith(JUnitParamsRunner.class)
 public class VendingMachineTest implements WithBDDMockito, WithAssertions {
 
     private Keyboard keyboardMock;
@@ -29,34 +35,49 @@ public class VendingMachineTest implements WithBDDMockito, WithAssertions {
     }
 
     @Test
-    public void should_return_selected_product() {
+    public void should_return_selected_shelf_number() {
         // given
         vendingMachine.putProductsOnShelf(1, Product.DIET_COKE, 2);
         given(keyboardMock.readNumber()).willReturn(1);
         // when
-        Optional<Product> selectedProduct = vendingMachine.getSelectedProduct();
+        int shelfNumber = vendingMachine.selectProductShelf();
         // then
-        assertThat(selectedProduct).contains(Product.DIET_COKE);
+        assertThat(shelfNumber).isEqualTo(1);
     }
 
     @Test
-    public void should_return_empty_optional_when_selected_shelf_number_is_out_of_range() {
+    @Parameters({"-1, input not a number", "1, product stack is empty", "10, shelf is empty"})
+    @TestCaseName("when {1}")
+    public void should_ask_for_shelf_number_again(int input, String desc) {
         // given
-        given(keyboardMock.readNumber()).willReturn(23);
+        vendingMachine
+            .putProductsOnShelf(1, Product.DIET_COKE, 0)
+            .putProductsOnShelf(2, Product.KITKAT, 2);
+        given(keyboardMock.readNumber()).willReturn(input, 2);
         // when
-        Optional<Product> selectedProduct = vendingMachine.getSelectedProduct();
+        int shelfNumber = vendingMachine.selectProductShelf();
         // then
-        assertThat(selectedProduct).isEmpty();
+        assertThat(shelfNumber).isEqualTo(2);
     }
 
     @Test
-    public void should_return_empty_optional_when_product_not_available() {
+    public void should_return_empty_optional_when_product_does_not_exist() throws Exception {
         // given
-        given(keyboardMock.readNumber()).willReturn(12);
+        vendingMachine.putProductsOnShelf(1, Product.DIET_COKE, 3);
         // when
-        Optional<Product> selectedProduct = vendingMachine.getSelectedProduct();
+        Optional<Product> product = vendingMachine.getProductInfo(3);
         // then
-        assertThat(selectedProduct).isEmpty();
+        assertThat(product).isEmpty();
+    }
+
+    @Test
+    public void should_return_product_when_getting_info() throws Exception {
+        // given
+        vendingMachine.putProductsOnShelf(1, Product.DIET_COKE, 3);
+        // when
+        Optional<Product> product = vendingMachine.getProductInfo(1);
+        // then
+        assertThat(product).contains(Product.DIET_COKE);
     }
 
     @Test

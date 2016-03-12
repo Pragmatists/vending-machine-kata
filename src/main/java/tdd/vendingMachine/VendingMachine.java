@@ -29,6 +29,7 @@ public class VendingMachine {
     @Setter
     private VendingMachineState state;
 
+
     public void start(VendingMachineState state) {
         setState(state).proceed();
     }
@@ -46,13 +47,26 @@ public class VendingMachine {
         return this;
     }
 
-    public Optional<Product> getSelectedProduct() {
+    public Optional<Product> getProductInfo(int shelfNumber) {
+        if (productMap.containsKey(shelfNumber)) {
+            return Optional.of(productMap.get(shelfNumber).getProduct());
+        }
+        return Optional.empty();
+    }
+
+    public int selectProductShelf() {
         final int selectedShelfNumber = readNumber();
-        if (correctShelfNumber(selectedShelfNumber) && productMap.containsKey(selectedShelfNumber)) {
-            return productMap.get(selectedShelfNumber).popOptional();
+        if (!correctShelfNumber(selectedShelfNumber)) {
+            display("Incorrect shelf number! Try again: ");
+            return selectProductShelf();
         }
 
-        return Optional.empty();
+        if (!productMap.containsKey(selectedShelfNumber) || productMap.get(selectedShelfNumber).empty()) {
+            display("Product out of stock, select other product: ");
+            return selectProductShelf();
+        }
+
+        return selectedShelfNumber;
     }
 
     public void displayProducts() {
