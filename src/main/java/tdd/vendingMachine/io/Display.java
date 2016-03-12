@@ -5,5 +5,5 @@ package tdd.vendingMachine.io;
  */
 public interface Display {
 
-    void display(String message, Object... args);
+    void display(String message);
 }

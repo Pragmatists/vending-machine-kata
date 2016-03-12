@@ -5,7 +5,7 @@ package tdd.vendingMachine.io;
  */
 public class StdOutputDisplay implements Display {
     @Override
-    public void display(String message, Object... args) {
-        System.out.print(String.format(message, args));
+    public void display(String message) {
+        System.out.print(message);
     }
 }

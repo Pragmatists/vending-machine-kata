@@ -1,14 +1,16 @@
 package tdd.vendingMachine;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import lombok.experimental.Delegate;
 import tdd.vendingMachine.io.Display;
 import tdd.vendingMachine.io.Keyboard;
 import tdd.vendingMachine.state.VendingMachineState;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Accessors(chain = true)
 @RequiredArgsConstructor
@@ -16,7 +18,10 @@ public class VendingMachine {
 
     private final int shelfCount;
 
+    @Delegate
     private final Keyboard keyboard;
+
+    @Delegate
     private final Display display;
 
     private Map<Integer, ProductStack> productMap = new HashMap<>();
@@ -34,7 +39,7 @@ public class VendingMachine {
 
     public VendingMachine putProductsOnShelf(int shelfNumber, Product product, int count) {
         if (!correctShelfNumber(shelfNumber)) {
-            throw new IllegalArgumentException("Illegal shelf number: " + shelfNumber);
+            throw new IllegalArgumentException("Incorrect shelf number: " + shelfNumber);
         }
 
         productMap.put(shelfNumber, ProductStack.of(product, count));
@@ -42,7 +47,7 @@ public class VendingMachine {
     }
 
     public Optional<Product> getSelectedProduct() {
-        final int selectedShelfNumber = keyboard.readNumber();
+        final int selectedShelfNumber = readNumber();
         if (correctShelfNumber(selectedShelfNumber) && productMap.containsKey(selectedShelfNumber)) {
             return productMap.get(selectedShelfNumber).popOptional();
         }
@@ -54,19 +59,15 @@ public class VendingMachine {
         for (int i = 1; i <= shelfCount; i++) {
             if (productMap.containsKey(i)) {
                 ProductStack productStack = productMap.get(i);
-                display("%s -> %s (%s PLN)\n", i, productStack.getName(), productStack.getPrice());
+                display("%s -> %s (%s PLN) x%s\n", i, productStack.getName(), productStack.getPrice(), productStack.size());
             } else {
                 display("%s -> empty\n", i);
             }
         }
     }
 
-    public void display(String message, Object... args) {
-        display.display(message, args);
-    }
-
-    public String readInput() {
-        return keyboard.readInput();
+    public void display(String messageTemplate, Object... args) {
+        display(String.format(messageTemplate, args));
     }
 
     private boolean correctShelfNumber(int number) {
