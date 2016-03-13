@@ -44,7 +44,7 @@ public class CoinCalculator {
             }
         }
 
-        if (getCoinsValue(coinCountMap).compareTo(value) == -1) {
+        if (getCoinsValue(coinCountMap).compareTo(value) < 0) {
             return Collections.emptyMap();
         }
 

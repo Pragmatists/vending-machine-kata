@@ -62,21 +62,23 @@ public class CoinsInsertStateTest implements WithBDDMockito {
     public void should_provide_product_if_inserted_amount_equals_product_price() {
         // given
         given(vendingMachineMock.readInput()).willReturn("2");
+        given(vendingMachineMock.setState(isA(ProvideProductState.class))).willReturn(vendingMachineMock);
         // when
         coinsInsertState.proceed(vendingMachineMock);
         // then
         verify(vendingMachineMock).putCoin(eq(Coin.COIN_2));
-        verify(vendingMachineMock).setState(isA(ProvideProductState.class));
+        verify(vendingMachineMock).proceed();
     }
 
     @Test
     public void should_check_for_change_if_inserted_amount_is_greater_than_price() {
         // given
         given(vendingMachineMock.readInput()).willReturn("5");
+        given(vendingMachineMock.setState(isA(ChangeCheckState.class))).willReturn(vendingMachineMock);
         // when
         coinsInsertState.proceed(vendingMachineMock);
         // then
         verify(vendingMachineMock).putCoin(eq(Coin.COIN_5));
-        verify(vendingMachineMock).setState(isA(ChangeCheckState.class));
+        verify(vendingMachineMock).proceed();
     }
 }

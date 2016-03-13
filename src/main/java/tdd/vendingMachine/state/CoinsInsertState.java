@@ -27,7 +27,7 @@ public class CoinsInsertState implements VendingMachineState {
         vendingMachine.display("Insert coin (or press 'c' to abort): ");
 
         String input = vendingMachine.readInput();
-        if (ABORT.equals(input) && insertedAmount.compareTo(BigDecimal.ZERO) == 1) {
+        if (ABORT.equals(input) && insertedAmount.compareTo(BigDecimal.ZERO) > 0) {
             vendingMachine.setState(new ReturnMoneyState(insertedAmount)).proceed();
             return;
         } else if (ABORT.equals(input)) {
@@ -48,11 +48,9 @@ public class CoinsInsertState implements VendingMachineState {
         }
 
         if (insertedAmount.compareTo(selectedProduct.getPrice()) == 0) {
-            vendingMachine.setState(new ProvideProductState(selectedShelfNumber));
-        } else if (insertedAmount.compareTo(selectedProduct.getPrice()) == 1) {
-            vendingMachine.setState(new ChangeCheckState(insertedAmount, selectedShelfNumber));
+            vendingMachine.setState(new ProvideProductState(selectedShelfNumber)).proceed();
+        } else if (insertedAmount.compareTo(selectedProduct.getPrice()) > 0) {
+            vendingMachine.setState(new ChangeCheckState(insertedAmount, selectedShelfNumber)).proceed();
         }
-
-        vendingMachine.proceed();
     }
 }
