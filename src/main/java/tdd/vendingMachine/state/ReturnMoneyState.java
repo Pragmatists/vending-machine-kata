@@ -1,9 +1,8 @@
 package tdd.vendingMachine.state;
 
+import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import tdd.vendingMachine.VendingMachine;
-
-import java.math.BigDecimal;
 
 /**
  * @author Mateusz Urbański <matek2305@gmail.com>.
@@ -15,6 +14,8 @@ public class ReturnMoneyState implements VendingMachineState {
 
     @Override
     public void proceed(VendingMachine vendingMachine) {
-        throw new UnsupportedOperationException("Not implemented yet!");
+        vendingMachine.removeValueInCoins(returnAmount);
+        vendingMachine.display("Please take your money, come back soon\n");
+        vendingMachine.setState(new ProductSelectState()).proceed();
     }
 }
