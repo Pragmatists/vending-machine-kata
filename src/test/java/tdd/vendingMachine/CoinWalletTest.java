@@ -1,6 +1,8 @@
 package tdd.vendingMachine;
 
+import java.math.BigDecimal;
 import java.util.EnumSet;
+import java.util.Map;
 import org.assertj.core.api.WithAssertions;
 import org.junit.Test;
 
@@ -31,5 +33,36 @@ public class CoinWalletTest implements WithAssertions {
         assertThatThrownBy(() -> new CoinWallet().putCoin(Coin.COIN_0_5, -2))
             .isExactlyInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining(String.valueOf(-2));
+    }
+
+    @Test
+    public void should_remove_value_in_coins_from_wallet() {
+        // given
+        CoinWallet coinWallet = new CoinWallet()
+            .putCoin(Coin.COIN_5)
+            .putCoin(Coin.COIN_1, 3)
+            .putCoin(Coin.COIN_0_2, 3)
+            .putCoin(Coin.COIN_0_1, 2);
+        BigDecimal walletValue = coinWallet.calculator().getCoinsValue();
+        BigDecimal valueToRemove = new BigDecimal("2.50");
+        // when
+        Map<Coin, Integer> removedCoins = coinWallet.removeValueInCoins(valueToRemove);
+        // then
+        assertThat(coinWallet.calculator().getCoinsValue()).isEqualByComparingTo(walletValue.subtract(valueToRemove));
+        assertThat(new CoinCalculator(removedCoins).getCoinsValue()).isEqualByComparingTo(valueToRemove);
+    }
+
+    @Test
+    public void should_throw_exception_when_not_enough_coins_in_wallet() {
+        // given
+        CoinWallet coinWallet = new CoinWallet()
+            .putCoin(Coin.COIN_5)
+            .putCoin(Coin.COIN_1, 3)
+            .putCoin(Coin.COIN_0_2)
+            .putCoin(Coin.COIN_0_1, 2);
+        // expect
+        assertThatThrownBy(() -> coinWallet.removeValueInCoins(new BigDecimal("2.50")))
+            .isExactlyInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("2.50");
     }
 }

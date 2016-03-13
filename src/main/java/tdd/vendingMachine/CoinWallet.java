@@ -1,5 +1,6 @@
 package tdd.vendingMachine;
 
+import java.math.BigDecimal;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -32,5 +33,23 @@ public class CoinWallet {
 
         coinCountMap.compute(coin, (c, v) -> v + quantity);
         return this;
+    }
+
+    public Map<Coin, Integer> removeValueInCoins(BigDecimal value) {
+        Map<Coin, Integer> coinsToRemove = calculator().getCoinsForValue(value);
+        if (coinsToRemove.isEmpty()) {
+            throw new IllegalStateException("Not enough coins in wallet for value " + value);
+        }
+
+        coinsToRemove.forEach(this::removeCoins);
+        return coinsToRemove;
+    }
+
+    private void removeCoins(Coin coin, Integer count) {
+        coinCountMap.compute(coin, (c, q) -> q - count);
+    }
+
+    public CoinCalculator calculator() {
+        return new CoinCalculator(coinCountMap);
     }
 }

@@ -1,6 +1,7 @@
 package tdd.vendingMachine;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -18,18 +19,16 @@ public class CoinCalculator {
     }
 
     public boolean hasCoinsForValue(BigDecimal value) {
-        return getCoinsValue(getCoinsForValue(value)).compareTo(value) == 0;
+        return !getCoinsForValue(value).isEmpty();
     }
 
-    private Map<Coin, Integer> getCoinsForValue(BigDecimal value) {
+    public Map<Coin, Integer> getCoinsForValue(BigDecimal value) {
         Map<Coin, Integer> coinCountMap = new EnumMap<>(Coin.class);
         BigDecimal remainingAmount = value;
 
         List<Coin> denominationDescOrderList = prepareAvailableCoinsInDenominationDescOrder();
-        for (int i = 0; i < denominationDescOrderList.size(); i++) {
-            Coin currentCoin = denominationDescOrderList.get(i);
+        for (Coin currentCoin : denominationDescOrderList) {
             BigDecimal currentDonimnationValue = currentCoin.getDenomination();
-
             if (remainingAmount.compareTo(currentDonimnationValue) < 0) {
                 continue;
             }
@@ -45,13 +44,15 @@ public class CoinCalculator {
             }
         }
 
+        if (getCoinsValue(coinCountMap).compareTo(value) == -1) {
+            return Collections.emptyMap();
+        }
+
         return coinCountMap;
     }
 
-    private List<Coin> prepareAvailableCoinsInDenominationDescOrder() {
-        return availableCoinMap.keySet().stream()
-            .sorted((c1, c2) -> c2.getDenomination().compareTo(c1.getDenomination()))
-            .collect(Collectors.toList());
+    public BigDecimal getCoinsValue() {
+        return getCoinsValue(availableCoinMap);
     }
 
     private BigDecimal getCoinsValue(Map<Coin, Integer> coinCountMap) {
@@ -59,6 +60,12 @@ public class CoinCalculator {
             .map(this::getEntryValue)
             .reduce(BigDecimal::add)
             .get();
+    }
+
+    private List<Coin> prepareAvailableCoinsInDenominationDescOrder() {
+        return availableCoinMap.keySet().stream()
+            .sorted((c1, c2) -> c2.getDenomination().compareTo(c1.getDenomination()))
+            .collect(Collectors.toList());
     }
 
     private BigDecimal getEntryValue(Map.Entry<Coin, Integer> entry) {
