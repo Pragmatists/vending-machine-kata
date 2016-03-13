@@ -46,9 +46,11 @@ public class CoinsInsertState implements VendingMachineState {
         }
 
         if (insertedAmount.compareTo(selectedProduct.getPrice()) == 0) {
-            vendingMachine.setState(new ProvideProductState(selectedShelfNumber)).proceed();
+            vendingMachine.setState(new ProvideProductState(selectedShelfNumber));
         } else if (insertedAmount.compareTo(selectedProduct.getPrice()) > 0) {
-            vendingMachine.setState(new ChangeCheckState(insertedAmount, selectedShelfNumber)).proceed();
+            vendingMachine.setState(new ChangeCheckState(insertedAmount, selectedShelfNumber));
         }
+
+        vendingMachine.proceed();
     }
 }

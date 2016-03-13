@@ -56,6 +56,7 @@ public class CoinsInsertStateTest implements WithBDDMockito {
         coinsInsertState.proceed(vendingMachineMock);
         // then
         verify(vendingMachineMock).putCoin(eq(Coin.COIN_1));
+        verify(vendingMachineMock).proceed();
     }
 
     @Test
