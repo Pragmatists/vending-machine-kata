@@ -36,12 +36,10 @@ public class CoinsInsertState implements VendingMachineState {
         }
 
         Optional<Coin> insertedCoin = Coin.fromDenomination(input);
-        insertedCoin.ifPresent(c -> {
-            insertedAmount = insertedAmount.add(c.getDenomination());
-            vendingMachine.putCoin(c);
-        });
-
-        if (!insertedCoin.isPresent()) {
+        if (insertedCoin.isPresent()) {
+            insertedAmount = insertedAmount.add(insertedCoin.get().getDenomination());
+            vendingMachine.putCoin(insertedCoin.get());
+        } else {
             vendingMachine.display("Incorrect input.\nAccepted denominations: 5, 2, 1, 0.5, 0.2, 0.1\n");
             vendingMachine.proceed();
             return;
