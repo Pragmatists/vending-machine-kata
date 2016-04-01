@@ -4,7 +4,10 @@ vending-machine-kata
 This is a simple exercise vending-machine-kata - in which you will simulate the...
 vending machine ( https://en.wikipedia.org/wiki/Vending_machine )
 
-The project is maven based. On opening you will also find two classes: `VendingMachine` and `VendingMachineTest`.
+The project is maven based. We are providing maven wrapper so if do not have maven installed call `./mvnw` (or `mvnw.cmd` on Windows) to 
+build it.
+On opening you will find two classes: 
+`VendingMachine` and `VendingMachineTest`.
 The second one contains one test, which you can easily remove, since it is not part of the assignment.
 You can also rename or even remove provided classes.
 Below you will find requirements, key aspects and most importantly assignment itself.
