@@ -1,0 +1,15 @@
+package tdd.vendingMachine.Domain;
+
+/**
+ * Codes of errors occuring in Domain
+ */
+public enum Error {
+    INVALID_SHELF_NUMBER,
+    INVALID_NUMBER_OF_ITEMS_AT_SHELF,
+    CANNOT_ADD_TO_EMPTY_SHELF,
+    NEGATIVE_NUMBER_OF_COINS,
+    INVALID_COIN_NOMINAL,
+    TOO_FEW_COINS_FOR_DISBURSE_ORDER,
+    ERROR_SERVING_PRODUCT__EMPTY_SHELF,
+    ERROR_DISBURSING_COINS
+}
