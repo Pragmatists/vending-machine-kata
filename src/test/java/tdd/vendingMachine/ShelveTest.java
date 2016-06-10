@@ -7,6 +7,7 @@ import tdd.vendingMachine.impl.BasicProduct;
 import tdd.vendingMachine.impl.BasicShelve;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ShelveTest {
@@ -29,5 +30,7 @@ public class ShelveTest {
 
         assertThat(product.getName()).isEqualTo("Product 2");
         assertThat(product.getPrice()).isEqualTo("2.0");
+
+        assertFalse(shelve.hasProducts());
     }
 }
