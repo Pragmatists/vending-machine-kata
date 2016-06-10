@@ -4,17 +4,17 @@ import org.junit.Test;
 import tdd.vendingMachine.core.ProductName;
 import tdd.vendingMachine.core.ProductPrice;
 import tdd.vendingMachine.impl.BasicProduct;
-import tdd.vendingMachine.impl.BasicShelve;
+import tdd.vendingMachine.impl.BasicShelf;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class ShelveTest {
+public class ShelfTest {
 
     @Test
     public void shelve_should_contain_products() {
-        BasicShelve shelve = new BasicShelve();
+        BasicShelf shelve = new BasicShelf();
 
         shelve.put(new BasicProduct(ProductName.valueOf("Product 1"), ProductPrice.valueOf("1")))
             .put(new BasicProduct(ProductName.valueOf("Product 2"), ProductPrice.valueOf("2")));

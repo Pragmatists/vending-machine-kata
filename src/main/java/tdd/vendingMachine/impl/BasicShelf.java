@@ -1,16 +1,16 @@
 package tdd.vendingMachine.impl;
 
-import tdd.vendingMachine.core.Shelve;
+import tdd.vendingMachine.core.Shelf;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public class BasicShelve implements Shelve<BasicProduct> {
+public class BasicShelf implements Shelf<BasicProduct> {
 
     private final Deque<BasicProduct> products = new ArrayDeque<>();
 
     @Override
-    public Shelve<BasicProduct> put(BasicProduct product) {
+    public Shelf<BasicProduct> put(BasicProduct product) {
         products.add(product);
         return this;
     }
