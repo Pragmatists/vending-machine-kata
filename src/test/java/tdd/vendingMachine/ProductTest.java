@@ -1,7 +1,9 @@
 package tdd.vendingMachine;
 
 import org.junit.Test;
+import tdd.vendingMachine.core.IllegalProductNameException;
 import tdd.vendingMachine.core.IllegalProductPriceException;
+import tdd.vendingMachine.core.ProductName;
 import tdd.vendingMachine.core.ProductPrice;
 
 public class ProductTest {
@@ -22,5 +24,14 @@ public class ProductTest {
     @Test(expected = NumberFormatException.class)
     public void produce_price_should_accept_only_valid_values() {
         ProductPrice.valueOf("abra cadabra");
+    }
+
+    @Test(expected = IllegalProductNameException.class)
+    public void product_name_should_not_be_null_or_empty() {
+        try {
+            ProductName.valueOf(null);
+        } catch (IllegalProductNameException ignored) {
+            ProductName.valueOf("");
+        }
     }
 }
