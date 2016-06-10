@@ -57,27 +57,27 @@ case "`uname`" in
            #
            # Look for the Apple JDKs first to preserve the existing behaviour, and then look
            # for the new JDKs provided by Oracle.
-           # 
+           #
            if [ -z "$JAVA_HOME" ] && [ -L /System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK ] ; then
              #
              # Apple JDKs
              #
              export JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Home
            fi
-           
+
            if [ -z "$JAVA_HOME" ] && [ -L /System/Library/Java/JavaVirtualMachines/CurrentJDK ] ; then
              #
              # Apple JDKs
              #
              export JAVA_HOME=/System/Library/Java/JavaVirtualMachines/CurrentJDK/Contents/Home
            fi
-             
+
            if [ -z "$JAVA_HOME" ] && [ -L "/Library/Java/JavaVirtualMachines/CurrentJDK" ] ; then
              #
              # Oracle JDKs
              #
              export JAVA_HOME=/Library/Java/JavaVirtualMachines/CurrentJDK/Contents/Home
-           fi           
+           fi
 
            if [ -z "$JAVA_HOME" ] && [ -x "/usr/libexec/java_home" ]; then
              #
@@ -195,7 +195,7 @@ if $cygwin; then
 fi
 
 # traverses directory structure from process work directory to filesystem root
-# first directory with .mvn subdirectory is considered project base directory
+# first directory with .mvn subdirectory is considered project core directory
 find_maven_basedir() {
   local basedir=$(pwd)
   local wdir=$(pwd)
@@ -219,7 +219,7 @@ concat_lines() {
 export MAVEN_PROJECTBASEDIR=${MAVEN_BASEDIR:-$(find_maven_basedir)}
 MAVEN_OPTS="$(concat_lines "$MAVEN_PROJECTBASEDIR/.mvn/jvm.config") $MAVEN_OPTS"
 
-# Provide a "standardized" way to retrieve the CLI args that will 
+# Provide a "standardized" way to retrieve the CLI args that will
 # work with both Windows and non-Windows executions.
 MAVEN_CMD_LINE_ARGS="$MAVEN_CONFIG $@"
 export MAVEN_CMD_LINE_ARGS
