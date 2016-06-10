@@ -23,4 +23,8 @@ public class ProductPrice {
 
         return new ProductPrice(bigDecimal);
     }
+
+    public String value() {
+        return value.toString();
+    }
 }

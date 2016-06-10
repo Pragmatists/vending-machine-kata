@@ -5,6 +5,9 @@ import tdd.vendingMachine.core.IllegalProductNameException;
 import tdd.vendingMachine.core.IllegalProductPriceException;
 import tdd.vendingMachine.core.ProductName;
 import tdd.vendingMachine.core.ProductPrice;
+import tdd.vendingMachine.impl.BasicProduct;
+
+import static org.junit.Assert.assertTrue;
 
 public class ProductTest {
 
@@ -33,5 +36,15 @@ public class ProductTest {
         } catch (IllegalProductNameException ignored) {
             ProductName.valueOf("");
         }
+    }
+
+    @Test
+    public void product_should_have_name_and_price() {
+        String productName = "Basic Product";
+        String productPrice = "10.0";
+
+        BasicProduct product = new BasicProduct(ProductName.valueOf(productName), ProductPrice.valueOf(productPrice));
+        assertTrue(productName.equals(product.getName()));
+        assertTrue(productPrice.equals(product.getPrice()));
     }
 }

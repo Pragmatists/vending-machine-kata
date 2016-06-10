@@ -15,4 +15,8 @@ public class ProductName {
 
         return new ProductName(value);
     }
+
+    public String value() {
+        return value;
+    }
 }
