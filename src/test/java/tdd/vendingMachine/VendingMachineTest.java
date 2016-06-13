@@ -74,4 +74,20 @@ public class VendingMachineTest {
         assertThat(iterator.next()).isEqualTo(CurrencyUnit.valueOf("2"));
         assertThat(iterator.next()).isEqualTo(CurrencyUnit.valueOf("5"));
     }
+
+    @Test
+    public void should_be_able_to_commit_transaction() {
+        VendingMachine vendingMachine = new VendingMachine()
+            .addAllowedDenomination(CurrencyUnit.valueOf("2"))
+            .addAllowedDenomination(CurrencyUnit.valueOf("5"))
+            .addShelf(new BasicShelf(ProductName.valueOf("Product 1"), ProductPrice.valueOf("10")).charge(10));
+
+        PurchaseResult purchaseResult = vendingMachine.selectShelf(0)
+            .insertCoin(CurrencyUnit.valueOf("5"))
+            .insertCoin(CurrencyUnit.valueOf("2"))
+            .insertCoin(CurrencyUnit.valueOf("5"))
+            .commit();
+
+        assertThat(purchaseResult).isNotNull();
+    }
 }

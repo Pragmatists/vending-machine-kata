@@ -1,6 +1,7 @@
 package tdd.vendingMachine.impl;
 
 import tdd.vendingMachine.core.CurrencyUnit;
+import tdd.vendingMachine.core.PurchaseResult;
 import tdd.vendingMachine.core.Shelf;
 import tdd.vendingMachine.core.Transaction;
 
@@ -52,5 +53,10 @@ public class BasicTransaction implements Transaction {
         insertedCoinsSum = CurrencyUnit.zero();
 
         return result;
+    }
+
+    @Override
+    public PurchaseResult commit() {
+        return new BasicPurchaseResult();
     }
 }

@@ -6,4 +6,5 @@ public interface Transaction {
     Transaction insertCoin(CurrencyUnit currencyUnit);
     CurrencyUnit getShortFall();
     Collection<CurrencyUnit> rollback();
+    PurchaseResult commit();
 }
