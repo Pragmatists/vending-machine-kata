@@ -20,6 +20,11 @@ public class BasicShelf implements Shelf {
     }
 
     @Override
+    public int amount() {
+        return amountOfProducts;
+    }
+
+    @Override
     public boolean hasProducts() {
         return amountOfProducts > 0;
     }

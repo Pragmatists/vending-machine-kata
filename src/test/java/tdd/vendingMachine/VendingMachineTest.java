@@ -89,14 +89,14 @@ public class VendingMachineTest {
     @Test
     public void should_be_able_to_commit_valid_transaction() {
         VendingMachine vendingMachine = new VendingMachine()
-            .addAllowedDenomination(CurrencyUnit.valueOf("2"))
+            .addAllowedDenomination(CurrencyUnit.valueOf("2.5"))
             .addAllowedDenomination(CurrencyUnit.valueOf("5"))
             .addShelf(new BasicShelf(ProductName.valueOf("Product 1"), ProductPrice.valueOf("10")).charge(10));
 
         PurchaseResult purchaseResult = vendingMachine.selectShelf(0)
             .insertCoin(CurrencyUnit.valueOf("5"))
-            .insertCoin(CurrencyUnit.valueOf("2"))
-            .insertCoin(CurrencyUnit.valueOf("5"))
+            .insertCoin(CurrencyUnit.valueOf("2.5"))
+            .insertCoin(CurrencyUnit.valueOf("2.5"))
             .commit();
 
         assertThat(purchaseResult).isNotNull();
@@ -105,5 +105,16 @@ public class VendingMachineTest {
         Collection<CurrencyUnit> change = purchaseResult.getChange();
 
         assertThat(change).isNotNull();
+        assertThat(change.size()).isZero();
+
+        Product product = purchaseResult.getProduct();
+
+        assertThat(product).isNotNull();
+        assertThat(product.getName()).isEqualTo(ProductName.valueOf("Product 1"));
+        assertThat(product.getPrice()).isEqualTo(ProductPrice.valueOf("10"));
+
+        Shelf shelf = vendingMachine.getShelves().iterator().next();
+
+        assertThat(shelf.amount()).isEqualTo(9);
     }
 }
