@@ -40,7 +40,7 @@ public class VendingMachine {
 
     public Transaction selectShelf(int index) {
         if (shelves.size() > index) {
-            return new BasicTransaction(shelves.get(index));
+            return new BasicTransaction(shelves.get(index), allowedDenominations);
         }
 
         throw new IndexOutOfBoundsException("There is no shelf at index " + index);

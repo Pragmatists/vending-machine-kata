@@ -29,6 +29,16 @@ public class VendingMachineTest {
         assertThat(vendingMachine.getShelves().size()).isEqualTo(2);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void should_throw_exception_when_inserted_not_allowed_coin() {
+        VendingMachine vendingMachine = new VendingMachine()
+            .addAllowedDenomination(CurrencyUnit.valueOf("2.5"))
+            .addAllowedDenomination(CurrencyUnit.valueOf("5"))
+            .addShelf(new BasicShelf(ProductName.valueOf("Product 1"), ProductPrice.valueOf("10")).charge(1));
+
+        vendingMachine.selectShelf(0).insertCoin(CurrencyUnit.valueOf("2"));
+    }
+
     @Test
     public void should_start_transaction_on_shelf_selection() {
         VendingMachine vendingMachine = new VendingMachine()

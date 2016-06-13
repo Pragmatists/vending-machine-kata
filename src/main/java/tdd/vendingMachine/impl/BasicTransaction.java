@@ -1,31 +1,32 @@
 package tdd.vendingMachine.impl;
 
-import tdd.vendingMachine.core.CurrencyUnit;
-import tdd.vendingMachine.core.PurchaseResult;
-import tdd.vendingMachine.core.Shelf;
-import tdd.vendingMachine.core.Transaction;
+import tdd.vendingMachine.core.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class BasicTransaction implements Transaction {
 
     private final Shelf shelf;
+    private final Set<CurrencyUnit> allowedDenominations;
     private final List<CurrencyUnit> insertedCoins = new ArrayList<>();
     private CurrencyUnit insertedCoinsSum = CurrencyUnit.zero();
 
-    public BasicTransaction(Shelf shelf) {
+    public BasicTransaction(Shelf shelf, Set<CurrencyUnit> allowedDenominations) {
         if (shelf == null || !shelf.hasProducts()) {
             throw new IllegalArgumentException("Transaction should be created using only correct shelf with products");
         }
 
         this.shelf = shelf;
+        this.allowedDenominations = allowedDenominations != null ? allowedDenominations : new HashSet<>();
     }
 
     @Override
     public Transaction insertCoin(CurrencyUnit currencyUnit) {
         if (currencyUnit != null) {
+            if (!allowedDenominations.isEmpty() && !allowedDenominations.contains(currencyUnit)) {
+                throw new IllegalArgumentException("Coin of value '" + currencyUnit.value() + "' is not allowed to accept");
+            }
+
             insertedCoins.add(currencyUnit);
             insertedCoinsSum = insertedCoinsSum.add(currencyUnit);
             return this;
