@@ -48,4 +48,8 @@ public class VendingMachine {
 
         throw new IndexOutOfBoundsException("There is no shelf at index " + index);
     }
+
+    public CurrencyUnit moneyAmount() {
+        return cashHandler.amount();
+    }
 }

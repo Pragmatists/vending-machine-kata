@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 public class CurrencyUnit {
 
     private final BigDecimal amount;
+    private boolean positive;
 
     private CurrencyUnit(BigDecimal amount) {
         this.amount = amount;
@@ -50,12 +51,24 @@ public class CurrencyUnit {
         return value();
     }
 
+    public Integer toInteger() {
+        return amount.intValue();
+    }
+
+    public boolean isPositive() {
+        return amount.signum() == 1;
+    }
+
     public boolean isNegative() {
         return amount.signum() == -1;
     }
 
     public boolean isZero() {
         return amount.signum() == 0;
+    }
+
+    public boolean greaterThan(CurrencyUnit value) {
+        return amount.compareTo(value.amount) > 0;
     }
 
     public boolean greaterOrEqualThan(CurrencyUnit value) {
@@ -68,5 +81,13 @@ public class CurrencyUnit {
 
     public CurrencyUnit subtract(CurrencyUnit value) {
         return new CurrencyUnit(amount.subtract(value.amount));
+    }
+
+    public CurrencyUnit multiply(Integer value) {
+        return new CurrencyUnit(amount.multiply(new BigDecimal(value)));
+    }
+
+    public CurrencyUnit divide(CurrencyUnit value) {
+        return new CurrencyUnit(amount.divide(value.amount));
     }
 }

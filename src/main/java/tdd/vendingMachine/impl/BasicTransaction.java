@@ -65,7 +65,10 @@ public class BasicTransaction implements Transaction {
     @Override
     public PurchaseResult commit() {
         if (getShortFall().isZero()) {
-            Collection<CurrencyUnit> change = cashHandler.withdraw();
+            cashHandler.deposit(insertedCoins);
+
+            Collection<CurrencyUnit> change = insertedCoinsSum.greaterThan(shelf.getProductPrice())
+                ? cashHandler.withdraw(insertedCoinsSum.subtract(shelf.getProductPrice())) : new ArrayList<>();
 
             try {
                 return new BasicPurchaseResult(shelf.withdraw() ,change);

@@ -117,4 +117,29 @@ public class VendingMachineTest {
 
         assertThat(shelf.amount()).isEqualTo(9);
     }
+
+    @Test
+    public void should_be_able_to_give_right_change() {
+        VendingMachine vendingMachine = new VendingMachine()
+            .addAllowedDenomination(CurrencyUnit.valueOf("2.5"))
+            .addAllowedDenomination(CurrencyUnit.valueOf("5"))
+            .addShelf(new BasicShelf(ProductName.valueOf("Product 1"), ProductPrice.valueOf("10")).charge(10));
+
+        assertThat(vendingMachine.moneyAmount()).isEqualTo(CurrencyUnit.zero());
+
+        PurchaseResult purchaseResult = vendingMachine.selectShelf(0)
+            .insertCoin(CurrencyUnit.valueOf("5"))
+            .insertCoin(CurrencyUnit.valueOf("2.5"))
+            .insertCoin(CurrencyUnit.valueOf("5"))
+            .commit();
+
+        assertThat(purchaseResult.getProduct()).isNotNull();
+
+        Collection<CurrencyUnit> change = purchaseResult.getChange();
+        assertThat(change.size()).isEqualTo(1);
+
+        Iterator<CurrencyUnit> iterator = change.iterator();
+        assertThat(iterator.next()).isEqualTo(CurrencyUnit.valueOf("2.5"));
+        assertThat(vendingMachine.moneyAmount()).isEqualTo(CurrencyUnit.valueOf("10"));
+    }
 }
