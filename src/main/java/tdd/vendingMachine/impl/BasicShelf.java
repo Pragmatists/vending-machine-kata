@@ -1,27 +1,39 @@
 package tdd.vendingMachine.impl;
 
+import tdd.vendingMachine.core.Product;
+import tdd.vendingMachine.core.ProductName;
+import tdd.vendingMachine.core.ProductPrice;
 import tdd.vendingMachine.core.Shelf;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+public class BasicShelf implements Shelf {
 
-public class BasicShelf implements Shelf<BasicProduct> {
+    private final ProductName productName;
+    private final ProductPrice productPrice;
+    private int amountOfProducts = 0;
 
-    private final Deque<BasicProduct> products = new ArrayDeque<>();
+    public BasicShelf(ProductName productName, ProductPrice productPrice) {
+        this.productName = productName;
+        this.productPrice = productPrice;
+    }
 
     @Override
-    public Shelf<BasicProduct> put(BasicProduct product) {
-        products.add(product);
+    public Shelf charge(int amountOfProducts) {
+        this.amountOfProducts += amountOfProducts;
         return this;
     }
 
     @Override
     public boolean hasProducts() {
-        return !products.isEmpty();
+        return amountOfProducts > 0;
     }
 
     @Override
-    public BasicProduct withdraw() {
-        return products.poll();
+    public Product withdraw() {
+        if (amountOfProducts > 0) {
+            --amountOfProducts;
+            return new BasicProduct(productName, productPrice);
+        } else {
+            throw new IndexOutOfBoundsException("Shelf does not have any products");
+        }
     }
 }

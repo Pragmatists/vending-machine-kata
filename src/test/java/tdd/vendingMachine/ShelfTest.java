@@ -1,9 +1,9 @@
 package tdd.vendingMachine;
 
 import org.junit.Test;
+import tdd.vendingMachine.core.Product;
 import tdd.vendingMachine.core.ProductName;
 import tdd.vendingMachine.core.ProductPrice;
-import tdd.vendingMachine.impl.BasicProduct;
 import tdd.vendingMachine.impl.BasicShelf;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,22 +14,20 @@ public class ShelfTest {
 
     @Test
     public void shelve_should_contain_products() {
-        BasicShelf shelve = new BasicShelf();
-
-        shelve.put(new BasicProduct(ProductName.valueOf("Product 1"), ProductPrice.valueOf("1")))
-            .put(new BasicProduct(ProductName.valueOf("Product 2"), ProductPrice.valueOf("2")));
+        BasicShelf shelve = new BasicShelf(ProductName.valueOf("Product 1"), ProductPrice.valueOf("1"));
+        shelve.charge(2);
 
         assertTrue(shelve.hasProducts());
 
-        BasicProduct product = shelve.withdraw();
+        Product product = shelve.withdraw();
 
-        assertThat(product.getName()).isEqualTo("Product 1");
-        assertThat(product.getPrice()).isEqualTo("1.0");
+        assertThat(product.getName()).isEqualTo(ProductName.valueOf("Product 1"));
+        assertThat(product.getPrice()).isEqualTo(ProductPrice.valueOf("1"));
 
         product = shelve.withdraw();
 
-        assertThat(product.getName()).isEqualTo("Product 2");
-        assertThat(product.getPrice()).isEqualTo("2.0");
+        assertThat(product.getName()).isEqualTo(ProductName.valueOf("Product 1"));
+        assertThat(product.getPrice()).isEqualTo(ProductPrice.valueOf("1"));
 
         assertFalse(shelve.hasProducts());
     }

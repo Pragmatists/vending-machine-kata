@@ -23,6 +23,25 @@ public class CurrencyUnit {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        CurrencyUnit that = (CurrencyUnit) obj;
+        return amount != null ? amount.equals(that.amount) : that.amount == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return amount != null ? amount.hashCode() : 0;
+    }
+
+    @Override
     public String toString() {
         return value();
     }

@@ -1,7 +1,7 @@
 package tdd.vendingMachine.core;
 
-public interface Shelf<T extends Product> {
-    Shelf<T> put(T product);
+public interface Shelf {
+    Shelf charge(int amountOfProducts);
     boolean hasProducts();
-    T withdraw();
+    Product withdraw();
 }

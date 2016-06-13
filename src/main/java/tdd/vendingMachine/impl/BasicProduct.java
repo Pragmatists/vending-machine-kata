@@ -14,12 +14,12 @@ public class BasicProduct implements Product {
     }
 
     @Override
-    public String getName() {
-        return productName.value();
+    public ProductName getName() {
+        return productName;
     }
 
     @Override
-    public String getPrice() {
-        return productPrice.value();
+    public ProductPrice getPrice() {
+        return productPrice;
     }
 }
