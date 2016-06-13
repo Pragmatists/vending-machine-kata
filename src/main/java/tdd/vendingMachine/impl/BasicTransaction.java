@@ -5,6 +5,7 @@ import tdd.vendingMachine.core.Shelf;
 import tdd.vendingMachine.core.Transaction;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class BasicTransaction implements Transaction {
@@ -41,5 +42,15 @@ public class BasicTransaction implements Transaction {
         }
 
         return CurrencyUnit.zero();
+    }
+
+    @Override
+    public Collection<CurrencyUnit> rollback() {
+        Collection<CurrencyUnit> result = new ArrayList<>(insertedCoins);
+
+        insertedCoins.clear();
+        insertedCoinsSum = CurrencyUnit.zero();
+
+        return result;
     }
 }
