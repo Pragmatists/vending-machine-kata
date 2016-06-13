@@ -26,7 +26,7 @@ public class BasicCashHandlerWithdrawContext {
         }
     }
 
-    boolean equals(CurrencyUnit value) {
+    boolean equalsWithCurrencyUnit(CurrencyUnit value) {
         return sum.equals(value);
     }
 

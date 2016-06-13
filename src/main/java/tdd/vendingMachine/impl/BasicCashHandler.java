@@ -76,7 +76,7 @@ public class BasicCashHandler implements CashHandler {
         Iterator<Map.Entry<CurrencyUnit, Integer>> iterator = denominations.entrySet().iterator();
         BasicCashHandlerWithdrawContext change = withdrawStartsWith(value, new BasicCashHandlerWithdrawContext(), iterator);
 
-        return change.equals(value) ? change : change.clear();
+        return change.equalsWithCurrencyUnit(value) ? change : change.clear();
     }
 
     private BasicCashHandlerWithdrawContext withdrawStartsWith(CurrencyUnit value, BasicCashHandlerWithdrawContext change,
@@ -94,7 +94,7 @@ public class BasicCashHandler implements CashHandler {
                     change.add(denomination.getKey(), denomination.getValue());
                 }
 
-                if (change.equals(value)) {
+                if (change.equalsWithCurrencyUnit(value)) {
                     return change;
                 }
             }

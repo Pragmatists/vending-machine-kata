@@ -144,7 +144,7 @@ public class VendingMachineTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void sould_not_withdraw_if_could_not_give_change() {
+    public void should_not_withdraw_if_could_not_give_change() {
         VendingMachine vendingMachine = new VendingMachine()
             .addAllowedDenomination(CurrencyUnit.valueOf("0.5"))
             .addAllowedDenomination(CurrencyUnit.valueOf("1"))
