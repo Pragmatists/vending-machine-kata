@@ -7,4 +7,5 @@ public interface Transaction {
     CurrencyUnit getShortFall();
     Collection<CurrencyUnit> rollback();
     PurchaseResult commit();
+    CurrencyUnit getProductPrice();
 }

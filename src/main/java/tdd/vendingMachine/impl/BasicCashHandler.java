@@ -31,7 +31,13 @@ public class BasicCashHandler implements CashHandler {
     @Override
     public Collection<CurrencyUnit> withdraw(CurrencyUnit amount) {
         if (amount().isPositive()) {
-            return cleanExtractedDenominations(getChange(amount, this.denominations).getDenominations());
+            BasicCashHandlerWithdrawContext context = withdraw(amount, this.denominations);
+
+            if (context.getSum().equals(amount)) {
+                return cleanExtractedDenominations(context.getDenominations());
+            } else {
+                throw new IllegalStateException("Unable to withdraw " + amount);
+            }
         }
 
         return new ArrayList<>();
@@ -66,7 +72,7 @@ public class BasicCashHandler implements CashHandler {
         return denominations;
     }
 
-    private BasicCashHandlerWithdrawContext getChange(CurrencyUnit value, Map<CurrencyUnit, Integer> denominations) {
+    private BasicCashHandlerWithdrawContext withdraw(CurrencyUnit value, Map<CurrencyUnit, Integer> denominations) {
         Iterator<Map.Entry<CurrencyUnit, Integer>> iterator = denominations.entrySet().iterator();
         BasicCashHandlerWithdrawContext change = withdrawStartsWith(value, new BasicCashHandlerWithdrawContext(), iterator);
 

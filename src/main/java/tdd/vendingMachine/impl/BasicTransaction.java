@@ -71,7 +71,7 @@ public class BasicTransaction implements Transaction {
             Collection<CurrencyUnit> change;
 
             try {
-                change = insertedCoinsSum.greaterThan(shelf.getProductPrice())
+                change = insertedCoinsSum.greaterOrEqualThan(shelf.getProductPrice())
                     ? cashHandler.withdraw(insertedCoinsSum.subtract(shelf.getProductPrice()))
                     : new ArrayList<>();
             } catch (Exception e) {
@@ -88,5 +88,10 @@ public class BasicTransaction implements Transaction {
         }
 
         throw new IllegalStateException("Do not have enough money to purchase a product");
+    }
+
+    @Override
+    public CurrencyUnit getProductPrice() {
+        return shelf.getProductPrice();
     }
 }

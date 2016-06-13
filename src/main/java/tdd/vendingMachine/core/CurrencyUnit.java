@@ -15,7 +15,7 @@ public class CurrencyUnit implements Comparable<CurrencyUnit> {
             throw new IllegalArgumentException("Value should not be null, empty or non number");
         }
 
-        return new CurrencyUnit(new BigDecimal(value).setScale(1, BigDecimal.ROUND_FLOOR));
+        return new CurrencyUnit(new BigDecimal(value).setScale(2, BigDecimal.ROUND_FLOOR));
     }
 
     public static CurrencyUnit zero() {

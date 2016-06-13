@@ -5,5 +5,6 @@ public interface Shelf {
     int amount();
     boolean hasProducts();
     Product withdraw();
+    String getProductName();
     CurrencyUnit getProductPrice();
 }

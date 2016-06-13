@@ -1,16 +1,15 @@
 package tdd.vendingMachine;
 
-import tdd.vendingMachine.core.CashHandler;
-import tdd.vendingMachine.core.CurrencyUnit;
-import tdd.vendingMachine.core.Shelf;
-import tdd.vendingMachine.core.Transaction;
+import tdd.vendingMachine.core.*;
 import tdd.vendingMachine.impl.BasicCashHandler;
+import tdd.vendingMachine.impl.BasicDisplay;
 import tdd.vendingMachine.impl.BasicTransaction;
 
 import java.util.*;
 
-public class VendingMachine {
+public class VendingMachine implements Display.Observer {
 
+    private final Display display = new BasicDisplay(this);
     private final CashHandler cashHandler = new BasicCashHandler();
     private final Set<CurrencyUnit> allowedDenominations = new HashSet<>();
     private final List<Shelf> shelves = new ArrayList<>();
@@ -42,7 +41,7 @@ public class VendingMachine {
     }
 
     public Transaction selectShelf(int index) {
-        if (shelves.size() > index) {
+        if (index >= 0 && shelves.size() > index) {
             return new BasicTransaction(shelves.get(index), cashHandler, allowedDenominations);
         }
 
@@ -51,5 +50,14 @@ public class VendingMachine {
 
     public CurrencyUnit moneyAmount() {
         return cashHandler.amount();
+    }
+
+    @Override
+    public Transaction shelfHasBeenSelected(int index) {
+        return selectShelf(index);
+    }
+
+    void run() {
+        display.displayShelves(shelves);
     }
 }

@@ -40,6 +40,11 @@ public class BasicShelf implements Shelf {
     }
 
     @Override
+    public String getProductName() {
+        return productName.value();
+    }
+
+    @Override
     public CurrencyUnit getProductPrice() {
         return productPrice.toCurrency();
     }

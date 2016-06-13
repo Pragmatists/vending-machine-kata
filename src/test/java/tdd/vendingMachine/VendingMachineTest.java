@@ -142,4 +142,19 @@ public class VendingMachineTest {
         assertThat(iterator.next()).isEqualTo(CurrencyUnit.valueOf("2.5"));
         assertThat(vendingMachine.moneyAmount()).isEqualTo(CurrencyUnit.valueOf("10"));
     }
+
+    @Test(expected = IllegalStateException.class)
+    public void sould_not_withdraw_if_could_not_give_change() {
+        VendingMachine vendingMachine = new VendingMachine()
+            .addAllowedDenomination(CurrencyUnit.valueOf("0.5"))
+            .addAllowedDenomination(CurrencyUnit.valueOf("1"))
+            .addShelf(new BasicShelf(ProductName.valueOf("Product 1"), ProductPrice.valueOf("1.5")).charge(1));
+
+        assertThat(vendingMachine.moneyAmount()).isEqualTo(CurrencyUnit.zero());
+
+        assertThat(vendingMachine.selectShelf(0)
+            .insertCoin(CurrencyUnit.valueOf("1"))
+            .insertCoin(CurrencyUnit.valueOf("1"))
+            .commit().getChange().size()).isZero();
+    }
 }
