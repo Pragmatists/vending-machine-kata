@@ -41,4 +41,8 @@ public class ProductPrice {
     public String value() {
         return currencyUnit.value();
     }
+
+    public CurrencyUnit toCurrency() {
+        return currencyUnit;
+    }
 }

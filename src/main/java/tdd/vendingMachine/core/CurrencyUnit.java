@@ -18,6 +18,10 @@ public class CurrencyUnit {
         return new CurrencyUnit(new BigDecimal(value).setScale(1, BigDecimal.ROUND_FLOOR));
     }
 
+    public static CurrencyUnit zero() {
+        return CurrencyUnit.valueOf("0");
+    }
+
     public String value() {
         return amount.toString();
     }
@@ -52,5 +56,17 @@ public class CurrencyUnit {
 
     public boolean isZero() {
         return amount.signum() == 0;
+    }
+
+    public boolean greaterOrEqualThan(CurrencyUnit value) {
+        return amount.compareTo(value.amount) >= 0;
+    }
+
+    public CurrencyUnit add(CurrencyUnit value) {
+        return new CurrencyUnit(amount.add(value.amount));
+    }
+
+    public CurrencyUnit subtract(CurrencyUnit value) {
+        return new CurrencyUnit(amount.subtract(value.amount));
     }
 }

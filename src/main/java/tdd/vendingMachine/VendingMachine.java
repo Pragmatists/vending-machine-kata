@@ -3,7 +3,6 @@ package tdd.vendingMachine;
 import tdd.vendingMachine.core.CurrencyUnit;
 import tdd.vendingMachine.core.Shelf;
 import tdd.vendingMachine.core.Transaction;
-import tdd.vendingMachine.impl.BasicShelf;
 import tdd.vendingMachine.impl.BasicTransaction;
 
 import java.util.*;
@@ -26,7 +25,7 @@ public class VendingMachine {
         return Collections.unmodifiableSet(allowedDenominations);
     }
 
-    public VendingMachine addShelf(BasicShelf shelf) {
+    public VendingMachine addShelf(Shelf shelf) {
         if (shelf != null) {
             shelves.add(shelf);
             return this;

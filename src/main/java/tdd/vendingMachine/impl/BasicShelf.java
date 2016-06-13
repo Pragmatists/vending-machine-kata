@@ -1,9 +1,6 @@
 package tdd.vendingMachine.impl;
 
-import tdd.vendingMachine.core.Product;
-import tdd.vendingMachine.core.ProductName;
-import tdd.vendingMachine.core.ProductPrice;
-import tdd.vendingMachine.core.Shelf;
+import tdd.vendingMachine.core.*;
 
 public class BasicShelf implements Shelf {
 
@@ -35,5 +32,10 @@ public class BasicShelf implements Shelf {
         } else {
             throw new IndexOutOfBoundsException("Shelf does not have any products");
         }
+    }
+
+    @Override
+    public CurrencyUnit getProductPrice() {
+        return productPrice.toCurrency();
     }
 }
