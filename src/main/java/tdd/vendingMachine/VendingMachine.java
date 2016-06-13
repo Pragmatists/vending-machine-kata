@@ -1,14 +1,17 @@
 package tdd.vendingMachine;
 
+import tdd.vendingMachine.core.CashHandler;
 import tdd.vendingMachine.core.CurrencyUnit;
 import tdd.vendingMachine.core.Shelf;
 import tdd.vendingMachine.core.Transaction;
+import tdd.vendingMachine.impl.BasicCashHandler;
 import tdd.vendingMachine.impl.BasicTransaction;
 
 import java.util.*;
 
 public class VendingMachine {
 
+    private final CashHandler cashHandler = new BasicCashHandler();
     private final Set<CurrencyUnit> allowedDenominations = new HashSet<>();
     private final List<Shelf> shelves = new ArrayList<>();
 
@@ -40,7 +43,7 @@ public class VendingMachine {
 
     public Transaction selectShelf(int index) {
         if (shelves.size() > index) {
-            return new BasicTransaction(shelves.get(index), allowedDenominations);
+            return new BasicTransaction(shelves.get(index), cashHandler, allowedDenominations);
         }
 
         throw new IndexOutOfBoundsException("There is no shelf at index " + index);

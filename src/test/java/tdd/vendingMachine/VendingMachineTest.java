@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class VendingMachineTest {
 
@@ -86,7 +87,7 @@ public class VendingMachineTest {
     }
 
     @Test
-    public void should_be_able_to_commit_transaction() {
+    public void should_be_able_to_commit_valid_transaction() {
         VendingMachine vendingMachine = new VendingMachine()
             .addAllowedDenomination(CurrencyUnit.valueOf("2"))
             .addAllowedDenomination(CurrencyUnit.valueOf("5"))
@@ -99,5 +100,10 @@ public class VendingMachineTest {
             .commit();
 
         assertThat(purchaseResult).isNotNull();
+        assertTrue(purchaseResult.isSuccessful());
+
+        Collection<CurrencyUnit> change = purchaseResult.getChange();
+
+        assertThat(change).isNotNull();
     }
 }
