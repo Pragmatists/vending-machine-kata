@@ -7,7 +7,7 @@ import java.util.*;
 
 public class BasicCashHandler implements CashHandler {
 
-    private final Map<CurrencyUnit, Integer> denominations = new HashMap<>();
+    private final Map<CurrencyUnit, Integer> denominations = new TreeMap<>((left, right) -> right.compareTo(left));
 
     @Override
     public CashHandler deposit(Collection<CurrencyUnit> currencyUnits) {

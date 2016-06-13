@@ -2,10 +2,9 @@ package tdd.vendingMachine.core;
 
 import java.math.BigDecimal;
 
-public class CurrencyUnit {
+public class CurrencyUnit implements Comparable<CurrencyUnit> {
 
     private final BigDecimal amount;
-    private boolean positive;
 
     private CurrencyUnit(BigDecimal amount) {
         this.amount = amount;
@@ -25,6 +24,11 @@ public class CurrencyUnit {
 
     public String value() {
         return amount.toString();
+    }
+
+    @Override
+    public int compareTo(CurrencyUnit other) {
+        return amount.compareTo(other.amount);
     }
 
     @Override
