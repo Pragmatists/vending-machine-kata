@@ -2,7 +2,9 @@ package tdd.vendingMachine;
 
 import tdd.vendingMachine.core.CurrencyUnit;
 import tdd.vendingMachine.core.Shelf;
+import tdd.vendingMachine.core.Transaction;
 import tdd.vendingMachine.impl.BasicShelf;
+import tdd.vendingMachine.impl.BasicTransaction;
 
 import java.util.*;
 
@@ -35,5 +37,13 @@ public class VendingMachine {
 
     public List<Shelf> getShelves() {
         return Collections.unmodifiableList(shelves);
+    }
+
+    public Transaction selectShelf(int index) {
+        if (shelves.size() > index) {
+            return new BasicTransaction(shelves.get(index));
+        }
+
+        throw new IndexOutOfBoundsException("There is no shelf at index " + index);
     }
 }
