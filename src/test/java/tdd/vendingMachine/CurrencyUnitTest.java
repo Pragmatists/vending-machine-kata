@@ -2,7 +2,6 @@ package tdd.vendingMachine;
 
 import org.junit.Test;
 import tdd.vendingMachine.core.CurrencyUnit;
-import tdd.vendingMachine.core.IllegalCurrencyValueException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
@@ -10,17 +9,17 @@ import static org.junit.Assert.assertTrue;
 
 public class CurrencyUnitTest {
 
-    @Test(expected = IllegalCurrencyValueException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void currency_unit_should_not_be_null() {
         CurrencyUnit.valueOf(null);
     }
 
-    @Test(expected = IllegalCurrencyValueException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void currency_unit_should_not_be_empty() {
         CurrencyUnit.valueOf("");
     }
 
-    @Test(expected = IllegalCurrencyValueException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void currency_unit_should_not_be_non_number() {
         CurrencyUnit.valueOf("abra cadabra");
     }

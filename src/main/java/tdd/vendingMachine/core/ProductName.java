@@ -10,7 +10,7 @@ public class ProductName {
 
     public static ProductName valueOf(String value) {
         if (value == null || value.isEmpty()) {
-            throw new IllegalProductNameException("Product name should not be empty");
+            throw new IllegalArgumentException("Product name should not be empty");
         }
 
         return new ProductName(value);

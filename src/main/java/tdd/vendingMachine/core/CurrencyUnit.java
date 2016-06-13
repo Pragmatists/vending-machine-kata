@@ -12,7 +12,7 @@ public class CurrencyUnit {
 
     public static CurrencyUnit valueOf(String value) {
         if (value == null || value.isEmpty() || !value.matches("-?\\d+(\\.\\d+)?")) {
-            throw new IllegalCurrencyValueException("Value should not be null, empty or non number");
+            throw new IllegalArgumentException("Value should not be null, empty or non number");
         }
 
         return new CurrencyUnit(new BigDecimal(value).setScale(1, BigDecimal.ROUND_FLOOR));

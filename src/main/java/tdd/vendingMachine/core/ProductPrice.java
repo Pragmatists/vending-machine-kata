@@ -32,7 +32,7 @@ public class ProductPrice {
         CurrencyUnit currencyUnit = CurrencyUnit.valueOf(value);
 
         if (currencyUnit.isNegative() || currencyUnit.isZero()) {
-            throw new IllegalCurrencyValueException("Value should be greater than 0");
+            throw new IllegalArgumentException("Value should be greater than 0");
         }
 
         return new ProductPrice(currencyUnit);
