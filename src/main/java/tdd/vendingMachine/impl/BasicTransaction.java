@@ -29,7 +29,9 @@ public class BasicTransaction implements Transaction {
     @Override
     public Transaction insertCoin(CurrencyUnit currencyUnit) {
         if (currencyUnit != null) {
-            if (!allowedDenominations.isEmpty() && !allowedDenominations.contains(currencyUnit)) {
+            if (currencyUnit.isNegative() || currencyUnit.isZero() ||
+                (!allowedDenominations.isEmpty() && !allowedDenominations.contains(currencyUnit))) {
+
                 throw new IllegalArgumentException("Coin of value '" + currencyUnit.value() + "' is not allowed to accept");
             }
 
