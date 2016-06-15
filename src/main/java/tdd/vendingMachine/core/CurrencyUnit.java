@@ -92,6 +92,6 @@ public class CurrencyUnit implements Comparable<CurrencyUnit> {
     }
 
     public CurrencyUnit divide(CurrencyUnit value) {
-        return new CurrencyUnit(amount.divide(value.amount));
+        return new CurrencyUnit(amount.divide(value.amount, BigDecimal.ROUND_FLOOR));
     }
 }
