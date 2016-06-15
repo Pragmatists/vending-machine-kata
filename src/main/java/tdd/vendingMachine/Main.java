@@ -4,6 +4,7 @@ import tdd.vendingMachine.core.CurrencyUnit;
 import tdd.vendingMachine.core.ProductName;
 import tdd.vendingMachine.core.ProductPrice;
 import tdd.vendingMachine.impl.AllowedDenominations;
+import tdd.vendingMachine.impl.BasicCashHandler;
 import tdd.vendingMachine.impl.BasicShelf;
 
 import java.util.Random;
@@ -21,7 +22,7 @@ public class Main {
             .add(CurrencyUnit.valueOf("0.2"))
             .add(CurrencyUnit.valueOf("1"));
 
-        new VendingMachine(allowedDenominations)
+        new VendingMachine(new BasicCashHandler(), allowedDenominations)
             .addShelf(new BasicShelf(ProductName.valueOf("Water"), ProductPrice.valueOf("1.5")).charge(random.nextInt(10) + 1))
             .addShelf(new BasicShelf(ProductName.valueOf("Tropic Jiuce"), ProductPrice.valueOf("2.9")).charge(random.nextInt(10) + 1))
             .addShelf(new BasicShelf(ProductName.valueOf("Orange Jiuce"), ProductPrice.valueOf("4.8")).charge(random.nextInt(10) + 1))
