@@ -6,6 +6,7 @@ import tdd.vendingMachine.core.ProductPrice;
 import tdd.vendingMachine.impl.AllowedDenominations;
 import tdd.vendingMachine.impl.BasicCashHandler;
 import tdd.vendingMachine.impl.BasicShelf;
+import tdd.vendingMachine.impl.ShelveContainer;
 
 import java.util.Random;
 
@@ -22,13 +23,15 @@ public class Main {
             .add(CurrencyUnit.valueOf("0.2"))
             .add(CurrencyUnit.valueOf("1"));
 
-        new VendingMachine(new BasicCashHandler(), allowedDenominations)
-            .addShelf(new BasicShelf(ProductName.valueOf("Water"), ProductPrice.valueOf("1.5")).charge(random.nextInt(10) + 1))
-            .addShelf(new BasicShelf(ProductName.valueOf("Tropic Jiuce"), ProductPrice.valueOf("2.9")).charge(random.nextInt(10) + 1))
-            .addShelf(new BasicShelf(ProductName.valueOf("Orange Jiuce"), ProductPrice.valueOf("4.8")).charge(random.nextInt(10) + 1))
-            .addShelf(new BasicShelf(ProductName.valueOf("Mango Jiuce"), ProductPrice.valueOf("6")).charge(random.nextInt(10) + 1))
-            .addShelf(new BasicShelf(ProductName.valueOf("Chocolate Bar"), ProductPrice.valueOf("2")).charge(random.nextInt(10) + 1))
-            .addShelf(new BasicShelf(ProductName.valueOf("Crackers"), ProductPrice.valueOf("3.5")).charge(random.nextInt(10) + 1))
-            .run();
+        ShelveContainer shelveContainer = new ShelveContainer()
+            .add(new BasicShelf(ProductName.valueOf("Water"), ProductPrice.valueOf("1.5")).charge(random.nextInt(10) + 1))
+            .add(new BasicShelf(ProductName.valueOf("Tropic Jiuce"), ProductPrice.valueOf("2.9")).charge(random.nextInt(10) + 1))
+            .add(new BasicShelf(ProductName.valueOf("Orange Jiuce"), ProductPrice.valueOf("4.8")).charge(random.nextInt(10) + 1))
+            .add(new BasicShelf(ProductName.valueOf("Mango Jiuce"), ProductPrice.valueOf("6")).charge(random.nextInt(10) + 1))
+            .add(new BasicShelf(ProductName.valueOf("Chocolate Bar"), ProductPrice.valueOf("2")).charge(random.nextInt(10) + 1))
+            .add(new BasicShelf(ProductName.valueOf("Crackers"), ProductPrice.valueOf("3.5")).charge(random.nextInt(10) + 1));
+
+
+        new VendingMachine(new BasicCashHandler(), shelveContainer, allowedDenominations).run();
     }
 }

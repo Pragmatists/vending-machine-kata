@@ -1,6 +1,6 @@
 package tdd.vendingMachine.core;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface Display {
 
@@ -14,6 +14,6 @@ public interface Display {
         int readInt();
     }
 
-    void run(List<Shelf> shelves);
+    void run(Collection<Shelf> shelves);
     void displayProductPrice(CurrencyUnit productPrice);
 }

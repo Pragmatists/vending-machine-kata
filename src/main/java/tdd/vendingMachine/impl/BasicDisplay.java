@@ -4,7 +4,6 @@ import tdd.vendingMachine.core.*;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 public class BasicDisplay implements Display {
 
@@ -22,7 +21,7 @@ public class BasicDisplay implements Display {
     }
 
     @Override
-    public void run(List<Shelf> shelves) {
+    public void run(Collection<Shelf> shelves) {
         int shelfIndex = 0;
         System.out.println("Available shelves: ");
 
