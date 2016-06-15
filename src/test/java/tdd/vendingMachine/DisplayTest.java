@@ -34,7 +34,7 @@ public class DisplayTest {
     }
 
     @Test
-    public void abc() {
+    public void test_display_actions_flow() {
         BasicProduct product = new BasicProduct(ProductName.valueOf("Product 1"), ProductPrice.valueOf("1"));
 
         PurchaseResult purchaseResult = mock(PurchaseResult.class);
