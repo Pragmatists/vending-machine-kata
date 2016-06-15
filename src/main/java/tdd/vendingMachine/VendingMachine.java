@@ -9,7 +9,20 @@ import java.util.*;
 
 public class VendingMachine implements Display.Observer {
 
-    private final Display display = new BasicDisplay(this);
+    private final Display display = new BasicDisplay(this, new Display.Input() {
+        private final Scanner scanner = new Scanner(System.in);
+
+        @Override
+        public String readString() {
+            return scanner.next();
+        }
+
+        @Override
+        public int readInt() {
+            return scanner.nextInt();
+        }
+    });
+
     private final CashHandler cashHandler = new BasicCashHandler();
     private final Set<CurrencyUnit> allowedDenominations = new HashSet<>();
     private final List<Shelf> shelves = new ArrayList<>();
@@ -58,6 +71,6 @@ public class VendingMachine implements Display.Observer {
     }
 
     void run() {
-        display.displayShelves(shelves);
+        display.run(shelves);
     }
 }

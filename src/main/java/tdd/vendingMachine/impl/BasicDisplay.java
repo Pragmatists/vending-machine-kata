@@ -5,25 +5,24 @@ import tdd.vendingMachine.core.*;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Scanner;
 
 public class BasicDisplay implements Display {
 
     private final Observer observer;
-    private final Scanner scanner = new Scanner(System.in);
-    private Transaction transaction;
+    private final Input input;
+    private Transaction transaction = null;
 
-
-    public BasicDisplay(Observer observer) {
-        if (observer == null) {
-            throw new IllegalArgumentException("Display should be created with valid observer");
+    public BasicDisplay(Observer observer, Input input) {
+        if (observer == null || input == null) {
+            throw new IllegalArgumentException("Display should be created with valid observer and input source");
         }
 
         this.observer = observer;
+        this.input = input;
     }
 
     @Override
-    public void displayShelves(List<Shelf> shelves) {
+    public void run(List<Shelf> shelves) {
         int shelfIndex = 0;
         System.out.println("Available shelves: ");
 
@@ -41,18 +40,22 @@ public class BasicDisplay implements Display {
     }
 
     private void selectShelf() {
-        boolean shelfSelected = false;
-
-        while (!shelfSelected) {
+        while (transaction == null) {
             try {
-                System.out.print("Select shelve: ");
-                transaction = observer.shelfHasBeenSelected(scanner.nextInt() - 1);
-                shelfSelected = true;
+                System.out.print("Select shelve (-1 terminate): ");
+                int index = input.readInt();
+
+                if (index >= 0) {
+                    transaction = observer.shelfHasBeenSelected(index - 1);
+                } else {
+                    return;
+                }
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }
 
+        System.out.println();
         displayProductPrice(transaction.getProductPrice());
     }
 
@@ -63,7 +66,7 @@ public class BasicDisplay implements Display {
             System.out.print("Insert coin (0 - buy product, -1 - cancel): ");
 
             try {
-                CurrencyUnit currencyUnit = CurrencyUnit.valueOf(scanner.next());
+                CurrencyUnit currencyUnit = CurrencyUnit.valueOf(input.readString());
 
                 if (currencyUnit.isNegative()) {
                     System.out.println("Byuing process has been cancelled");
@@ -84,11 +87,15 @@ public class BasicDisplay implements Display {
     }
 
     private void rollbackTransaction() {
-        Collection<CurrencyUnit> rollback = transaction.rollback();
+        try {
+            Collection<CurrencyUnit> rollback = transaction.rollback();
 
-        if (!rollback.isEmpty()) {
-            System.out.print("Money returned: ");
-            displayListOfCurrencyUnits(rollback);
+            if (!rollback.isEmpty()) {
+                System.out.print("Money returned: ");
+                displayListOfCurrencyUnits(rollback);
+            }
+        } finally {
+            transaction = null;
         }
     }
 
@@ -104,6 +111,8 @@ public class BasicDisplay implements Display {
         } catch (IllegalStateException e) {
             System.out.println("Product buying has been cancelled, reason: " + e.getMessage());
             rollbackTransaction();
+        } finally {
+            transaction = null;
         }
     }
 

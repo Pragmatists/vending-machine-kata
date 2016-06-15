@@ -9,6 +9,11 @@ public interface Display {
         Transaction shelfHasBeenSelected(int index);
     }
 
-    void displayShelves(List<Shelf> shelves);
+    interface Input {
+        String readString();
+        int readInt();
+    }
+
+    void run(List<Shelf> shelves);
     void displayProductPrice(CurrencyUnit productPrice);
 }
