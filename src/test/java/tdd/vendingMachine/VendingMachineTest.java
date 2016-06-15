@@ -2,6 +2,7 @@ package tdd.vendingMachine;
 
 import org.junit.Test;
 import tdd.vendingMachine.core.*;
+import tdd.vendingMachine.impl.AllowedDenominations;
 import tdd.vendingMachine.impl.BasicShelf;
 
 import java.util.Collection;
@@ -9,21 +10,19 @@ import java.util.Iterator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class VendingMachineTest {
 
     @Test
-    public void should_configure_allowed_denominations() {
-        VendingMachine vendingMachine = new VendingMachine();
-        vendingMachine.addAllowedDenomination(CurrencyUnit.valueOf("2"));
-        vendingMachine.addAllowedDenomination(CurrencyUnit.valueOf("5"));
-
-        assertThat(vendingMachine.getAllowedDenominations().size()).isEqualTo(2);
-    }
-
-    @Test
     public void should_configure_shelves() {
-        VendingMachine vendingMachine = new VendingMachine();
+        AllowedDenominations allowedDenominations = mock(AllowedDenominations.class);
+        when(allowedDenominations.add(any(CurrencyUnit.class))).thenReturn(allowedDenominations);
+        when(allowedDenominations.isAllowed(any(CurrencyUnit.class))).thenReturn(true);
+
+        VendingMachine vendingMachine = new VendingMachine(allowedDenominations);
         vendingMachine.addShelf(new BasicShelf(ProductName.valueOf("Product 1"), ProductPrice.valueOf("1")));
         vendingMachine.addShelf(new BasicShelf(ProductName.valueOf("Product 2"), ProductPrice.valueOf("2")));
 
@@ -32,9 +31,11 @@ public class VendingMachineTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void should_throw_exception_when_inserted_not_allowed_coin() {
-        VendingMachine vendingMachine = new VendingMachine()
-            .addAllowedDenomination(CurrencyUnit.valueOf("2.5"))
-            .addAllowedDenomination(CurrencyUnit.valueOf("5"))
+        AllowedDenominations allowedDenominations = mock(AllowedDenominations.class);
+        when(allowedDenominations.add(any(CurrencyUnit.class))).thenReturn(allowedDenominations);
+        when(allowedDenominations.isAllowed(any(CurrencyUnit.class))).thenReturn(false);
+
+        VendingMachine vendingMachine = new VendingMachine(allowedDenominations)
             .addShelf(new BasicShelf(ProductName.valueOf("Product 1"), ProductPrice.valueOf("10")).charge(1));
 
         vendingMachine.selectShelf(0).insertCoin(CurrencyUnit.valueOf("2"));
@@ -42,9 +43,11 @@ public class VendingMachineTest {
 
     @Test
     public void should_start_transaction_on_shelf_selection() {
-        VendingMachine vendingMachine = new VendingMachine()
-            .addAllowedDenomination(CurrencyUnit.valueOf("2"))
-            .addAllowedDenomination(CurrencyUnit.valueOf("5"))
+        AllowedDenominations allowedDenominations = mock(AllowedDenominations.class);
+        when(allowedDenominations.add(any(CurrencyUnit.class))).thenReturn(allowedDenominations);
+        when(allowedDenominations.isAllowed(any(CurrencyUnit.class))).thenReturn(true);
+
+        VendingMachine vendingMachine = new VendingMachine(allowedDenominations)
             .addShelf(new BasicShelf(ProductName.valueOf("Product 1"), ProductPrice.valueOf("1")).charge(1));
 
         Transaction transaction = vendingMachine.selectShelf(0);
@@ -53,9 +56,11 @@ public class VendingMachineTest {
 
     @Test
     public void should_consume_coins_and_detect_shortfall() {
-        VendingMachine vendingMachine = new VendingMachine()
-            .addAllowedDenomination(CurrencyUnit.valueOf("2"))
-            .addAllowedDenomination(CurrencyUnit.valueOf("5"))
+        AllowedDenominations allowedDenominations = mock(AllowedDenominations.class);
+        when(allowedDenominations.add(any(CurrencyUnit.class))).thenReturn(allowedDenominations);
+        when(allowedDenominations.isAllowed(any(CurrencyUnit.class))).thenReturn(true);
+
+        VendingMachine vendingMachine = new VendingMachine(allowedDenominations)
             .addShelf(new BasicShelf(ProductName.valueOf("Product 1"), ProductPrice.valueOf("10")).charge(10));
 
         Transaction transaction = vendingMachine.selectShelf(0).insertCoin(CurrencyUnit.valueOf("2"));
@@ -67,9 +72,11 @@ public class VendingMachineTest {
 
     @Test
     public void should_be_able_to_rollback_transaction() {
-        VendingMachine vendingMachine = new VendingMachine()
-            .addAllowedDenomination(CurrencyUnit.valueOf("2"))
-            .addAllowedDenomination(CurrencyUnit.valueOf("5"))
+        AllowedDenominations allowedDenominations = mock(AllowedDenominations.class);
+        when(allowedDenominations.add(any(CurrencyUnit.class))).thenReturn(allowedDenominations);
+        when(allowedDenominations.isAllowed(any(CurrencyUnit.class))).thenReturn(true);
+
+        VendingMachine vendingMachine = new VendingMachine(allowedDenominations)
             .addShelf(new BasicShelf(ProductName.valueOf("Product 1"), ProductPrice.valueOf("10")).charge(10));
 
         Collection<CurrencyUnit> rollbackResult = vendingMachine.selectShelf(0)
@@ -88,9 +95,11 @@ public class VendingMachineTest {
 
     @Test
     public void should_be_able_to_commit_valid_transaction() {
-        VendingMachine vendingMachine = new VendingMachine()
-            .addAllowedDenomination(CurrencyUnit.valueOf("2.5"))
-            .addAllowedDenomination(CurrencyUnit.valueOf("5"))
+        AllowedDenominations allowedDenominations = mock(AllowedDenominations.class);
+        when(allowedDenominations.add(any(CurrencyUnit.class))).thenReturn(allowedDenominations);
+        when(allowedDenominations.isAllowed(any(CurrencyUnit.class))).thenReturn(true);
+
+        VendingMachine vendingMachine = new VendingMachine(allowedDenominations)
             .addShelf(new BasicShelf(ProductName.valueOf("Product 1"), ProductPrice.valueOf("10")).charge(10));
 
         PurchaseResult purchaseResult = vendingMachine.selectShelf(0)
@@ -120,9 +129,11 @@ public class VendingMachineTest {
 
     @Test
     public void should_be_able_to_give_right_change() {
-        VendingMachine vendingMachine = new VendingMachine()
-            .addAllowedDenomination(CurrencyUnit.valueOf("2.5"))
-            .addAllowedDenomination(CurrencyUnit.valueOf("5"))
+        AllowedDenominations allowedDenominations = mock(AllowedDenominations.class);
+        when(allowedDenominations.add(any(CurrencyUnit.class))).thenReturn(allowedDenominations);
+        when(allowedDenominations.isAllowed(any(CurrencyUnit.class))).thenReturn(true);
+
+        VendingMachine vendingMachine = new VendingMachine(allowedDenominations)
             .addShelf(new BasicShelf(ProductName.valueOf("Product 1"), ProductPrice.valueOf("10")).charge(10));
 
         assertThat(vendingMachine.moneyAmount()).isEqualTo(CurrencyUnit.zero());
@@ -145,9 +156,11 @@ public class VendingMachineTest {
 
     @Test(expected = IllegalStateException.class)
     public void should_not_withdraw_if_could_not_give_change() {
-        VendingMachine vendingMachine = new VendingMachine()
-            .addAllowedDenomination(CurrencyUnit.valueOf("0.5"))
-            .addAllowedDenomination(CurrencyUnit.valueOf("1"))
+        AllowedDenominations allowedDenominations = mock(AllowedDenominations.class);
+        when(allowedDenominations.add(any(CurrencyUnit.class))).thenReturn(allowedDenominations);
+        when(allowedDenominations.isAllowed(any(CurrencyUnit.class))).thenReturn(true);
+
+        VendingMachine vendingMachine = new VendingMachine(allowedDenominations)
             .addShelf(new BasicShelf(ProductName.valueOf("Product 1"), ProductPrice.valueOf("1.5")).charge(1));
 
         assertThat(vendingMachine.moneyAmount()).isEqualTo(CurrencyUnit.zero());

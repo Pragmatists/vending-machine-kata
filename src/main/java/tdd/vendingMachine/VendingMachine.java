@@ -1,6 +1,7 @@
 package tdd.vendingMachine;
 
 import tdd.vendingMachine.core.*;
+import tdd.vendingMachine.impl.AllowedDenominations;
 import tdd.vendingMachine.impl.BasicCashHandler;
 import tdd.vendingMachine.impl.BasicDisplay;
 import tdd.vendingMachine.impl.BasicTransaction;
@@ -24,20 +25,11 @@ public class VendingMachine implements Display.Observer {
     });
 
     private final CashHandler cashHandler = new BasicCashHandler();
-    private final Set<CurrencyUnit> allowedDenominations = new HashSet<>();
+    private final AllowedDenominations allowedDenominations;
     private final List<Shelf> shelves = new ArrayList<>();
 
-    public VendingMachine addAllowedDenomination(CurrencyUnit currencyUnit) {
-        if (currencyUnit != null) {
-            allowedDenominations.add(currencyUnit);
-            return this;
-        }
-
-        throw new IllegalArgumentException("Allowed denomination should be a valid number");
-    }
-
-    public Set<CurrencyUnit> getAllowedDenominations() {
-        return Collections.unmodifiableSet(allowedDenominations);
+    public VendingMachine(AllowedDenominations allowedDenominations) {
+        this.allowedDenominations = allowedDenominations;
     }
 
     public VendingMachine addShelf(Shelf shelf) {

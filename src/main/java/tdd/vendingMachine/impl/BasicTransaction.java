@@ -7,12 +7,12 @@ import java.util.*;
 public class BasicTransaction implements Transaction {
 
     private final Shelf shelf;
-    private final Set<CurrencyUnit> allowedDenominations;
+    private final AllowedDenominations allowedDenominations;
     private final CashHandler cashHandler;
     private final List<CurrencyUnit> insertedCoins = new ArrayList<>();
     private CurrencyUnit insertedCoinsSum = CurrencyUnit.zero();
 
-    public BasicTransaction(Shelf shelf, CashHandler cashHandler, Set<CurrencyUnit> allowedDenominations) {
+    public BasicTransaction(Shelf shelf, CashHandler cashHandler, AllowedDenominations allowedDenominations) {
         if (shelf == null || !shelf.hasProducts()) {
             throw new IllegalArgumentException("Transaction should be created using only correct shelf with products");
         }
@@ -23,15 +23,13 @@ public class BasicTransaction implements Transaction {
 
         this.shelf = shelf;
         this.cashHandler = cashHandler;
-        this.allowedDenominations = allowedDenominations != null ? allowedDenominations : new HashSet<>();
+        this.allowedDenominations = allowedDenominations;
     }
 
     @Override
     public Transaction insertCoin(CurrencyUnit currencyUnit) {
         if (currencyUnit != null) {
-            if (currencyUnit.isNegative() || currencyUnit.isZero() ||
-                (!allowedDenominations.isEmpty() && !allowedDenominations.contains(currencyUnit))) {
-
+            if (currencyUnit.isNegative() || currencyUnit.isZero() || (allowedDenominations != null && !allowedDenominations.isAllowed(currencyUnit))) {
                 throw new IllegalArgumentException("Coin of value '" + currencyUnit.value() + "' is not allowed to accept");
             }
 
