@@ -1,3 +1,6 @@
+[![CircleCI](https://circleci.com/gh/cezarykluczynski/vending-machine-kata.svg?style=svg)](https://circleci.com/gh/cezarykluczynski/vending-machine-kata)
+[![codecov](https://codecov.io/gh/cezarykluczynski/vending-machine-kata/branch/master/graph/badge.svg)](https://codecov.io/gh/cezarykluczynski/vending-machine-kata)
+
 vending-machine-kata
 ====================
 
