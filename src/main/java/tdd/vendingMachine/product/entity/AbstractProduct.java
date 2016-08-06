@@ -10,7 +10,7 @@ import static lombok.AccessLevel.PACKAGE;
 
 @Getter
 @AllArgsConstructor(access = PACKAGE)
-class AbstractProduct implements Product {
+public abstract class AbstractProduct implements Product {
 
 	private String name;
 
