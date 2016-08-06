@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan("tdd.vendingMachine")
-public class VendingMachine {
+public class VendingMachineApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(VendingMachine.class, args);
+		SpringApplication.run(VendingMachineApplication.class, args);
 	}
 
 }
