@@ -12,12 +12,12 @@ import tdd.vendingMachine.machine.MachineFacade;
 @ContextConfiguration(classes = VendingMachineApplication.class)
 public class VendingMachingApplicationTest {
 
-    @Autowired
-    private MachineFacade machineFacade;
+	@Autowired
+	private MachineFacade machineFacade;
 
-    @Test
-    public void application_run() {
-        Assertions.assertThat(machineFacade).isNotNull();
-    }
+	@Test
+	public void application_runs() {
+		Assertions.assertThat(machineFacade).isNotNull();
+	}
 
 }

@@ -10,7 +10,6 @@ import tdd.vendingMachine.machine.cli.util.CommandLinePrinter;
 import java.io.InputStream;
 import java.util.List;
 
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class CommandLineInterfaceTest {
@@ -45,9 +44,6 @@ public class CommandLineInterfaceTest {
 	public void runs_command() {
 		final List<String> stateElements = Lists.newArrayList("It's OK.");
 		when(machineFacade.getState()).thenReturn(stateElements);
-		doNothing().when(machineFacade).executeCommand("line");
-		doNothing().when(commandLinePrinter).print(anyString());
-
 		try {
 			commandLineInterface.run();
 		} catch(Exception e) {

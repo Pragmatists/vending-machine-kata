@@ -1,10 +1,10 @@
 package tdd.vendingMachine.machine;
 
-import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tdd.vendingMachine.machine.cli.util.AnsiColorDecorator;
 import tdd.vendingMachine.machine.cli.util.CommandLinePrinter;
+import tdd.vendingMachine.machine.state.InteractionState;
 
 import java.util.List;
 
@@ -13,13 +13,16 @@ public class MachineFacade {
 
 	private CommandLinePrinter commandLinePrinter;
 
+	private InteractionState interactionState;
+
 	@Autowired
-	public MachineFacade(CommandLinePrinter commandLinePrinter) {
+	public MachineFacade(CommandLinePrinter commandLinePrinter, InteractionState interactionState) {
 		this.commandLinePrinter = commandLinePrinter;
+		this.interactionState = interactionState;
 	}
 
 	public List<String> getState() {
-		return Lists.newArrayList(AnsiColorDecorator.green("Vending machine is ready."));
+		return interactionState.getDescription();
 	}
 
 	public void executeCommand(String command) {
@@ -27,6 +30,8 @@ public class MachineFacade {
 			commandLinePrinter.print(AnsiColorDecorator.green("Exiting."));
 			commandLinePrinter.exit(0);
 		}
+
+		interactionState.executeCommand(command);
 	}
 
 }
