@@ -50,11 +50,28 @@ public class InteractionStateTest {
 
 	@Test
 	public void does_state_transition() {
-		final InteractionState.StateName stateName = InteractionState.StateName.CANCEL;
+		final InteractionState.StateName stateName = InteractionState.StateName.PAYING;
 
 		interactionState.changeState(stateName);
 		interactionState.changeState(stateName);
 		Assertions.assertThat(interactionState.getStateName()).isEqualTo(stateName);
+	}
+
+	@Test
+	public void changes_state_to_unknown_command() {
+		final String invalidCommand = "invalidCommand";
+		when(state.getLatestInvalidCommand()).thenReturn(invalidCommand);
+
+		interactionState.changeState(InteractionState.StateName.UNKNOWN_COMMAND);
+
+		verify(state).executeCommand(invalidCommand, interactionState);
+	}
+
+	@Test
+	public void changes_state_to_cancel() {
+		interactionState.changeState(InteractionState.StateName.CANCEL);
+
+		verify(state).executeCommand(null, interactionState);
 	}
 
 }

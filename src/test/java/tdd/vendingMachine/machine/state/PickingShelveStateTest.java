@@ -53,8 +53,18 @@ public class PickingShelveStateTest {
 		final InteractionState interactionState = mock(InteractionState.class);
 		pickingShelveState.executeCommand(unknownCommand, interactionState);
 
-		Assertions.assertThat(pickingShelveState.getLatestCommand()).isEqualTo(unknownCommand);
+		Assertions.assertThat(pickingShelveState.getLatestInvalidCommand()).isEqualTo(unknownCommand);
 		verify(interactionState).changeState(InteractionState.StateName.UNKNOWN_COMMAND);
+	}
+
+	@Test
+	public void changes_state_to_paying_when_valid_shelve_is_picked() {
+		final String validShelveCommand = "0";
+		final InteractionState interactionState = mock(InteractionState.class);
+		pickingShelveState.executeCommand(validShelveCommand, interactionState);
+
+		verify(machine).setActiveShelveIndex(0);
+		verify(interactionState).changeState(InteractionState.StateName.PAYING);
 	}
 
 }

@@ -41,7 +41,7 @@ public class HelloStateTest {
 		final InteractionState interactionState = mock(InteractionState.class);
 		helloState.executeCommand(unknownCommand, interactionState);
 
-		Assertions.assertThat(helloState.getLatestCommand()).isEqualTo(unknownCommand);
+		Assertions.assertThat(helloState.getLatestInvalidCommand()).isEqualTo(unknownCommand);
 		verify(interactionState).changeState(InteractionState.StateName.UNKNOWN_COMMAND);
 	}
 

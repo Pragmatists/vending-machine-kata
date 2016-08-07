@@ -6,7 +6,7 @@ public interface State {
 
 	List<String> getDescription();
 
-	String getLatestCommand();
+	String getLatestInvalidCommand();
 
 	void executeCommand(String command, InteractionState interactionState);
 

@@ -38,4 +38,5 @@ class HelloState extends AbstractState implements State {
 			this.showInvalidCommandMessage(command, interactionState);
 		}
 	}
+
 }

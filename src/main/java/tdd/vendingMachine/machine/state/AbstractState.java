@@ -5,10 +5,10 @@ import lombok.Getter;
 abstract class AbstractState {
 
 	@Getter
-	private String latestCommand;
+	private String latestInvalidCommand;
 
 	void showInvalidCommandMessage(String command, InteractionState interactionState) {
-		this.latestCommand = command;
+		this.latestInvalidCommand = command;
 		interactionState.changeState(InteractionState.StateName.UNKNOWN_COMMAND);
 	}
 

@@ -41,6 +41,8 @@ class PickingShelveState extends AbstractState implements State {
 	public void executeCommand(String command, InteractionState interactionState) {
 		try {
 			Integer index = Integer.valueOf(command);
+			machine.setActiveShelveIndex(index);
+			interactionState.changeState(InteractionState.StateName.PAYING);
 		} catch (NumberFormatException e) {
 			showInvalidCommandMessage(command, interactionState);
 		}

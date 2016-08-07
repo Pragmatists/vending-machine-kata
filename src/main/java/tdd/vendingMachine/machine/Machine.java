@@ -1,9 +1,11 @@
 package tdd.vendingMachine.machine;
 
 import com.google.common.collect.Lists;
+import lombok.Setter;
 import org.apache.commons.lang3.RandomUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tdd.vendingMachine.money.ChangeStorage;
+import tdd.vendingMachine.money.change.ChangeStorage;
 import tdd.vendingMachine.product.factory.ProductFactory;
 import tdd.vendingMachine.shelve.entity.Shelve;
 
@@ -16,15 +18,27 @@ public class Machine {
 
 	private ChangeStorage changeStorage;
 
-	public Machine() {
+	@Setter
+	private Integer activeShelveIndex;
+
+	@Autowired
+	public Machine(ChangeStorage changeStorage) {
+		this.changeStorage = changeStorage;
+		createShelves();
+	}
+
+	private void createShelves() {
 		shelves.add(Shelve.of(ProductFactory.createCocaCola(), RandomUtils.nextInt(5, 11)));
 		shelves.add(Shelve.of(ProductFactory.createChocolateBar(), RandomUtils.nextInt(5, 11)));
 		shelves.add(Shelve.of(ProductFactory.createMineralWater(), RandomUtils.nextInt(5, 11)));
-		changeStorage = new ChangeStorage();
 	}
 
 	public Shelve getShelve(Integer index) {
 		return shelves.get(index);
+	}
+
+	public Shelve getActiveShelve() {
+		return getShelve(activeShelveIndex);
 	}
 
 	public List<Shelve> getShelves() {

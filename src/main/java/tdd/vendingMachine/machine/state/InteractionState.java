@@ -30,6 +30,7 @@ public class InteractionState {
 		states.put(StateName.PAYING, PayingState.class);
 		states.put(StateName.PICKING_SHELVE, PickingShelveState.class);
 		states.put(StateName.UNKNOWN_COMMAND, UnknownCommandState.class);
+		states.put(StateName.CANCEL, CancelState.class);
 	}
 
 	@Getter
@@ -69,7 +70,9 @@ public class InteractionState {
 
 	private void doStateTransition(StateName futureStateName) {
 		if (futureStateName == StateName.UNKNOWN_COMMAND) {
-			getStateService(futureStateName).executeCommand(getStateService().getLatestCommand(), this);
+			getStateService(futureStateName).executeCommand(getStateService().getLatestInvalidCommand(), this);
+		} else if (futureStateName == StateName.CANCEL) {
+			getStateService(futureStateName).executeCommand(null, this);
 		} else {
 			this.stateName = futureStateName;
 		}
