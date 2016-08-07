@@ -12,7 +12,7 @@ import static tdd.vendingMachine.machine.cli.util.CommandLinePrinter.EMPTY_LINE;
 import static tdd.vendingMachine.machine.state.InteractionState.QUIT;
 
 @Service
-public class HelloState implements State {
+class HelloState extends AbstractState implements State {
 
 	private static final List<String> DESCRIPTION = Lists.newArrayList();
 
@@ -33,7 +33,9 @@ public class HelloState implements State {
 	@Override
 	public void executeCommand(String command, InteractionState interactionState) {
 		if (command.equals("s")) {
-            interactionState.changeState(InteractionState.StateName.PICKING_SHELVE);
-        }
+			interactionState.changeState(InteractionState.StateName.PICKING_SHELVE);
+		} else {
+			this.showInvalidCommandMessage(command, interactionState);
+		}
 	}
 }

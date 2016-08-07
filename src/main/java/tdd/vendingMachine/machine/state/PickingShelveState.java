@@ -17,7 +17,7 @@ import static tdd.vendingMachine.machine.cli.util.CommandLinePrinter.EMPTY_LINE;
 import static tdd.vendingMachine.machine.state.InteractionState.QUIT;
 
 @Service
-public class PickingShelveState implements State {
+class PickingShelveState extends AbstractState implements State {
 
 	private Machine machine;
 
@@ -39,7 +39,11 @@ public class PickingShelveState implements State {
 
 	@Override
 	public void executeCommand(String command, InteractionState interactionState) {
-
+		try {
+			Integer index = Integer.valueOf(command);
+		} catch (NumberFormatException e) {
+			showInvalidCommandMessage(command, interactionState);
+		}
 	}
 
 	private List<String> getShelves() {

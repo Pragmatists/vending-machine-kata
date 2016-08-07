@@ -6,6 +6,8 @@ public interface State {
 
 	List<String> getDescription();
 
+	String getLatestCommand();
+
 	void executeCommand(String command, InteractionState interactionState);
 
 }

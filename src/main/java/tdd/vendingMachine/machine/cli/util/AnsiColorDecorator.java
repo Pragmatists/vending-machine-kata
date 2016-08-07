@@ -12,6 +12,10 @@ public class AnsiColorDecorator {
 		return decorate(message, GREEN);
 	}
 
+	public static String red(String message) {
+		return decorate(message, RED);
+	}
+
 	private static String decorate(String message, String color) {
 		return color + message + RESET;
 	}
