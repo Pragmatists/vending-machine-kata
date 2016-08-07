@@ -1,4 +1,4 @@
-package tdd.vendingMachine.product.factory;
+package tdd.vendingMachine.money.factory;
 
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;

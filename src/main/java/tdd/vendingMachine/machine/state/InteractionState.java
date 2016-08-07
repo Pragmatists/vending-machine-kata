@@ -27,6 +27,7 @@ public class InteractionState {
 
 	static {
 		states.put(StateName.HELLO, HelloState.class);
+		states.put(StateName.PAYING, PayingState.class);
 		states.put(StateName.PICKING_SHELVE, PickingShelveState.class);
 		states.put(StateName.UNKNOWN_COMMAND, UnknownCommandState.class);
 	}

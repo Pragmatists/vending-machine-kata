@@ -1,6 +1,6 @@
 package tdd.vendingMachine.product.entity;
 
-import tdd.vendingMachine.product.factory.MoneyFactory;
+import tdd.vendingMachine.money.factory.MoneyFactory;
 import tdd.vendingMachine.product.factory.ProductQuantityFactory;
 
 public class CocaCola extends AbstractProduct {

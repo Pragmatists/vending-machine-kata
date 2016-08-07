@@ -1,8 +1,9 @@
-package tdd.vendingMachine.product.factory;
+package tdd.vendingMachine.money;
 
 import org.assertj.core.api.Assertions;
 import org.joda.money.Money;
 import org.junit.Test;
+import tdd.vendingMachine.money.factory.MoneyFactory;
 
 public class MoneyFactoryTest {
 
