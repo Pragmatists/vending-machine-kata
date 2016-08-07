@@ -19,8 +19,9 @@ public class HelloStateTest {
 	public void has_complete_description() {
 		final List<String> description = helloState.getDescription();
 
-		Assertions.assertThat(description.get(0)).contains("Vending machine is ready.");
-		Assertions.assertThat(description.get(2)).contains("quit");
+		Assertions.assertThat(description.get(1)).contains("Vending machine is ready.");
+		Assertions.assertThat(description.get(4)).contains("display shelves");
+		Assertions.assertThat(description.get(5)).contains("quit");
 	}
 
 }

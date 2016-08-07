@@ -18,7 +18,7 @@ public class InteractionState {
 	enum StateName {
 		HELLO,
 		PAYING,
-		PICKING,
+		PICKING_SHELVE,
 		CANCEL
 	}
 
@@ -26,6 +26,7 @@ public class InteractionState {
 
 	static {
 		states.put(StateName.HELLO, HelloState.class);
+		states.put(StateName.PICKING_SHELVE, PickingShelveState.class);
 	}
 
 	@Getter

@@ -19,11 +19,11 @@ public class Machine {
 		shelves.add(Shelve.of(ProductFactory.createMineralWater(), RandomUtils.nextInt(5, 11)));
 	}
 
-	Shelve getShelve(Integer index) {
+	public Shelve getShelve(Integer index) {
 		return shelves.get(index);
 	}
 
-	List<Shelve> getShelves() {
+	public List<Shelve> getShelves() {
 		return Lists.newArrayList(shelves);
 	}
 
