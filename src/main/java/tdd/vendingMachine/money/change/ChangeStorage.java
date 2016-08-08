@@ -9,7 +9,6 @@ import tdd.vendingMachine.money.coin.entity.Coin;
 import tdd.vendingMachine.money.coin.factory.CoinFactory;
 
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class ChangeStorage {
@@ -24,7 +23,7 @@ public class ChangeStorage {
 	}
 
 	private void createCoins() {
-		ownedCoins = Maps.newHashMap();
+		ownedCoins = Maps.newLinkedHashMap();
 		ownedCoins.put(CoinFactory.create01(), RandomUtils.nextInt(6, 9));
 		ownedCoins.put(CoinFactory.create02(), RandomUtils.nextInt(5, 8));
 		ownedCoins.put(CoinFactory.create05(), RandomUtils.nextInt(4, 7));
@@ -35,15 +34,17 @@ public class ChangeStorage {
 	}
 
 	public Map<Coin, Integer> getOwnedCoins() {
-		return Maps.newHashMap(ownedCoins);
+		return Maps.newLinkedHashMap(ownedCoins);
 	}
 
 	public Map<Coin, Integer> getInsertedCoins() {
-		return Maps.newHashMap(insertedCoins);
+		return Maps.newLinkedHashMap(insertedCoins);
 	}
 
 	public void insertCoin(Coin coin) {
-		insertedCoins.put(coin, Optional.ofNullable(insertedCoins.get(coin)).orElse(0) + 1);
+		Integer value = insertedCoins.get(coin);
+		value = value == null ? 1 : value + 1;
+		insertedCoins.put(coin, value);
 	}
 
 	public void returnInsertedCoins() {

@@ -6,4 +6,8 @@ public class CommandLabelDecorator {
 		return "[ " + AnsiColorDecorator.green(key) + " ] - " + legend;
 	}
 
+	public static String keyLegendInvalid(String key, String legend) {
+		return "[ " + AnsiColorDecorator.red(key) + " ] - " + legend;
+	}
+
 }

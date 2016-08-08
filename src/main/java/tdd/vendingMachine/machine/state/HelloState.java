@@ -8,7 +8,7 @@ import tdd.vendingMachine.machine.cli.util.DisplayDecorator;
 
 import java.util.List;
 
-import static tdd.vendingMachine.machine.cli.util.CommandLinePrinter.EMPTY_LINE;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static tdd.vendingMachine.machine.state.InteractionState.QUIT;
 
 @Service
@@ -20,7 +20,7 @@ class HelloState extends AbstractState implements State {
 		DESCRIPTION.addAll(DisplayDecorator.decorate(
 			Lists.newArrayList(AnsiColorDecorator.green("Vending machine is ready."))
 		));
-		DESCRIPTION.add(EMPTY_LINE);
+		DESCRIPTION.add(EMPTY);
 		DESCRIPTION.add(CommandLabelDecorator.keyLegend("s", "display shelves"));
 		DESCRIPTION.add(QUIT);
 	}

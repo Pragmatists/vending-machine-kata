@@ -10,10 +10,11 @@ import tdd.vendingMachine.money.coin.entity.Coin;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-class ChangeCalculator {
+public class ChangeCalculator {
 
 	public static Map<Coin, Integer> calculate(Map<Coin, Integer> availableCoins, Money requiredMoney) {
 		int requiredAmount = requiredMoney.getAmountMinorInt();
@@ -28,12 +29,12 @@ class ChangeCalculator {
 			Map<Coin, Integer> remainingAvailableCoins = removeCoin(availableCoins, consumer.getKey());
 
 			for (int i = 0; i <= consumer.getValue(); i++) {
-				List<Coin> coins = Lists.newArrayList(alreadyUsedCoins);
-				int remainingRequiredAmount = requiredAmount;
 				int coinSumValue = getCoinValue(consumer.getKey()) * i;
 				if (coinSumValue == 0) {
 					continue;
 				}
+				List<Coin> coins = Lists.newArrayList(alreadyUsedCoins);
+				int remainingRequiredAmount = requiredAmount;
 				if (coinSumValue <= remainingRequiredAmount) {
 					remainingRequiredAmount -= coinSumValue;
 					addMultipleCoins(coins, consumer.getKey(), i);
@@ -73,13 +74,7 @@ class ChangeCalculator {
 
 	private static Map<Coin, Integer> createSolution(List<Coin> coins) {
 		Map<Coin, Integer> solution = Maps.newHashMap();
-		coins.forEach(coin -> {
-			if (solution.get(coin) == null) {
-				solution.put(coin, 1);
-			} else {
-				solution.put(coin, solution.get(coin) + 1);
-			}
-		});
+		coins.forEach(coin -> solution.put(coin, Optional.ofNullable(solution.get(coin)).orElse(0) + 1));
 		return solution;
 	}
 

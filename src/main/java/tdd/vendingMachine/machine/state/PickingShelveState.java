@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static tdd.vendingMachine.machine.cli.util.CommandLinePrinter.EMPTY_LINE;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static tdd.vendingMachine.machine.state.InteractionState.QUIT;
 
 @Service
@@ -31,7 +31,7 @@ class PickingShelveState extends AbstractState implements State {
 		final List<String> description = Lists.newArrayList();
 		List<String> shelves = getShelves();
 		description.addAll(DisplayDecorator.decorate(shelves));
-		description.add(EMPTY_LINE);
+		description.add(EMPTY);
 		description.addAll(getActions());
 		description.add(QUIT);
 		return description;

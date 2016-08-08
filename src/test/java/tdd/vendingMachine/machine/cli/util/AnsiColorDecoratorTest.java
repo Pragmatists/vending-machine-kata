@@ -19,4 +19,11 @@ public class AnsiColorDecoratorTest {
 		Assertions.assertThat(greenMessage).isEqualTo("\u001B[31mmessage\u001B[0m");
 	}
 
+	@Test
+	public void decorates_with_yellow_color() {
+		String greenMessage = AnsiColorDecorator.yellow("message");
+
+		Assertions.assertThat(greenMessage).isEqualTo("\u001B[33mmessage\u001B[0m");
+	}
+
 }

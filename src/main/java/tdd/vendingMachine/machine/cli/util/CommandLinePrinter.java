@@ -11,8 +11,6 @@ public class CommandLinePrinter {
 
 	private static final String EOL = System.lineSeparator();
 
-	public static final String EMPTY_LINE = "";
-
 	public void print(List<String> messages) {
 		System.out.println(EOL + Joiner.on(EOL).join(messages) + EOL);
 	}
