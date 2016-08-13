@@ -6,7 +6,7 @@ import tdd.vendingMachine.product.factory.ProductQuantityFactory;
 public class MineralWater extends AbstractProduct {
 
 	public MineralWater() {
-		super("Mineral water", MoneyFactory.USD(1), ProductQuantityFactory.LITER(.33));
+		super("Mineral water", MoneyFactory.of(1), ProductQuantityFactory.LITER(.33));
 	}
 
 }

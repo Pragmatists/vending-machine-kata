@@ -59,8 +59,8 @@ public class PayingStateTest {
 	public void shows_description_for_when_product_is_buyable() {
 		when(purchaseFacade.getPurchaseStatus()).thenReturn(PurchaseStatus.PURCHASABLE);
 		final Map<Coin, Integer> founds = Maps.newLinkedHashMap();
-		founds.put(CoinFactory.create10(), 1);
-		founds.put(CoinFactory.create05(), 1);
+		founds.put(CoinFactory.create100(), 1);
+		founds.put(CoinFactory.create050(), 1);
 		when(changeStorage.getInsertedCoins()).thenReturn(founds);
 
 		List<String> description = payingState.getDescription();
@@ -76,8 +76,8 @@ public class PayingStateTest {
 	public void shows_description_for_when_product_is_buyable_but_no_change_can_be_given() {
 		when(purchaseFacade.getPurchaseStatus()).thenReturn(PurchaseStatus.INSUFFICIENT_CHANGE);
 		final Map<Coin, Integer> founds = Maps.newLinkedHashMap();
-		founds.put(CoinFactory.create10(), 1);
-		founds.put(CoinFactory.create02(), 3);
+		founds.put(CoinFactory.create100(), 1);
+		founds.put(CoinFactory.create020(), 3);
 		when(changeStorage.getInsertedCoins()).thenReturn(founds);
 
 		List<String> description = payingState.getDescription();
@@ -93,8 +93,8 @@ public class PayingStateTest {
 	public void shows_description_for_when_there_is_no_more_product() {
 		when(purchaseFacade.getPurchaseStatus()).thenReturn(PurchaseStatus.NO_PRODUCT);
 		final Map<Coin, Integer> founds = Maps.newLinkedHashMap();
-		founds.put(CoinFactory.create10(), 1);
-		founds.put(CoinFactory.create02(), 3);
+		founds.put(CoinFactory.create100(), 1);
+		founds.put(CoinFactory.create020(), 3);
 		when(changeStorage.getInsertedCoins()).thenReturn(founds);
 
 		List<String> description = payingState.getDescription();
@@ -110,8 +110,8 @@ public class PayingStateTest {
 	public void description_contains_coins_description() {
 		when(purchaseFacade.getPurchaseStatus()).thenReturn(PurchaseStatus.INSUFFICIENT_FUNDS);
 		when(purchaseFacade.getAvailableCoin()).thenReturn(Lists.newArrayList(
-			CoinFactory.create01(),
-			CoinFactory.create02())
+			CoinFactory.create010(),
+			CoinFactory.create020())
 		);
 
 		List<String> description = payingState.getDescription();

@@ -6,7 +6,7 @@ import tdd.vendingMachine.product.factory.ProductQuantityFactory;
 public class ChocolateBar extends AbstractProduct {
 
 	public ChocolateBar() {
-		super("Chocolate bar", MoneyFactory.USD(2.20), ProductQuantityFactory.KILOGRAM(.1));
+		super("Chocolate bar", MoneyFactory.of(2.20), ProductQuantityFactory.KILOGRAM(.1));
 	}
 
 }

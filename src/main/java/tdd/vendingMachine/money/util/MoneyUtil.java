@@ -38,7 +38,7 @@ public class MoneyUtil {
 	}
 
 	public static Money sum(Map<Coin, Integer> coins) {
-		return MoneyFactory.USD(coins.entrySet().stream()
+		return MoneyFactory.of(coins.entrySet().stream()
 			.map(a -> a.getKey().getNominal().getAmount().multiply(BigDecimal.valueOf(a.getValue())))
 			.reduce(BigDecimal::add).orElse(BigDecimal.ZERO).doubleValue());
 	}

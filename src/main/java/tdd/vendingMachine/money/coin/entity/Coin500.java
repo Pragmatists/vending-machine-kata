@@ -2,10 +2,10 @@ package tdd.vendingMachine.money.coin.entity;
 
 import tdd.vendingMachine.money.factory.MoneyFactory;
 
-public class Coin01 extends AbstractCoin {
+public class Coin500 extends AbstractCoin {
 
-	public Coin01() {
-		super(MoneyFactory.USD(.1));
+	public Coin500() {
+		super(MoneyFactory.of(5));
 	}
 
 }

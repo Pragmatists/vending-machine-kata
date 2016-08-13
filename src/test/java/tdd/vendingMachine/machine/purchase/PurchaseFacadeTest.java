@@ -45,13 +45,13 @@ public class PurchaseFacadeTest {
 	@Test
 	public void inserts_coin() {
 		Map<Coin, Integer> ownedCoins = Maps.newLinkedHashMap();
-		ownedCoins.put(CoinFactory.create01(), 1);
-		ownedCoins.put(CoinFactory.create02(), 2);
+		ownedCoins.put(CoinFactory.create010(), 1);
+		ownedCoins.put(CoinFactory.create020(), 2);
 		when(changeStorage.getOwnedCoins()).thenReturn(ownedCoins);
 
 		purchaseFacade.insertCoin(1);
 
-		verify(changeStorage).insertCoin(CoinFactory.create02());
+		verify(changeStorage).insertCoin(CoinFactory.create020());
 		verify(commandLinePrinter).print("Inserted USD 0.20");
 	}
 
@@ -80,19 +80,19 @@ public class PurchaseFacadeTest {
 	@Test
 	public void gets_available_coins() {
 		Map<Coin, Integer> ownedCoins = Maps.newLinkedHashMap();
-		ownedCoins.put(CoinFactory.create01(), 1);
-		ownedCoins.put(CoinFactory.create02(), 2);
+		ownedCoins.put(CoinFactory.create010(), 1);
+		ownedCoins.put(CoinFactory.create020(), 2);
 		when(changeStorage.getOwnedCoins()).thenReturn(ownedCoins);
 
 		List<Coin> availableCoins = purchaseFacade.getAvailableCoin();
 
 		Assertions.assertThat(availableCoins).hasSize(6);
-		Assertions.assertThat(availableCoins.get(0)).isEqualTo(CoinFactory.create01());
-		Assertions.assertThat(availableCoins.get(1)).isEqualTo(CoinFactory.create02());
-		Assertions.assertThat(availableCoins.get(2)).isEqualTo(CoinFactory.create05());
-		Assertions.assertThat(availableCoins.get(3)).isEqualTo(CoinFactory.create10());
-		Assertions.assertThat(availableCoins.get(4)).isEqualTo(CoinFactory.create20());
-		Assertions.assertThat(availableCoins.get(5)).isEqualTo(CoinFactory.create50());
+		Assertions.assertThat(availableCoins.get(0)).isEqualTo(CoinFactory.create010());
+		Assertions.assertThat(availableCoins.get(1)).isEqualTo(CoinFactory.create020());
+		Assertions.assertThat(availableCoins.get(2)).isEqualTo(CoinFactory.create050());
+		Assertions.assertThat(availableCoins.get(3)).isEqualTo(CoinFactory.create100());
+		Assertions.assertThat(availableCoins.get(4)).isEqualTo(CoinFactory.create200());
+		Assertions.assertThat(availableCoins.get(5)).isEqualTo(CoinFactory.create500());
 	}
 
 	@Test
@@ -137,7 +137,7 @@ public class PurchaseFacadeTest {
 		mock_BUYABLE_status();
 		final String productName = "productName";
 		when(product.getName()).thenReturn(productName);
-		when(product.getPrice()).thenReturn(MoneyFactory.USD(1));
+		when(product.getPrice()).thenReturn(MoneyFactory.of(1));
 
 		purchaseFacade.buy();
 
@@ -149,7 +149,7 @@ public class PurchaseFacadeTest {
 
 		verify(changeStorage).setInsertedCoins(argumentCaptorMap.capture());
 		Map<Coin, Integer> map = argumentCaptorMap.getValue();
-		Assertions.assertThat(map.get(CoinFactory.create10())).isEqualTo(1);
+		Assertions.assertThat(map.get(CoinFactory.create100())).isEqualTo(1);
 
 		verify(machine.getActiveShelve()).setQuantity(2);
 	}
@@ -158,15 +158,15 @@ public class PurchaseFacadeTest {
 	public void buyable_product_is_bought_and_change_is_returned_using_both_storages() {
 		mock_BUYABLE_status();
 		insertedCoins.clear();
-		insertedCoins.put(CoinFactory.create05(), 2);
+		insertedCoins.put(CoinFactory.create050(), 2);
 
 		final Map<Coin, Integer> ownedCoins = Maps.newLinkedHashMap();
-		ownedCoins.put(CoinFactory.create02(), 10);
+		ownedCoins.put(CoinFactory.create020(), 10);
 		when(changeStorage.getOwnedCoins()).thenReturn(ownedCoins);
 
 		final String productName = "productName";
 		when(product.getName()).thenReturn(productName);
-		when(product.getPrice()).thenReturn(MoneyFactory.USD(.8));
+		when(product.getPrice()).thenReturn(MoneyFactory.of(.8));
 
 		purchaseFacade.buy();
 
@@ -181,9 +181,9 @@ public class PurchaseFacadeTest {
 		verify(changeStorage).setInsertedCoins(insertedCoinsArgumentCaptor.capture());
 		Map<Coin, Integer> ownedCoinsValue = ownedCoinsArgumentCaptor.getValue();
 		Map<Coin, Integer> insertedCoinsValue = insertedCoinsArgumentCaptor.getValue();
-		Assertions.assertThat(ownedCoinsValue.get(CoinFactory.create02())).isEqualTo(6);
-		Assertions.assertThat(ownedCoinsValue.get(CoinFactory.create05())).isEqualTo(2);
-		Assertions.assertThat(insertedCoinsValue.get(CoinFactory.create02())).isEqualTo(4);
+		Assertions.assertThat(ownedCoinsValue.get(CoinFactory.create020())).isEqualTo(6);
+		Assertions.assertThat(ownedCoinsValue.get(CoinFactory.create050())).isEqualTo(2);
+		Assertions.assertThat(insertedCoinsValue.get(CoinFactory.create020())).isEqualTo(4);
 
 		verify(machine.getActiveShelve()).setQuantity(2);
 	}
@@ -194,15 +194,15 @@ public class PurchaseFacadeTest {
 	public void buyable_product_is_bought_and_change_is_returned_using_storage_swap() {
 		mock_BUYABLE_status();
 		insertedCoins.clear();
-		insertedCoins.put(CoinFactory.create20(), 1);
+		insertedCoins.put(CoinFactory.create200(), 1);
 
 		final Map<Coin, Integer> ownedCoins = Maps.newLinkedHashMap();
-		ownedCoins.put(CoinFactory.create05(), 1);
+		ownedCoins.put(CoinFactory.create050(), 1);
 		when(changeStorage.getOwnedCoins()).thenReturn(ownedCoins);
 
 		final String productName = "productName";
 		when(product.getName()).thenReturn(productName);
-		when(product.getPrice()).thenReturn(MoneyFactory.USD(1.5));
+		when(product.getPrice()).thenReturn(MoneyFactory.of(1.5));
 
 		purchaseFacade.buy();
 
@@ -217,18 +217,18 @@ public class PurchaseFacadeTest {
 		verify(changeStorage).setInsertedCoins(insertedCoinsArgumentCaptor.capture());
 		Map<Coin, Integer> ownedCoinsValue = ownedCoinsArgumentCaptor.getValue();
 		Map<Coin, Integer> insertedCoinsValue = insertedCoinsArgumentCaptor.getValue();
-		Assertions.assertThat(ownedCoinsValue.get(CoinFactory.create20())).isEqualTo(1);
-		Assertions.assertThat(insertedCoinsValue.get(CoinFactory.create05())).isEqualTo(1);
+		Assertions.assertThat(ownedCoinsValue.get(CoinFactory.create200())).isEqualTo(1);
+		Assertions.assertThat(insertedCoinsValue.get(CoinFactory.create050())).isEqualTo(1);
 
 		verify(machine.getActiveShelve()).setQuantity(2);
 	}
 
 	private void mock_INSUFFICIENT_CHANGE_status() {
 		insertedCoins = Maps.newLinkedHashMap();
-		insertedCoins.put(CoinFactory.create02(), 3);
+		insertedCoins.put(CoinFactory.create020(), 3);
 		when(changeStorage.getInsertedCoins()).thenReturn(insertedCoins);
 		product = mock(Product.class);
-		when(product.getPrice()).thenReturn(MoneyFactory.USD(.5));
+		when(product.getPrice()).thenReturn(MoneyFactory.of(.5));
 		Shelve shelve = mock(Shelve.class);
 		when(shelve.getProduct()).thenReturn(product);
 		when(shelve.getQuantity()).thenReturn(3);
@@ -238,7 +238,7 @@ public class PurchaseFacadeTest {
 	private void mock_NO_PRODUCT_status() {
 		insertedCoins = Maps.newLinkedHashMap();
 		product = mock(Product.class);
-		when(product.getPrice()).thenReturn(MoneyFactory.USD(1));
+		when(product.getPrice()).thenReturn(MoneyFactory.of(1));
 		Shelve shelve = mock(Shelve.class);
 		when(shelve.getProduct()).thenReturn(product);
 		when(shelve.getQuantity()).thenReturn(0);
@@ -247,10 +247,10 @@ public class PurchaseFacadeTest {
 
 	private void mock_BUYABLE_status() {
 		insertedCoins = Maps.newLinkedHashMap();
-		insertedCoins.put(CoinFactory.create10(), 2);
+		insertedCoins.put(CoinFactory.create100(), 2);
 		when(changeStorage.getInsertedCoins()).thenReturn(insertedCoins);
 		product = mock(Product.class);
-		when(product.getPrice()).thenReturn(MoneyFactory.USD(1));
+		when(product.getPrice()).thenReturn(MoneyFactory.of(1));
 		Shelve shelve = mock(Shelve.class);
 		when(shelve.getProduct()).thenReturn(product);
 		when(shelve.getQuantity()).thenReturn(3);
@@ -260,7 +260,7 @@ public class PurchaseFacadeTest {
 	private void mock_INSUFFICIENT_FUNDS_status() {
 		when(changeStorage.getInsertedCoins()).thenReturn(Maps.newLinkedHashMap());
 		product = mock(Product.class);
-		when(product.getPrice()).thenReturn(MoneyFactory.USD(1));
+		when(product.getPrice()).thenReturn(MoneyFactory.of(1));
 		Shelve shelve = mock(Shelve.class);
 		when(shelve.getProduct()).thenReturn(product);
 		when(shelve.getQuantity()).thenReturn(3);

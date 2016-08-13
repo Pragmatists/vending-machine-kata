@@ -24,12 +24,12 @@ public class ChangeStorage {
 
 	private void createCoins() {
 		ownedCoins = CoinFactory.emptyCoinStorage();
-		ownedCoins.put(CoinFactory.create01(), RandomUtils.nextInt(0, 2));
-		ownedCoins.put(CoinFactory.create02(), RandomUtils.nextInt(0, 2));
-		ownedCoins.put(CoinFactory.create05(), RandomUtils.nextInt(0, 2));
-		ownedCoins.put(CoinFactory.create10(), RandomUtils.nextInt(0, 2));
-		ownedCoins.put(CoinFactory.create20(), RandomUtils.nextInt(0, 2));
-		ownedCoins.put(CoinFactory.create50(), RandomUtils.nextInt(0, 2));
+		ownedCoins.put(CoinFactory.create010(), RandomUtils.nextInt(0, 2));
+		ownedCoins.put(CoinFactory.create020(), RandomUtils.nextInt(0, 2));
+		ownedCoins.put(CoinFactory.create050(), RandomUtils.nextInt(0, 2));
+		ownedCoins.put(CoinFactory.create100(), RandomUtils.nextInt(0, 2));
+		ownedCoins.put(CoinFactory.create200(), RandomUtils.nextInt(0, 2));
+		ownedCoins.put(CoinFactory.create500(), RandomUtils.nextInt(0, 2));
 		insertedCoins = Maps.newHashMap();
 	}
 

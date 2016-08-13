@@ -9,58 +9,69 @@ import java.util.Map;
 
 public class CoinFactory {
 
+	private static final Map<Class, Coin> instances = Maps.newLinkedHashMap();
+
+	static {
+		instances.put(Coin010.class, new Coin010());
+		instances.put(Coin020.class, new Coin020());
+		instances.put(Coin050.class, new Coin050());
+		instances.put(Coin100.class, new Coin100());
+		instances.put(Coin200.class, new Coin200());
+		instances.put(Coin500.class, new Coin500());
+	}
+
 	public static final List<Coin> AVAILABLE_COINS = Lists.newArrayList(
-		create01(), create02(), create05(), create10(), create20(), create50());
+		create010(), create020(), create050(), create100(), create200(), create500());
 
-	public static Coin create01() {
-		return new Coin01();
+	public static Coin create010() {
+		return instances.get(Coin010.class);
 	}
 
-	public static Coin create02() {
-		return new Coin02();
+	public static Coin create020() {
+		return instances.get(Coin020.class);
 	}
 
-	public static Coin create05() {
-		return new Coin05();
+	public static Coin create050() {
+		return instances.get(Coin050.class);
 	}
 
-	public static Coin create10() {
-		return new Coin10();
+	public static Coin create100() {
+		return instances.get(Coin100.class);
 	}
 
-	public static Coin create20() {
-		return new Coin20();
+	public static Coin create200() {
+		return instances.get(Coin200.class);
 	}
 
-	public static Coin create50() {
-		return new Coin50();
+	public static Coin create500() {
+		return instances.get(Coin500.class);
 	}
 
 	public static Map<Coin, Integer> emptyCoinStorage() {
 		Map<Coin, Integer> emptyCoinStorage = Maps.newLinkedHashMap();
-		emptyCoinStorage.put(create01(), 0);
-		emptyCoinStorage.put(create02(), 0);
-		emptyCoinStorage.put(create05(), 0);
-		emptyCoinStorage.put(create10(), 0);
-		emptyCoinStorage.put(create20(), 0);
-		emptyCoinStorage.put(create50(), 0);
+		emptyCoinStorage.put(create010(), 0);
+		emptyCoinStorage.put(create020(), 0);
+		emptyCoinStorage.put(create050(), 0);
+		emptyCoinStorage.put(create100(), 0);
+		emptyCoinStorage.put(create200(), 0);
+		emptyCoinStorage.put(create500(), 0);
 		return emptyCoinStorage;
 	}
 
 	public static Coin ofAmount(Integer amount) {
 		switch(amount) {
 			case 10:
-				return create01();
+				return create010();
 			case 20:
-				return create02();
+				return create020();
 			case 50:
-				return create05();
+				return create050();
 			case 100:
-				return create10();
+				return create100();
 			case 200:
-				return create20();
+				return create200();
 			case 500:
-				return create50();
+				return create500();
 			default:
 				return null;
 		}

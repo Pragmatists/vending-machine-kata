@@ -5,7 +5,7 @@ import org.joda.money.Money;
 
 public class MoneyFactory {
 
-	public static Money USD(double amount) {
+	public static Money of(double amount) {
 		return Money.of(CurrencyUnit.USD, amount);
 	}
 

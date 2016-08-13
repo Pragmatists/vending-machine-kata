@@ -26,12 +26,12 @@ public class ChangeStorageTest {
 
 	@Test
 	public void coins_can_be_inserted() {
-		changeStorage.insertCoin(CoinFactory.create01());
-		changeStorage.insertCoin(CoinFactory.create01());
-		changeStorage.insertCoin(CoinFactory.create02());
+		changeStorage.insertCoin(CoinFactory.create010());
+		changeStorage.insertCoin(CoinFactory.create010());
+		changeStorage.insertCoin(CoinFactory.create020());
 
-		Assertions.assertThat(changeStorage.getInsertedCoins().get(CoinFactory.create01())).isEqualTo(2);
-		Assertions.assertThat(changeStorage.getInsertedCoins().get(CoinFactory.create02())).isEqualTo(1);
+		Assertions.assertThat(changeStorage.getInsertedCoins().get(CoinFactory.create010())).isEqualTo(2);
+		Assertions.assertThat(changeStorage.getInsertedCoins().get(CoinFactory.create020())).isEqualTo(1);
 	}
 
 }

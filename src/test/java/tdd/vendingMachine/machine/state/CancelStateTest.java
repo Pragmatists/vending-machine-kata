@@ -1,6 +1,5 @@
 package tdd.vendingMachine.machine.state;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
@@ -56,8 +55,8 @@ public class CancelStateTest {
 	public void returns_coins_on_command_execution() {
 		final InteractionState interactionState = mock(InteractionState.class);
 		Map<Coin, Integer> insertedCoins = Maps.newHashMap();
-		insertedCoins.put(CoinFactory.create02(), 1);
-		insertedCoins.put(CoinFactory.create01(), 2);
+		insertedCoins.put(CoinFactory.create020(), 1);
+		insertedCoins.put(CoinFactory.create010(), 2);
 
 		when(changeStorage.getInsertedCoins()).thenReturn(insertedCoins);
 
