@@ -95,10 +95,12 @@ class PayingState extends AbstractState implements State {
 
 	private List<String> getDescriptionDisplay() {
 		Product product = machine.getActiveShelve().getProduct();
+		int pad = 18;
 		List<String> description = Lists.newArrayList(
-			StringUtils.rightPad("Buying", 10) + AnsiColorDecorator.green(product.getName()),
-			StringUtils.rightPad("Price:", 10) + product.getPrice().getAmount(),
-			StringUtils.rightPad("Inserted:", 10) + MoneyUtil.sum(changeStorage.getInsertedCoins()).getAmount(),
+			StringUtils.rightPad("Buying", pad) + AnsiColorDecorator.green(product.getName()),
+			StringUtils.rightPad("Available amount:", pad) + getProductQuantity(),
+			StringUtils.rightPad("Price:", pad) + product.getPrice().getAmount(),
+			StringUtils.rightPad("Inserted:", pad) + MoneyUtil.sum(changeStorage.getInsertedCoins()).getAmount(),
 			EMPTY,
 			getBuyDescription(),
 			EMPTY
@@ -107,12 +109,19 @@ class PayingState extends AbstractState implements State {
 		return DisplayDecorator.decorate(description);
 	}
 
+	private String getProductQuantity() {
+		int productQuantity = machine.getActiveShelve().getQuantity();
+		return productQuantity == 0 ? AnsiColorDecorator.red("0") : String.valueOf(productQuantity);
+	}
+
 	private String getBuyDescription() {
 		switch (purchaseFacade.getPurchaseStatus()) {
 			case PURCHASABLE:
 				return AnsiColorDecorator.green("You can buy now!");
 			case INSUFFICIENT_CHANGE:
 				return AnsiColorDecorator.red("Cannot buy - machine is unable to return change.");
+			case NO_PRODUCT:
+				return AnsiColorDecorator.red("Cannot buy - no more product in machine.");
 			default:
 				return AnsiColorDecorator.yellow("Cannot buy - insufficient founds. Insert more coins.");
 		}

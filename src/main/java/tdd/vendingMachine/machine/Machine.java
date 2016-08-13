@@ -28,9 +28,9 @@ public class Machine {
 	}
 
 	private void createShelves() {
-		shelves.add(Shelve.of(ProductFactory.createCocaCola(), RandomUtils.nextInt(5, 11)));
-		shelves.add(Shelve.of(ProductFactory.createChocolateBar(), RandomUtils.nextInt(5, 11)));
-		shelves.add(Shelve.of(ProductFactory.createMineralWater(), RandomUtils.nextInt(5, 11)));
+		shelves.add(Shelve.of(ProductFactory.createCocaCola(), RandomUtils.nextInt(1, 4)));
+		shelves.add(Shelve.of(ProductFactory.createChocolateBar(), RandomUtils.nextInt(1, 4)));
+		shelves.add(Shelve.of(ProductFactory.createMineralWater(), RandomUtils.nextInt(1, 4)));
 	}
 
 	public Shelve getShelve(Integer index) {

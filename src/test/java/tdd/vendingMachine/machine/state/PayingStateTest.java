@@ -26,8 +26,6 @@ public class PayingStateTest {
 
 	private PurchaseFacade purchaseFacade;
 
-	private Machine machine;
-
 	private ChangeStorage changeStorage;
 
 	private PayingState payingState;
@@ -35,7 +33,7 @@ public class PayingStateTest {
 	@Before
 	public void setup() {
 		purchaseFacade = mock(PurchaseFacade.class);
-		machine = mock(Machine.class);
+		Machine machine = mock(Machine.class);
 		changeStorage = mock(ChangeStorage.class);
 		final Shelve shelve = mock(Shelve.class);
 		when(shelve.getProduct()).thenReturn(ProductFactory.createCocaCola());
@@ -51,9 +49,10 @@ public class PayingStateTest {
 		List<String> description = payingState.getDescription();
 
 		Assertions.assertThat(description.get(1)).containsSequence("Buying", "Coca-Cola");
-		Assertions.assertThat(description.get(2)).containsSequence("Price", "1.50");
-		Assertions.assertThat(description.get(3)).containsSequence("Inserted", " 0.00");
-		Assertions.assertThat(description.get(5)).contains("insufficient founds");
+		Assertions.assertThat(description.get(2)).containsSequence("Available amount", "0");
+		Assertions.assertThat(description.get(3)).containsSequence("Price", "1.50");
+		Assertions.assertThat(description.get(4)).containsSequence("Inserted", " 0.00");
+		Assertions.assertThat(description.get(6)).contains("insufficient founds");
 	}
 
 	@Test
@@ -67,9 +66,10 @@ public class PayingStateTest {
 		List<String> description = payingState.getDescription();
 
 		Assertions.assertThat(description.get(1)).containsSequence("Buying", "Coca-Cola");
-		Assertions.assertThat(description.get(2)).containsSequence("Price", "1.50");
-		Assertions.assertThat(description.get(3)).containsSequence("Inserted", "1.50");
-		Assertions.assertThat(description.get(5)).contains("You can buy now!");
+		Assertions.assertThat(description.get(2)).containsSequence("Available amount", "0");
+		Assertions.assertThat(description.get(3)).containsSequence("Price", "1.50");
+		Assertions.assertThat(description.get(4)).containsSequence("Inserted", "1.50");
+		Assertions.assertThat(description.get(6)).contains("You can buy now!");
 	}
 
 	@Test
@@ -83,9 +83,27 @@ public class PayingStateTest {
 		List<String> description = payingState.getDescription();
 
 		Assertions.assertThat(description.get(1)).containsSequence("Buying", "Coca-Cola");
-		Assertions.assertThat(description.get(2)).containsSequence("Price", "1.50");
-		Assertions.assertThat(description.get(3)).containsSequence("Inserted", "1.60");
-		Assertions.assertThat(description.get(5)).contains(" machine is unable to return change.");
+		Assertions.assertThat(description.get(2)).containsSequence("Available amount", "0");
+		Assertions.assertThat(description.get(3)).containsSequence("Price", "1.50");
+		Assertions.assertThat(description.get(4)).containsSequence("Inserted", "1.60");
+		Assertions.assertThat(description.get(6)).contains("machine is unable to return change.");
+	}
+
+	@Test
+	public void shows_description_for_when_there_is_no_more_product() {
+		when(purchaseFacade.getPurchaseStatus()).thenReturn(PurchaseStatus.NO_PRODUCT);
+		final Map<Coin, Integer> founds = Maps.newLinkedHashMap();
+		founds.put(CoinFactory.create10(), 1);
+		founds.put(CoinFactory.create02(), 3);
+		when(changeStorage.getInsertedCoins()).thenReturn(founds);
+
+		List<String> description = payingState.getDescription();
+
+		Assertions.assertThat(description.get(1)).containsSequence("Buying", "Coca-Cola");
+		Assertions.assertThat(description.get(2)).containsSequence("Available amount", "0");
+		Assertions.assertThat(description.get(3)).containsSequence("Price", "1.50");
+		Assertions.assertThat(description.get(4)).containsSequence("Inserted", "1.60");
+		Assertions.assertThat(description.get(6)).contains("no more product in machine");
 	}
 
 	@Test
@@ -98,11 +116,11 @@ public class PayingStateTest {
 
 		List<String> description = payingState.getDescription();
 
-		Assertions.assertThat(TestUtil.stripColors(description.get(7))).containsSequence("Coin nominal", "Coins in machine", "Inserted coins");
-		Assertions.assertThat(TestUtil.stripColors(description.get(8))).containsSequence("0.10");
-		Assertions.assertThat(TestUtil.stripColors(description.get(9))).containsSequence("0.20");
-		Assertions.assertThat(TestUtil.stripColors(description.get(13))).containsSequence("[ 0 ]", "coin with value 0.10");
-		Assertions.assertThat(TestUtil.stripColors(description.get(14))).containsSequence("[ 1 ]", "coin with value 0.20");
+		Assertions.assertThat(TestUtil.stripColors(description.get(8))).containsSequence("Coin nominal", "Coins in machine", "Inserted coins");
+		Assertions.assertThat(TestUtil.stripColors(description.get(9))).containsSequence("0.10");
+		Assertions.assertThat(TestUtil.stripColors(description.get(10))).containsSequence("0.20");
+		Assertions.assertThat(TestUtil.stripColors(description.get(14))).containsSequence("[ 0 ]", "coin with value 0.10");
+		Assertions.assertThat(TestUtil.stripColors(description.get(15))).containsSequence("[ 1 ]", "coin with value 0.20");
 	}
 
 	@Test

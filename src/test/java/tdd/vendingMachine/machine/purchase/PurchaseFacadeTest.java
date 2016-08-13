@@ -121,6 +121,18 @@ public class PurchaseFacadeTest {
 	}
 
 	@Test
+	public void nothing_is_bought_when_status_is_NO_PRODUCT() {
+		mock_NO_PRODUCT_status();
+
+		purchaseFacade.buy();
+
+		ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
+
+		verify(commandLinePrinter).print(argumentCaptor.capture());
+		Assertions.assertThat(argumentCaptor.getValue()).containsSequence("Cannot buy: no more product in machine.");
+	}
+
+	@Test
 	public void buyable_product_is_bought_and_change_is_returned_using_inserted_coins() {
 		mock_BUYABLE_status();
 		final String productName = "productName";
@@ -138,6 +150,8 @@ public class PurchaseFacadeTest {
 		verify(changeStorage).setInsertedCoins(argumentCaptorMap.capture());
 		Map<Coin, Integer> map = argumentCaptorMap.getValue();
 		Assertions.assertThat(map.get(CoinFactory.create10())).isEqualTo(1);
+
+		verify(machine.getActiveShelve()).setQuantity(2);
 	}
 
 	@Test
@@ -170,6 +184,8 @@ public class PurchaseFacadeTest {
 		Assertions.assertThat(ownedCoinsValue.get(CoinFactory.create02())).isEqualTo(6);
 		Assertions.assertThat(ownedCoinsValue.get(CoinFactory.create05())).isEqualTo(2);
 		Assertions.assertThat(insertedCoinsValue.get(CoinFactory.create02())).isEqualTo(4);
+
+		verify(machine.getActiveShelve()).setQuantity(2);
 	}
 
 
@@ -203,6 +219,8 @@ public class PurchaseFacadeTest {
 		Map<Coin, Integer> insertedCoinsValue = insertedCoinsArgumentCaptor.getValue();
 		Assertions.assertThat(ownedCoinsValue.get(CoinFactory.create20())).isEqualTo(1);
 		Assertions.assertThat(insertedCoinsValue.get(CoinFactory.create05())).isEqualTo(1);
+
+		verify(machine.getActiveShelve()).setQuantity(2);
 	}
 
 	private void mock_INSUFFICIENT_CHANGE_status() {
@@ -213,6 +231,17 @@ public class PurchaseFacadeTest {
 		when(product.getPrice()).thenReturn(MoneyFactory.USD(.5));
 		Shelve shelve = mock(Shelve.class);
 		when(shelve.getProduct()).thenReturn(product);
+		when(shelve.getQuantity()).thenReturn(3);
+		when(machine.getActiveShelve()).thenReturn(shelve);
+	}
+
+	private void mock_NO_PRODUCT_status() {
+		insertedCoins = Maps.newLinkedHashMap();
+		product = mock(Product.class);
+		when(product.getPrice()).thenReturn(MoneyFactory.USD(1));
+		Shelve shelve = mock(Shelve.class);
+		when(shelve.getProduct()).thenReturn(product);
+		when(shelve.getQuantity()).thenReturn(0);
 		when(machine.getActiveShelve()).thenReturn(shelve);
 	}
 
@@ -224,6 +253,7 @@ public class PurchaseFacadeTest {
 		when(product.getPrice()).thenReturn(MoneyFactory.USD(1));
 		Shelve shelve = mock(Shelve.class);
 		when(shelve.getProduct()).thenReturn(product);
+		when(shelve.getQuantity()).thenReturn(3);
 		when(machine.getActiveShelve()).thenReturn(shelve);
 	}
 
@@ -233,6 +263,7 @@ public class PurchaseFacadeTest {
 		when(product.getPrice()).thenReturn(MoneyFactory.USD(1));
 		Shelve shelve = mock(Shelve.class);
 		when(shelve.getProduct()).thenReturn(product);
+		when(shelve.getQuantity()).thenReturn(3);
 		when(machine.getActiveShelve()).thenReturn(shelve);
 	}
 

@@ -12,6 +12,7 @@ import tdd.vendingMachine.money.change.ChangeStorage;
 import tdd.vendingMachine.money.coin.entity.Coin;
 import tdd.vendingMachine.money.util.MoneyUtil;
 import tdd.vendingMachine.product.Product;
+import tdd.vendingMachine.shelve.entity.Shelve;
 
 import java.util.List;
 import java.util.Map;
@@ -37,13 +38,7 @@ public class PurchaseFacade {
 	public void buy() {
 		PurchaseStatus purchaseStatus = getPurchaseStatus();
 		if (!PurchaseStatus.PURCHASABLE.equals(purchaseStatus)) {
-			String message = "Cannot buy: ";
-			if (PurchaseStatus.INSUFFICIENT_FUNDS.equals(purchaseStatus)) {
-				message += "insufficient money inserted.";
-			} else {
-				message += "changed cannot be given back using neither inserted coins nor coins owned by machine.";
-			}
-			commandLinePrinter.print(AnsiColorDecorator.red(message));
+			printCannotBuyMessage(purchaseStatus);
 			return;
 		}
 
@@ -54,6 +49,8 @@ public class PurchaseFacade {
 		}
 
 		Product product = getProduct();
+		Shelve activeShelve = machine.getActiveShelve();
+		activeShelve.setQuantity(activeShelve.getQuantity() - 1);
 		commandLinePrinter.print(AnsiColorDecorator.green(
 			"Purchased " + product.getName() + " for " + product.getPrice() + "."));
 	}
@@ -74,6 +71,11 @@ public class PurchaseFacade {
 		Money productPrice = getProduct().getPrice();
 		Money sum = sumInsertedCoins();
 		boolean enoughMoneyIsInserted = sum.compareTo(productPrice) >= 0;
+		Integer quantity = machine.getActiveShelve().getQuantity();
+
+		if (quantity == 0) {
+			return PurchaseStatus.NO_PRODUCT;
+		}
 
 		if (!enoughMoneyIsInserted) {
 			return PurchaseStatus.INSUFFICIENT_FUNDS;
@@ -94,6 +96,18 @@ public class PurchaseFacade {
 
 	public List<Coin> getAvailableCoin() {
 		return AVAILABLE_COINS;
+	}
+
+	private void printCannotBuyMessage(PurchaseStatus purchaseStatus) {
+		String message = "Cannot buy: ";
+		if (PurchaseStatus.INSUFFICIENT_FUNDS.equals(purchaseStatus)) {
+			message += "insufficient money inserted.";
+		} else if (PurchaseStatus.NO_PRODUCT.equals(purchaseStatus)) {
+			message += "no more product in machine.";
+		} else {
+			message += "changed cannot be given back using neither inserted coins nor coins owned by machine.";
+		}
+		commandLinePrinter.print(AnsiColorDecorator.red(message));
 	}
 
 	private void returnChangeUsingBothStorages() {
