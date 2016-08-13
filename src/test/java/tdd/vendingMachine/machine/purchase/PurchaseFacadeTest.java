@@ -66,6 +66,7 @@ public class PurchaseFacadeTest {
 	public void gets_INSUFFICIENT_CHANGE_status() {
 		mock_INSUFFICIENT_CHANGE_status();
 
+
 		Assertions.assertThat(purchaseFacade.getPurchaseStatus()).isEqualByComparingTo(PurchaseStatus.INSUFFICIENT_CHANGE);
 	}
 
@@ -85,9 +86,13 @@ public class PurchaseFacadeTest {
 
 		List<Coin> availableCoins = purchaseFacade.getAvailableCoin();
 
-		Assertions.assertThat(availableCoins).hasSize(2);
+		Assertions.assertThat(availableCoins).hasSize(6);
 		Assertions.assertThat(availableCoins.get(0)).isEqualTo(CoinFactory.create01());
 		Assertions.assertThat(availableCoins.get(1)).isEqualTo(CoinFactory.create02());
+		Assertions.assertThat(availableCoins.get(2)).isEqualTo(CoinFactory.create05());
+		Assertions.assertThat(availableCoins.get(3)).isEqualTo(CoinFactory.create10());
+		Assertions.assertThat(availableCoins.get(4)).isEqualTo(CoinFactory.create20());
+		Assertions.assertThat(availableCoins.get(5)).isEqualTo(CoinFactory.create50());
 	}
 
 	@Test
@@ -162,9 +167,42 @@ public class PurchaseFacadeTest {
 		verify(changeStorage).setInsertedCoins(insertedCoinsArgumentCaptor.capture());
 		Map<Coin, Integer> ownedCoinsValue = ownedCoinsArgumentCaptor.getValue();
 		Map<Coin, Integer> insertedCoinsValue = insertedCoinsArgumentCaptor.getValue();
-		Assertions.assertThat(ownedCoinsValue.get(CoinFactory.create02())).isEqualTo(5);
+		Assertions.assertThat(ownedCoinsValue.get(CoinFactory.create02())).isEqualTo(6);
 		Assertions.assertThat(ownedCoinsValue.get(CoinFactory.create05())).isEqualTo(2);
-		Assertions.assertThat(insertedCoinsValue.get(CoinFactory.create02())).isEqualTo(1);
+		Assertions.assertThat(insertedCoinsValue.get(CoinFactory.create02())).isEqualTo(4);
+	}
+
+
+
+	@Test
+	public void buyable_product_is_bought_and_change_is_returned_using_storage_swap() {
+		mock_BUYABLE_status();
+		insertedCoins.clear();
+		insertedCoins.put(CoinFactory.create20(), 1);
+
+		final Map<Coin, Integer> ownedCoins = Maps.newLinkedHashMap();
+		ownedCoins.put(CoinFactory.create05(), 1);
+		when(changeStorage.getOwnedCoins()).thenReturn(ownedCoins);
+
+		final String productName = "productName";
+		when(product.getName()).thenReturn(productName);
+		when(product.getPrice()).thenReturn(MoneyFactory.USD(1.5));
+
+		purchaseFacade.buy();
+
+		ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
+		ArgumentCaptor<Map> ownedCoinsArgumentCaptor = ArgumentCaptor.forClass(Map.class);
+		ArgumentCaptor<Map> insertedCoinsArgumentCaptor = ArgumentCaptor.forClass(Map.class);
+
+		verify(commandLinePrinter).print(stringArgumentCaptor.capture());
+		Assertions.assertThat(stringArgumentCaptor.getValue()).containsSequence("Purchased", "productName", "1.5");
+
+		verify(changeStorage).setOwnedCoins(ownedCoinsArgumentCaptor.capture());
+		verify(changeStorage).setInsertedCoins(insertedCoinsArgumentCaptor.capture());
+		Map<Coin, Integer> ownedCoinsValue = ownedCoinsArgumentCaptor.getValue();
+		Map<Coin, Integer> insertedCoinsValue = insertedCoinsArgumentCaptor.getValue();
+		Assertions.assertThat(ownedCoinsValue.get(CoinFactory.create20())).isEqualTo(1);
+		Assertions.assertThat(insertedCoinsValue.get(CoinFactory.create05())).isEqualTo(1);
 	}
 
 	private void mock_INSUFFICIENT_CHANGE_status() {

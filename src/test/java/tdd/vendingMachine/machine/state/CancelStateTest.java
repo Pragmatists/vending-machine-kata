@@ -47,7 +47,7 @@ public class CancelStateTest {
 		verify(commandLinePrinter).print(argumentCaptor.capture());
 		List<String> messages = argumentCaptor.getValue();
 
-		Assertions.assertThat(messages.get(1)).containsSequence("No coins to return.");
+		Assertions.assertThat(messages.get(0)).containsSequence("No coins to return.");
 
 		verify(interactionState).changeState(InteractionState.StateName.PICKING_SHELVE);
 	}
@@ -67,8 +67,8 @@ public class CancelStateTest {
 		verify(commandLinePrinter).print(argumentCaptor.capture());
 		List<String> messages = argumentCaptor.getValue();
 
-		Assertions.assertThat(messages.get(1)).containsSequence("Returned 1 coin with nominal 0.20.");
-		Assertions.assertThat(messages.get(2)).containsSequence("Returned 2 coins with nominal 0.10.");
+		Assertions.assertThat(messages.get(0)).containsSequence("Returned 1 coin with nominal 0.20.");
+		Assertions.assertThat(messages.get(1)).containsSequence("Returned 2 coins with nominal 0.10.");
 
 		verify(interactionState).changeState(InteractionState.StateName.PICKING_SHELVE);
 	}

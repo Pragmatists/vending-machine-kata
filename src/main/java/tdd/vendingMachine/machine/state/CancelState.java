@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tdd.vendingMachine.machine.cli.util.CommandLinePrinter;
-import tdd.vendingMachine.machine.cli.util.DisplayDecorator;
 import tdd.vendingMachine.money.change.ChangeStorage;
 import tdd.vendingMachine.money.coin.entity.Coin;
 
@@ -40,12 +39,12 @@ class CancelState extends AbstractState implements State {
 		Map<Coin, Integer> coins = changeStorage.getInsertedCoins();
 
 		if (coins.isEmpty()) {
-			return DisplayDecorator.decorate(Lists.newArrayList("No coins to return."));
+			return Lists.newArrayList("No coins to return.");
 		} else {
-			return DisplayDecorator.decorate(coins.entrySet().stream().map(entry ->
+			return coins.entrySet().stream().map(entry ->
 				 "Returned " + entry.getValue() + " coin" + (entry.getValue() == 1 ? "" : "s" ) +
 					" with nominal " + entry.getKey().getNominal().getAmount().toString() + "."
-			).collect(Collectors.toList()));
+			).collect(Collectors.toList());
 		}
 	}
 

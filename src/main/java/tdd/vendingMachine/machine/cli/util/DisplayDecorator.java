@@ -48,6 +48,4 @@ public class DisplayDecorator {
 		return "+" + StringUtils.repeat("-", size + 2) + "+";
 	}
 
-
-
 }

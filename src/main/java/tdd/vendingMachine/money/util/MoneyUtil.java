@@ -1,7 +1,6 @@
 package tdd.vendingMachine.money.util;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.Data;
 import org.joda.money.Money;
@@ -45,12 +44,12 @@ public class MoneyUtil {
 	}
 
 	public static Map<Coin, Integer> add(Map<Coin, Integer>... addends) {
-		Map<Coin, Integer> sum = Maps.newLinkedHashMap();
+		Map<Coin, Integer> sum = CoinFactory.emptyCoinStorage();
 
 		Lists.newArrayList(addends).forEach(consumer ->
 			consumer.entrySet().forEach(coins -> {
 				Coin coin = coins.getKey();
-				sum.put(coin, Optional.ofNullable(sum.get(coin)).orElse(0) + coins.getValue());
+				sum.put(coin, sum.get(coin) + coins.getValue());
 			})
 		);
 
@@ -58,7 +57,7 @@ public class MoneyUtil {
 	}
 
 	public static Map<Coin, Integer> subtract(Map<Coin, Integer> minuend, Map<Coin, Integer> subtrahend) {
-		Map<Coin, Integer> difference = Maps.newLinkedHashMap(minuend);
+		Map<Coin, Integer> difference = CoinFactory.emptyCoinStorage();
 
 		subtrahend.entrySet().forEach(coins -> {
 			Coin coin = coins.getKey();
@@ -94,12 +93,20 @@ public class MoneyUtil {
 	}
 
 	private static Map<Coin, Integer> getBestSubset(List<Integer> amounts, Money target) {
-		Map<Coin, Integer> subset = Maps.newLinkedHashMap();
+		Map<Coin, Integer> subset = CoinFactory.emptyCoinStorage();
 
-		getSubset(amounts, target.getAmountMinorInt()).forEach(consumer -> {
-			Coin coin = CoinFactory.ofAmount(consumer);
-			subset.put(coin, Optional.ofNullable(subset.get(coin)).orElse(0) + 1);
-		});
+		List<Integer> nominals = getSubset(amounts, target.getAmountMinorInt());
+
+		if (nominals == null) {
+			return null;
+		}
+
+		if (!nominals.isEmpty()) {
+			nominals.forEach(consumer -> {
+				Coin coin = CoinFactory.ofAmount(consumer);
+				subset.put(coin, subset.get(coin) + 1);
+			});
+		}
 
 		return subset;
 	}

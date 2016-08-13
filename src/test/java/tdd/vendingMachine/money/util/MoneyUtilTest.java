@@ -75,7 +75,7 @@ public class MoneyUtilTest {
 
 		Map<Coin, Integer> subset = MoneyUtil.subset(map1, MoneyFactory.USD(.4));
 
-		Assertions.assertThat(subset).hasSize(1);
+		Assertions.assertThat(subset).hasSize(6);
 		Assertions.assertThat(subset.get(CoinFactory.create02())).isEqualTo(2);
 	}
 
@@ -88,7 +88,7 @@ public class MoneyUtilTest {
 
 		Map<Coin, Integer> subset = MoneyUtil.subset(map1, MoneyFactory.USD(1.7));
 
-		Assertions.assertThat(subset).hasSize(3);
+		Assertions.assertThat(subset).hasSize(6);
 		Assertions.assertThat(subset.get(CoinFactory.create01())).isEqualTo(1);
 		Assertions.assertThat(subset.get(CoinFactory.create02())).isEqualTo(3);
 		Assertions.assertThat(subset.get(CoinFactory.create10())).isEqualTo(1);
@@ -104,7 +104,7 @@ public class MoneyUtilTest {
 
 		Map<Coin, Integer> subset = MoneyUtil.subset(map1, MoneyFactory.USD(3.6));
 
-		Assertions.assertThat(subset).hasSize(4);
+		Assertions.assertThat(subset).hasSize(6);
 		Assertions.assertThat(subset.get(CoinFactory.create01())).isEqualTo(2);
 		Assertions.assertThat(subset.get(CoinFactory.create02())).isEqualTo(2);
 		Assertions.assertThat(subset.get(CoinFactory.create05())).isEqualTo(2);

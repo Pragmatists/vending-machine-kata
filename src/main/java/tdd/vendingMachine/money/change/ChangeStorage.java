@@ -23,7 +23,7 @@ public class ChangeStorage {
 	}
 
 	private void createCoins() {
-		ownedCoins = Maps.newLinkedHashMap();
+		ownedCoins = CoinFactory.emptyCoinStorage();
 		ownedCoins.put(CoinFactory.create01(), RandomUtils.nextInt(0, 2));
 		ownedCoins.put(CoinFactory.create02(), RandomUtils.nextInt(0, 2));
 		ownedCoins.put(CoinFactory.create05(), RandomUtils.nextInt(0, 2));

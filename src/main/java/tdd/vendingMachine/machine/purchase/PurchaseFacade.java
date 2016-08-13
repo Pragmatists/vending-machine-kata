@@ -15,7 +15,8 @@ import tdd.vendingMachine.product.Product;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import static tdd.vendingMachine.money.coin.factory.CoinFactory.AVAILABLE_COINS;
 
 @Service
 public class PurchaseFacade {
@@ -46,16 +47,15 @@ public class PurchaseFacade {
 			return;
 		}
 
-		Product product = getProduct();
-
-		commandLinePrinter.print(AnsiColorDecorator.green(
-			"Purchased " + product.getName() + " for " + product.getPrice() + "."));
-
 		if (canChangeBeReturnedUsingInsertedCoins()) {
 			returnChangeUsingInsertedCoins();
 		} else {
 			returnChangeUsingBothStorages();
 		}
+
+		Product product = getProduct();
+		commandLinePrinter.print(AnsiColorDecorator.green(
+			"Purchased " + product.getName() + " for " + product.getPrice() + "."));
 	}
 
 	public void insertCoin(Integer index) {
@@ -82,8 +82,10 @@ public class PurchaseFacade {
 		boolean insertedCoinsMakeChange = canChangeBeReturnedUsingInsertedCoins();
 		boolean ownedCoinsMakeChange = !insertedCoinsMakeChange && canChangeBeReturnedUsingOwnedCoins();
 		boolean bothStoragesCoinsMakeChange = !ownedCoinsMakeChange && canChangeByReturnedUsingBothStorages();
+		boolean swapingStoragesCoinsMakeChange = !bothStoragesCoinsMakeChange && canChangeBeReturnedOnlyBeSwapingStorages();
 
-		if (!insertedCoinsMakeChange && !ownedCoinsMakeChange && !bothStoragesCoinsMakeChange) {
+		if (!insertedCoinsMakeChange && !ownedCoinsMakeChange && !bothStoragesCoinsMakeChange &&
+			!swapingStoragesCoinsMakeChange) {
 			return PurchaseStatus.INSUFFICIENT_CHANGE;
 		}
 
@@ -91,25 +93,31 @@ public class PurchaseFacade {
 	}
 
 	public List<Coin> getAvailableCoin() {
-		return getOwnedCoins().keySet().stream().collect(Collectors.toList());
+		return AVAILABLE_COINS;
 	}
 
 	private void returnChangeUsingBothStorages() {
 		Money productPrice = getProductPrice();
-		Map<Coin, Integer> sum = getOwnedAndInsertedCoins();
-		Map<Coin, Integer> change = ChangeCalculator.calculate(sum, productPrice);
-		Map<Coin, Integer> sumWithoutChange = MoneyUtil.subtract(sum, change);
-		Money moneyWithoutChange = MoneyUtil.sum(getInsertedCoins()).minus(productPrice);
-		Map<Coin, Integer> insertedCoins = MoneyUtil.subset(sumWithoutChange, moneyWithoutChange);
-		Map<Coin, Integer> ownedCoins = MoneyUtil.subtract(sumWithoutChange, insertedCoins);
-		changeStorage.setInsertedCoins(insertedCoins);
-		changeStorage.setOwnedCoins(ownedCoins);
+		if (!canChangeBeReturnedUsingInsertedCoins() && !canChangeBeReturnedUsingOwnedCoins() &&
+			!canChangeByReturnedUsingBothStorages() && canChangeBeReturnedOnlyBeSwapingStorages()) {
+			Map<Coin, Integer> insertedCoins = MoneyUtil.subset(getOwnedCoins(), sumInsertedCoins().minus(getProductPrice()));
+			Map<Coin, Integer> ownedCoins = MoneyUtil.subset(getInsertedCoins(), sumOwnedCoins().plus(getProductPrice()));
+			changeStorage.setInsertedCoins(insertedCoins);
+			changeStorage.setOwnedCoins(ownedCoins);
+		} else {
+			Map<Coin, Integer> sum = getOwnedAndInsertedCoins();
+			Map<Coin, Integer> change = ChangeCalculator.calculate(sum, productPrice);
+			Map<Coin, Integer> insertedCoins = MoneyUtil.subset(sum, MoneyUtil.sum(change));
+			Map<Coin, Integer> ownedCoins = MoneyUtil.subtract(sum, insertedCoins);
+			changeStorage.setInsertedCoins(insertedCoins);
+			changeStorage.setOwnedCoins(ownedCoins);
+		}
 	}
 
 	private void returnChangeUsingInsertedCoins() {
-
-		changeStorage.setInsertedCoins(MoneyUtil.subtract(getInsertedCoins(),
-			ChangeCalculator.calculate(getInsertedCoins(), getProductPrice())));
+		Map<Coin, Integer> payingCoins = ChangeCalculator.calculate(getInsertedCoins(), getProductPrice());
+		changeStorage.setInsertedCoins(MoneyUtil.subtract(getInsertedCoins(), payingCoins));
+		changeStorage.setOwnedCoins(MoneyUtil.add(getOwnedCoins(), payingCoins));
 	}
 
 	private boolean canChangeBeReturnedUsingInsertedCoins() {
@@ -124,6 +132,19 @@ public class PurchaseFacade {
 		return ChangeCalculator.calculate(getOwnedAndInsertedCoins(), getProductPrice()) != null;
 	}
 
+	private boolean canChangeBeReturnedOnlyBeSwapingStorages() {
+		Map<Coin, Integer> subset = MoneyUtil.subset(getOwnedCoins(), sumInsertedCoins().minus(getProductPrice()));
+
+		if (subset == null) {
+			return false;
+		}
+
+		return !subset
+			.values()
+			.stream()
+			.anyMatch(value -> value < 0);
+	}
+
 	private Money getProductPrice() {
 		return getProduct().getPrice();
 	}
@@ -132,12 +153,12 @@ public class PurchaseFacade {
 		return  machine.getActiveShelve().getProduct();
 	}
 
-	private Money sumOwnedCoins() {
-		return MoneyUtil.sum(getOwnedCoins());
-	}
-
 	private Money sumInsertedCoins() {
 		return MoneyUtil.sum(getInsertedCoins());
+	}
+
+	private Money sumOwnedCoins() {
+		return MoneyUtil.sum(getOwnedCoins());
 	}
 
 	private Map<Coin, Integer> getOwnedCoins() {

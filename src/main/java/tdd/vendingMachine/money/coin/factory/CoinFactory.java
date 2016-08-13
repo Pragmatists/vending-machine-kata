@@ -1,8 +1,16 @@
 package tdd.vendingMachine.money.coin.factory;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import tdd.vendingMachine.money.coin.entity.*;
 
+import java.util.List;
+import java.util.Map;
+
 public class CoinFactory {
+
+	public static final List<Coin> AVAILABLE_COINS = Lists.newArrayList(
+		create01(), create02(), create05(), create10(), create20(), create50());
 
 	public static Coin create01() {
 		return new Coin01();
@@ -26,6 +34,17 @@ public class CoinFactory {
 
 	public static Coin create50() {
 		return new Coin50();
+	}
+
+	public static Map<Coin, Integer> emptyCoinStorage() {
+		Map<Coin, Integer> emptyCoinStorage = Maps.newLinkedHashMap();
+		emptyCoinStorage.put(create01(), 0);
+		emptyCoinStorage.put(create02(), 0);
+		emptyCoinStorage.put(create05(), 0);
+		emptyCoinStorage.put(create10(), 0);
+		emptyCoinStorage.put(create20(), 0);
+		emptyCoinStorage.put(create50(), 0);
+		return emptyCoinStorage;
 	}
 
 	public static Coin ofAmount(Integer amount) {

@@ -85,7 +85,7 @@ public class PayingStateTest {
 		Assertions.assertThat(description.get(1)).containsSequence("Buying", "Coca-Cola");
 		Assertions.assertThat(description.get(2)).containsSequence("Price", "1.50");
 		Assertions.assertThat(description.get(3)).containsSequence("Inserted", "1.60");
-		Assertions.assertThat(description.get(5)).contains(" machine is unable to return change");
+		Assertions.assertThat(description.get(5)).contains(" machine is unable to return change.");
 	}
 
 	@Test
@@ -98,8 +98,11 @@ public class PayingStateTest {
 
 		List<String> description = payingState.getDescription();
 
-		Assertions.assertThat(TestUtil.stripColors(description.get(9))).containsSequence("[ 0 ]", "coin with value 0.10");
-		Assertions.assertThat(TestUtil.stripColors(description.get(10))).containsSequence("[ 1 ]", "coin with value 0.20");
+		Assertions.assertThat(TestUtil.stripColors(description.get(7))).containsSequence("Coin nominal", "Coins in machine", "Inserted coins");
+		Assertions.assertThat(TestUtil.stripColors(description.get(8))).containsSequence("0.10");
+		Assertions.assertThat(TestUtil.stripColors(description.get(9))).containsSequence("0.20");
+		Assertions.assertThat(TestUtil.stripColors(description.get(13))).containsSequence("[ 0 ]", "coin with value 0.10");
+		Assertions.assertThat(TestUtil.stripColors(description.get(14))).containsSequence("[ 1 ]", "coin with value 0.20");
 	}
 
 	@Test
