@@ -22,7 +22,7 @@ public class ChangeCalculatorTest {
 
 		Money amount = MoneyFactory.of(2.50);
 
-		Map<Coin, Integer> solution = ChangeCalculator.calculate(coins, amount);
+		Map<Coin, Integer> solution = ChangeCalculator.calculateChange(coins, amount);
 
 		Assertions.assertThat(solution).isNotNull();
 		Assertions.assertThat(solution).hasSize(4);
@@ -41,7 +41,7 @@ public class ChangeCalculatorTest {
 
 		Money amount = MoneyFactory.of(.80);
 
-		Map<Coin, Integer> solution = ChangeCalculator.calculate(coins, amount);
+		Map<Coin, Integer> solution = ChangeCalculator.calculateChange(coins, amount);
 
 		Assertions.assertThat(solution).isNotNull();
 		Assertions.assertThat(solution).hasSize(3);
@@ -60,7 +60,7 @@ public class ChangeCalculatorTest {
 
 		Money amount = MoneyFactory.of(3);
 
-		Map<Coin, Integer> solution = ChangeCalculator.calculate(coins, amount);
+		Map<Coin, Integer> solution = ChangeCalculator.calculateChange(coins, amount);
 
 		Assertions.assertThat(solution).isNotNull();
 		Assertions.assertThat(solution).hasSize(4);
@@ -77,7 +77,7 @@ public class ChangeCalculatorTest {
 
 		Money amount = MoneyFactory.of(2);
 
-		Map<Coin, Integer> solution = ChangeCalculator.calculate(coins, amount);
+		Map<Coin, Integer> solution = ChangeCalculator.calculateChange(coins, amount);
 
 		Assertions.assertThat(solution).isNotNull();
 		Assertions.assertThat(solution).hasSize(1);
@@ -91,9 +91,52 @@ public class ChangeCalculatorTest {
 
 		Money amount = MoneyFactory.of(.50);
 
-		Map<Coin, Integer> solution = ChangeCalculator.calculate(coins, amount);
+		Map<Coin, Integer> solution = ChangeCalculator.calculateChange(coins, amount);
 
 		Assertions.assertThat(solution).isNull();
+	}
+
+	@Test
+	public void extracts_change_difference_of_money_for_money_valued_0_dot_40() {
+		Map<Coin, Integer> map1 = Maps.newLinkedHashMap();
+		map1.put(CoinFactory.create020(), 3);
+
+		Map<Coin, Integer> subset = ChangeCalculator.calculateChangeDifference(map1, MoneyFactory.of(.4));
+
+		Assertions.assertThat(subset).hasSize(6);
+		Assertions.assertThat(subset.get(CoinFactory.create020())).isEqualTo(2);
+	}
+
+	@Test
+	public void extracts_change_difference_of_money_for_money_valued_1_dot_70() {
+		Map<Coin, Integer> map1 = Maps.newLinkedHashMap();
+		map1.put(CoinFactory.create010(), 2);
+		map1.put(CoinFactory.create020(), 3);
+		map1.put(CoinFactory.create100(), 2);
+
+		Map<Coin, Integer> subset = ChangeCalculator.calculateChangeDifference(map1, MoneyFactory.of(1.7));
+
+		Assertions.assertThat(subset).hasSize(6);
+		Assertions.assertThat(subset.get(CoinFactory.create010())).isEqualTo(1);
+		Assertions.assertThat(subset.get(CoinFactory.create020())).isEqualTo(3);
+		Assertions.assertThat(subset.get(CoinFactory.create100())).isEqualTo(1);
+	}
+
+	@Test
+	public void extracts_change_difference_of_money_for_money_valued_3_dot_60() {
+		Map<Coin, Integer> map1 = Maps.newLinkedHashMap();
+		map1.put(CoinFactory.create010(), 3);
+		map1.put(CoinFactory.create020(), 3);
+		map1.put(CoinFactory.create050(), 3);
+		map1.put(CoinFactory.create100(), 3);
+
+		Map<Coin, Integer> subset = ChangeCalculator.calculateChangeDifference(map1, MoneyFactory.of(3.6));
+
+		Assertions.assertThat(subset).hasSize(6);
+		Assertions.assertThat(subset.get(CoinFactory.create010())).isEqualTo(2);
+		Assertions.assertThat(subset.get(CoinFactory.create020())).isEqualTo(2);
+		Assertions.assertThat(subset.get(CoinFactory.create050())).isEqualTo(2);
+		Assertions.assertThat(subset.get(CoinFactory.create100())).isEqualTo(2);
 	}
 
 }

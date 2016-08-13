@@ -114,14 +114,14 @@ public class PurchaseFacade {
 		Money productPrice = getProductPrice();
 		if (!canChangeBeReturnedUsingInsertedCoins() && !canChangeBeReturnedUsingOwnedCoins() &&
 			!canChangeByReturnedUsingBothStorages() && canChangeBeReturnedOnlyBeSwapingStorages()) {
-			Map<Coin, Integer> insertedCoins = MoneyUtil.subset(getOwnedCoins(), sumInsertedCoins().minus(getProductPrice()));
-			Map<Coin, Integer> ownedCoins = MoneyUtil.subset(getInsertedCoins(), sumOwnedCoins().plus(getProductPrice()));
+			Map<Coin, Integer> insertedCoins = ChangeCalculator.calculateChangeDifference(getOwnedCoins(), sumInsertedCoins().minus(getProductPrice()));
+			Map<Coin, Integer> ownedCoins = ChangeCalculator.calculateChangeDifference(getInsertedCoins(), sumOwnedCoins().plus(getProductPrice()));
 			changeStorage.setInsertedCoins(insertedCoins);
 			changeStorage.setOwnedCoins(ownedCoins);
 		} else {
 			Map<Coin, Integer> sum = getOwnedAndInsertedCoins();
-			Map<Coin, Integer> change = ChangeCalculator.calculate(sum, productPrice);
-			Map<Coin, Integer> insertedCoins = MoneyUtil.subset(sum, MoneyUtil.sum(change));
+			Map<Coin, Integer> change = ChangeCalculator.calculateChange(sum, productPrice);
+			Map<Coin, Integer> insertedCoins =ChangeCalculator.calculateChangeDifference(sum, MoneyUtil.sum(change));
 			Map<Coin, Integer> ownedCoins = MoneyUtil.subtract(sum, insertedCoins);
 			changeStorage.setInsertedCoins(insertedCoins);
 			changeStorage.setOwnedCoins(ownedCoins);
@@ -129,25 +129,25 @@ public class PurchaseFacade {
 	}
 
 	private void returnChangeUsingInsertedCoins() {
-		Map<Coin, Integer> payingCoins = ChangeCalculator.calculate(getInsertedCoins(), getProductPrice());
+		Map<Coin, Integer> payingCoins = ChangeCalculator.calculateChange(getInsertedCoins(), getProductPrice());
 		changeStorage.setInsertedCoins(MoneyUtil.subtract(getInsertedCoins(), payingCoins));
 		changeStorage.setOwnedCoins(MoneyUtil.add(getOwnedCoins(), payingCoins));
 	}
 
 	private boolean canChangeBeReturnedUsingInsertedCoins() {
-		return ChangeCalculator.calculate(getInsertedCoins(), getProductPrice()) != null;
+		return ChangeCalculator.calculateChange(getInsertedCoins(), getProductPrice()) != null;
 	}
 
 	private boolean canChangeBeReturnedUsingOwnedCoins() {
-		return ChangeCalculator.calculate(getOwnedCoins(), getProductPrice()) != null;
+		return ChangeCalculator.calculateChange(getOwnedCoins(), getProductPrice()) != null;
 	}
 
 	private boolean canChangeByReturnedUsingBothStorages() {
-		return ChangeCalculator.calculate(getOwnedAndInsertedCoins(), getProductPrice()) != null;
+		return ChangeCalculator.calculateChange(getOwnedAndInsertedCoins(), getProductPrice()) != null;
 	}
 
 	private boolean canChangeBeReturnedOnlyBeSwapingStorages() {
-		Map<Coin, Integer> subset = MoneyUtil.subset(getOwnedCoins(), sumInsertedCoins().minus(getProductPrice()));
+		Map<Coin, Integer> subset = ChangeCalculator.calculateChangeDifference(getOwnedCoins(), sumInsertedCoins().minus(getProductPrice()));
 
 		if (subset == null) {
 			return false;
