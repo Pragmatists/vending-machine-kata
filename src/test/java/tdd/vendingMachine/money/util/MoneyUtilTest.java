@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import tdd.vendingMachine.money.coin.entity.Coin;
 import tdd.vendingMachine.money.coin.factory.CoinFactory;
+import tdd.vendingMachine.money.factory.MoneyFactory;
 
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class MoneyUtilTest {
 		map3.put(CoinFactory.create05(), 2);
 		map3.put(CoinFactory.create01(), 7);
 
-		Map<Coin, Integer> sum = MoneyUtil.sum(map1, map2, map3);
+		Map<Coin, Integer> sum = MoneyUtil.add(map1, map2, map3);
 
 		Assertions.assertThat(sum.get(CoinFactory.create01())).isEqualTo(22);
 		Assertions.assertThat(sum.get(CoinFactory.create02())).isEqualTo(3);
@@ -66,5 +67,49 @@ public class MoneyUtilTest {
 		Assertions.assertThat(difference.get(CoinFactory.create02())).isEqualTo(4);
 		Assertions.assertThat(difference.get(CoinFactory.create05())).isEqualTo(1);
 	}
+
+	@Test
+	public void extracts_subset_of_money_for_money_valued_0_dot_40() {
+		Map<Coin, Integer> map1 = Maps.newLinkedHashMap();
+		map1.put(CoinFactory.create02(), 3);
+
+		Map<Coin, Integer> subset = MoneyUtil.subset(map1, MoneyFactory.USD(.4));
+
+		Assertions.assertThat(subset).hasSize(1);
+		Assertions.assertThat(subset.get(CoinFactory.create02())).isEqualTo(2);
+	}
+
+	@Test
+	public void extracts_subset_of_money_for_money_valued_1_dot_70() {
+		Map<Coin, Integer> map1 = Maps.newLinkedHashMap();
+		map1.put(CoinFactory.create01(), 2);
+		map1.put(CoinFactory.create02(), 3);
+		map1.put(CoinFactory.create10(), 2);
+
+		Map<Coin, Integer> subset = MoneyUtil.subset(map1, MoneyFactory.USD(1.7));
+
+		Assertions.assertThat(subset).hasSize(3);
+		Assertions.assertThat(subset.get(CoinFactory.create01())).isEqualTo(1);
+		Assertions.assertThat(subset.get(CoinFactory.create02())).isEqualTo(3);
+		Assertions.assertThat(subset.get(CoinFactory.create10())).isEqualTo(1);
+	}
+
+	@Test
+	public void extracts_subset_of_money_for_money_valued_3_dot_60() {
+		Map<Coin, Integer> map1 = Maps.newLinkedHashMap();
+		map1.put(CoinFactory.create01(), 3);
+		map1.put(CoinFactory.create02(), 3);
+		map1.put(CoinFactory.create05(), 3);
+		map1.put(CoinFactory.create10(), 3);
+
+		Map<Coin, Integer> subset = MoneyUtil.subset(map1, MoneyFactory.USD(3.6));
+
+		Assertions.assertThat(subset).hasSize(4);
+		Assertions.assertThat(subset.get(CoinFactory.create01())).isEqualTo(2);
+		Assertions.assertThat(subset.get(CoinFactory.create02())).isEqualTo(2);
+		Assertions.assertThat(subset.get(CoinFactory.create05())).isEqualTo(2);
+		Assertions.assertThat(subset.get(CoinFactory.create10())).isEqualTo(2);
+	}
+
 
 }

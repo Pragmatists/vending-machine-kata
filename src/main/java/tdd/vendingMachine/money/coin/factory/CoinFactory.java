@@ -28,4 +28,23 @@ public class CoinFactory {
 		return new Coin50();
 	}
 
+	public static Coin ofAmount(Integer amount) {
+		switch(amount) {
+			case 10:
+				return create01();
+			case 20:
+				return create02();
+			case 50:
+				return create05();
+			case 100:
+				return create10();
+			case 200:
+				return create20();
+			case 500:
+				return create50();
+			default:
+				return null;
+		}
+	}
+
 }
