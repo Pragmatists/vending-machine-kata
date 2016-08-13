@@ -43,18 +43,6 @@ public class PurchaseFacadeTest {
 	}
 
 	@Test
-	public void returns_inserted_coins() {
-		insertedCoins = Maps.newLinkedHashMap();
-		insertedCoins.put(CoinFactory.create01(), 1);
-		when(changeStorage.getInsertedCoins()).thenReturn(insertedCoins);
-
-		Map<Coin, Integer> result = purchaseFacade.returnInsertedCoins();
-
-		verify(changeStorage).returnInsertedCoins();
-		Assertions.assertThat(result.get(CoinFactory.create01())).isEqualTo(1);
-	}
-
-	@Test
 	public void inserts_coin() {
 		Map<Coin, Integer> ownedCoins = Maps.newLinkedHashMap();
 		ownedCoins.put(CoinFactory.create01(), 1);
@@ -69,19 +57,14 @@ public class PurchaseFacadeTest {
 
 	@Test
 	public void gets_INSUFFICIENT_FUNDS_status() {
-		when(changeStorage.getInsertedCoins()).thenReturn(Maps.newLinkedHashMap());
-		product = mock(Product.class);
-		when(product.getPrice()).thenReturn(MoneyFactory.USD(1));
-		Shelve shelve = mock(Shelve.class);
-		when(shelve.getProduct()).thenReturn(product);
-		when(machine.getActiveShelve()).thenReturn(shelve);
+		mock_INSUFFICIENT_FUNDS_status();
 
 		Assertions.assertThat(purchaseFacade.getPurchaseStatus()).isEqualByComparingTo(PurchaseStatus.INSUFFICIENT_FUNDS);
 	}
 
 	@Test
-	public void gets_NONBUYABLE_NO_CHANGE_status() {
-		mock_NONBUYABLE_NO_CHANGE_status();
+	public void gets_INSUFFICIENT_CHANGE_status() {
+		mock_INSUFFICIENT_CHANGE_status();
 
 		Assertions.assertThat(purchaseFacade.getPurchaseStatus()).isEqualByComparingTo(PurchaseStatus.INSUFFICIENT_CHANGE);
 	}
@@ -108,15 +91,28 @@ public class PurchaseFacadeTest {
 	}
 
 	@Test
-	public void nothing_is_bought_when_status_is_not_PURCHASABLE() {
-		mock_NONBUYABLE_NO_CHANGE_status();
+	public void nothing_is_bought_when_status_is_INSUFFICIENT_CHANGE() {
+		mock_INSUFFICIENT_CHANGE_status();
 
 		purchaseFacade.buy();
 
 		ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
 
 		verify(commandLinePrinter).print(argumentCaptor.capture());
-		Assertions.assertThat(argumentCaptor.getValue()).containsSequence("Cannot buy.");
+		Assertions.assertThat(argumentCaptor.getValue()).containsSequence("Cannot buy: changed cannot be given back " +
+			"using neither inserted coins nor coins owned by machine.");
+	}
+
+	@Test
+	public void nothing_is_bought_when_status_is_INSUFFICIENT_FUNDS() {
+		mock_INSUFFICIENT_FUNDS_status();
+
+		purchaseFacade.buy();
+
+		ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
+
+		verify(commandLinePrinter).print(argumentCaptor.capture());
+		Assertions.assertThat(argumentCaptor.getValue()).containsSequence("Cannot buy: insufficient money inserted.");
 	}
 
 	@Test
@@ -171,7 +167,7 @@ public class PurchaseFacadeTest {
 		Assertions.assertThat(insertedCoinsValue.get(CoinFactory.create02())).isEqualTo(1);
 	}
 
-	private void mock_NONBUYABLE_NO_CHANGE_status() {
+	private void mock_INSUFFICIENT_CHANGE_status() {
 		insertedCoins = Maps.newLinkedHashMap();
 		insertedCoins.put(CoinFactory.create02(), 3);
 		when(changeStorage.getInsertedCoins()).thenReturn(insertedCoins);
@@ -186,6 +182,15 @@ public class PurchaseFacadeTest {
 		insertedCoins = Maps.newLinkedHashMap();
 		insertedCoins.put(CoinFactory.create10(), 2);
 		when(changeStorage.getInsertedCoins()).thenReturn(insertedCoins);
+		product = mock(Product.class);
+		when(product.getPrice()).thenReturn(MoneyFactory.USD(1));
+		Shelve shelve = mock(Shelve.class);
+		when(shelve.getProduct()).thenReturn(product);
+		when(machine.getActiveShelve()).thenReturn(shelve);
+	}
+
+	private void mock_INSUFFICIENT_FUNDS_status() {
+		when(changeStorage.getInsertedCoins()).thenReturn(Maps.newLinkedHashMap());
 		product = mock(Product.class);
 		when(product.getPrice()).thenReturn(MoneyFactory.USD(1));
 		Shelve shelve = mock(Shelve.class);

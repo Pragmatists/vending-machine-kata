@@ -47,7 +47,6 @@ class PayingState extends AbstractState implements State {
 	@Override
 	public void executeCommand(String command, InteractionState interactionState) {
 		if (command.equals("c")) {
-			purchaseFacade.returnInsertedCoins();
 			interactionState.changeState(InteractionState.StateName.CANCEL);
 		} else if (command.equals("b")) {
 			purchaseFacade.buy();

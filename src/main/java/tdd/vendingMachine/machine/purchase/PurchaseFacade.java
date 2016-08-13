@@ -33,16 +33,16 @@ public class PurchaseFacade {
 		this.commandLinePrinter = commandLinePrinter;
 	}
 
-	public Map<Coin, Integer> returnInsertedCoins() {
-		Map<Coin, Integer> insertedCoins = getInsertedCoins();
-		changeStorage.returnInsertedCoins();
-		return insertedCoins;
-	}
-
 	public void buy() {
-		if (!PurchaseStatus.PURCHASABLE.equals(getPurchaseStatus())) {
-			// TODO: more info
-			commandLinePrinter.print(AnsiColorDecorator.red("Cannot buy."));
+		PurchaseStatus purchaseStatus = getPurchaseStatus();
+		if (!PurchaseStatus.PURCHASABLE.equals(purchaseStatus)) {
+			String message = "Cannot buy: ";
+			if (PurchaseStatus.INSUFFICIENT_FUNDS.equals(purchaseStatus)) {
+				message += "insufficient money inserted.";
+			} else {
+				message += "changed cannot be given back using neither inserted coins nor coins owned by machine.";
+			}
+			commandLinePrinter.print(AnsiColorDecorator.red(message));
 			return;
 		}
 
