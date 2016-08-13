@@ -32,7 +32,7 @@ public class PurchaseFacadeTest {
 
 	private Product product;
 
-	Map<Coin, Integer> insertedCoins;
+	private Map<Coin, Integer> insertedCoins;
 
 	@Before
 	public void setup() {
