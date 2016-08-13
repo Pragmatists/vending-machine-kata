@@ -50,7 +50,7 @@ class PayingState extends AbstractState implements State {
 			purchaseFacade.returnInsertedCoins();
 			interactionState.changeState(InteractionState.StateName.CANCEL);
 		} else if (command.equals("b")) {
-			purchaseFacade.buyAndGetChange();
+			purchaseFacade.buy();
 		} else {
 			try {
 				Integer index = Integer.valueOf(command);

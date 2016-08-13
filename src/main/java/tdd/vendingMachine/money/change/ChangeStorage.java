@@ -1,7 +1,7 @@
 package tdd.vendingMachine.money.change;
 
 import com.google.common.collect.Maps;
-import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.RandomUtils;
 import org.joda.money.Money;
 import org.springframework.stereotype.Service;
@@ -13,9 +13,10 @@ import java.util.Map;
 @Service
 public class ChangeStorage {
 
+	@Setter
 	private Map<Coin, Integer> ownedCoins;
 
-	@Getter
+	@Setter
 	private Map<Coin, Integer> insertedCoins;
 
 	public ChangeStorage() {

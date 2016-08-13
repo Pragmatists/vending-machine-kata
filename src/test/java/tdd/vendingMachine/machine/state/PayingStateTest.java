@@ -137,7 +137,7 @@ public class PayingStateTest {
 
 		payingState.executeCommand(command, interactionState);
 
-		verify(purchaseFacade).buyAndGetChange();
+		verify(purchaseFacade).buy();
 	}
 
 }
