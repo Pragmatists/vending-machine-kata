@@ -113,7 +113,7 @@ public class PurchaseFacade {
 	private void returnChangeUsingBothStorages() {
 		Money productPrice = getProductPrice();
 		if (!canChangeBeReturnedUsingInsertedCoins() && !canChangeBeReturnedUsingOwnedCoins() &&
-			!canChangeByReturnedUsingBothStorages() && canChangeBeReturnedOnlyBeSwapingStorages()) {
+			canChangeBeReturnedOnlyBeSwapingStorages()) {
 			Map<Coin, Integer> insertedCoins = ChangeCalculator.calculateChangeDifference(getOwnedCoins(), sumInsertedCoins().minus(getProductPrice()));
 			Map<Coin, Integer> ownedCoins = ChangeCalculator.calculateChangeDifference(getInsertedCoins(), sumOwnedCoins().plus(getProductPrice()));
 			changeStorage.setInsertedCoins(insertedCoins);
