@@ -1,0 +1,9 @@
+machine:
+  java:
+    version:
+      oraclejdk8
+test:
+  override:
+    - mvn install
+  post:
+    - bash <(curl -s https://codecov.io/bash)
