@@ -77,7 +77,7 @@ public class VendingMachineTest {
         //when
         vendingMachine.selectProduct(invalidShelfNumber);
         //then
-        assertThat(vendingMachine.currentRequest).isNull();
+        assertThat(vendingMachine.currentRequest).isEqualTo(vendingMachine.currentRequest);
         assertThat(vendingMachine.state).isEqualTo(VendingMachineState.WAITING_FOR_SELECT_PRODUCT);
     }
 

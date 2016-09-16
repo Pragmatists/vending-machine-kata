@@ -14,6 +14,10 @@ import tdd.vendingMachine.strategy.IVendingMachineStrategies;
 import tdd.vendingMachine.strategy.IVendingMachineStrategy;
 import tdd.vendingMachine.strategy.VendingMachineStateStrategies;
 
+import java.math.BigDecimal;
+
+import static tdd.vendingMachine.util.BigDecimalUtil.createBigDecimalWithPrecision;
+
 public class VendingMachine implements IVendingMachine {
 
     VendingMachineState state = VendingMachineState.WAITING_FOR_SELECT_PRODUCT;
@@ -62,8 +66,8 @@ public class VendingMachine implements IVendingMachine {
     }
 
     Double countReamingValueForCurrentRequest() {
-        Double insertedCoinsValueForCurrentRequest = cashBox.getInsertedCoinsValueForCurrentRequest();
-        return getCurrentRequestPrice() - insertedCoinsValueForCurrentRequest;
+        BigDecimal insertedCoinsValueForCurrentRequest = createBigDecimalWithPrecision(cashBox.getInsertedCoinsValueForCurrentRequest());
+        return createBigDecimalWithPrecision(getCurrentRequestPrice()).subtract(insertedCoinsValueForCurrentRequest).doubleValue();
     }
 
     Double getCurrentRequestPrice() {
@@ -78,8 +82,9 @@ public class VendingMachine implements IVendingMachine {
     @Override
     public void selectProduct(int shelfNumber) {
         IShelf shelf = shelfs.get(shelfNumber);
-        currentRequest = getStrategyForCurrentState().selectProduct(display, shelf);
-        if (currentRequest != null) {
+        Request selectProductRequest = getStrategyForCurrentState().selectProduct(display, shelf);
+        if (selectProductRequest != null) {
+            currentRequest = selectProductRequest;
             state = VendingMachineState.PRODUCT_SELECTED;
         }
     }

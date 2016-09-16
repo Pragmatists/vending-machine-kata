@@ -4,12 +4,12 @@ import lombok.Getter;
 import tdd.vendingMachine.cash.coin.Coin;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
+import static tdd.vendingMachine.util.BigDecimalUtil.createBigDecimalWithPrecision;
 
 public class CashBox extends HashMap<Double, CashBoxPocket> implements ICashBox {
     public static final int REQUIRED_VALUE_PRECISION = 2;
@@ -45,10 +45,11 @@ public class CashBox extends HashMap<Double, CashBoxPocket> implements ICashBox 
     }
 
     public Double getInsertedCoinsValueForCurrentRequest() {
-        return currentRequestPocket
+        double sum = currentRequestPocket
             .stream()
             .mapToDouble(Coin::getValue)
             .sum();
+        return createBigDecimalWithPrecision(sum).doubleValue();
     }
 
     @Override
@@ -109,10 +110,6 @@ public class CashBox extends HashMap<Double, CashBoxPocket> implements ICashBox 
             return coinValue.multiply(new BigDecimal(availableCoins));
         }
         return coinValue.multiply(new BigDecimal(neededCoinsForCurrentDenomination));
-    }
-
-    private BigDecimal createBigDecimalWithPrecision(Double valueToReturn) {
-        return new BigDecimal(valueToReturn).round(new MathContext(REQUIRED_VALUE_PRECISION, RoundingMode.DOWN));
     }
 
     private int getMachineCoinsCountFor(Double coinValue) {
