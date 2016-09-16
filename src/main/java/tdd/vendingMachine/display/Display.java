@@ -13,7 +13,7 @@ public class Display implements IDisplay {
     public static final String REMAINING_VALUE_MESSAGE = "Still need : %d more. Hurry up!";
     public static final String INCORRECT_SHELF_NUMBER_MESSAGE = "Cant find shelf which you specify in this machine!";
     public static final String ADD_PRODUCT_INFORMATION_MESSAGE = "Inserted product at shelf: %s. Product type is: %s with own price: %s";
-    public static final String INCORRECT_SHELF_SELECT_MESSAGE = "No way! You chose wrong shelf: %s or shelf is empty. Please look closer and try again!";
+    public static final String INCORRECT_SHELF_SELECT_MESSAGE = "No way! You chose wrong shelf or shelf is empty. Please look closer and try again!";
     public static final String SELECTED_PRODUCT_MESSAGE = "Congratulations you choose product: %s. Please insert %s if you want to get this product.";
     public static final String RETURN_COIN_MESSAGE = "Returned coin: %s";
     public static final String ACTION_IS_NOT_ALLOWED_ON_THIS_MACHINE_STATE_MESSAGE = "Method is not allowed on this machine state";

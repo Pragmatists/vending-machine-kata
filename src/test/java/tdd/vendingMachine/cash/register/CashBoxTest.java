@@ -71,9 +71,9 @@ public class CashBoxTest {
     @Test
     public void shouldReturnTrueIfCashBoxHasEnoughMoneyToReturnChange() throws Exception {
         //given
-        cashBox.addToCurrentRequestPocket(new Coin(5.0));
+        cashBox.addToCurrentRequestPocket(new Coin(2.0));
         cashBox.addToCashBoxPocket(new Coin(0.5));
-        double price = 4.5;
+        double price = 2.5;
         //when
         boolean couldReturnChangeForRequest = cashBox.isAbleToReturnChangeFor(price);
         //then
@@ -98,7 +98,7 @@ public class CashBoxTest {
     public void shouldReturnTrueIfCashBoxHasEnoughMoneyToReturnChange_2() throws Exception {
         //given
         cashBox.addToCurrentRequestPocket(new Coin(2.0));
-        cashBox.addToCurrentRequestPocket(new Coin(2.0));
+        cashBox.addToCurrentRequestPocket(new Coin(1.0));
         cashBox.addToCashBoxPocket(new Coin(0.1));
         cashBox.addToCashBoxPocket(new Coin(0.1));
         cashBox.addToCashBoxPocket(new Coin(0.2));

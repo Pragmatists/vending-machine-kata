@@ -16,11 +16,11 @@ public class VendingMachineInitializer {
         new ProductConfiguration(1, ProductType.CHIPS),
         new ProductConfiguration(1, ProductType.CHIPS),
         new ProductConfiguration(2, ProductType.COLA),
-        new ProductConfiguration(3, ProductType.COLA),
+        new ProductConfiguration(3, ProductType.NUTS),
         new ProductConfiguration(2, ProductType.CHIPS),
         new ProductConfiguration(5, ProductType.CHOCOLATE_BAR),
         new ProductConfiguration(6, ProductType.CHIPS),
-        new ProductConfiguration(7, ProductType.CHIPS),
+        new ProductConfiguration(7, ProductType.WATER),
         new ProductConfiguration(8, ProductType.COLA),
         new ProductConfiguration(8, ProductType.COLA),
         new ProductConfiguration(10, ProductType.CHOCOLATE_BAR)

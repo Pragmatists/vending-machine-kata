@@ -53,9 +53,8 @@ public class CashBox extends HashMap<Double, CashBoxPocket> implements ICashBox 
     }
 
     @Override
-    public boolean isAbleToReturnChangeFor(Double value) {
-        Double valueToReturn = getInsertedCoinsValueForCurrentRequest() - value;
-        return valueToReturn > 0 && hasCoinsToReturnTheChange(valueToReturn);
+    public boolean isAbleToReturnChangeFor(Double valueToReturn) {
+        return valueToReturn >= 0 && hasCoinsToReturnTheChange(valueToReturn);
     }
 
     @Override
