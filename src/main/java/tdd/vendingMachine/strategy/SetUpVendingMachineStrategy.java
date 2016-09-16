@@ -13,7 +13,7 @@ public class SetUpVendingMachineStrategy extends VendingMachineStrategyBase {
         return false;
     }
 
-    public void insertProduct(IShelf shelf, Product product, IDisplay display) throws CannotChangeShelfProductsTypeException {
+    public void insertProduct(IDisplay display, IShelf shelf, Product product) throws CannotChangeShelfProductsTypeException {
         if (shelf != null) {
             shelf.setProductsType(product.getType());
             shelf.push(product);

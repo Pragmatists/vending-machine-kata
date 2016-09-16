@@ -11,11 +11,11 @@ import tdd.vendingMachine.shelf.IShelf;
 public interface IVendingMachineStrategy {
     boolean insertCoinForCurrentRequest(IDisplay display, ICashBox cashBox, Coin coin);
 
-    void insertProduct(IShelf shelf, Product product, IDisplay display) throws CannotChangeShelfProductsTypeException;
+    void insertProduct(IDisplay display, IShelf shelf, Product product) throws CannotChangeShelfProductsTypeException;
 
-    void cancelRequest(ICashBox cashBox, IDisplay display);
+    void cancelRequest(IDisplay display, ICashBox cashBox);
 
-    Request selectProduct(IShelf shelf, IDisplay display);
+    Request selectProduct(IDisplay display, IShelf shelf);
 
     void insertCoinToCashBox(IDisplay display, ICashBox cashBox, Coin coin);
 

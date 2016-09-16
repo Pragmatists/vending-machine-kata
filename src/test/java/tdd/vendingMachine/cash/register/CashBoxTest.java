@@ -153,4 +153,18 @@ public class CashBoxTest {
         assertThat(coins).contains(sec);
     }
 
+    @Test
+    public void shouldPutAllCoinsFromCurrentRequestToCashBoxPockets() throws Exception {
+        //given
+        Coin currentRequestPocketCoinFirst = new Coin(5.0);
+        Coin currentRequestPocketCoinSecond = new Coin(2.0);
+        cashBox.addToCurrentRequestPocket(currentRequestPocketCoinFirst);
+        cashBox.addToCurrentRequestPocket(currentRequestPocketCoinSecond);
+        //when
+        cashBox.depositCurrentRequestCoins();
+        //then
+        assertThat(cashBox.get(5.0)).contains(currentRequestPocketCoinFirst);
+        assertThat(cashBox.get(2.0)).contains(currentRequestPocketCoinSecond);
+    }
+
 }

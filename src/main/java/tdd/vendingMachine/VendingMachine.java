@@ -10,6 +10,7 @@ import tdd.vendingMachine.request.Request;
 import tdd.vendingMachine.shelf.CannotChangeShelfProductsTypeException;
 import tdd.vendingMachine.shelf.IShelf;
 import tdd.vendingMachine.shelf.Shelfs;
+import tdd.vendingMachine.strategy.IVendingMachineStrategies;
 import tdd.vendingMachine.strategy.IVendingMachineStrategy;
 import tdd.vendingMachine.strategy.VendingMachineStateStrategies;
 
@@ -20,7 +21,7 @@ public class VendingMachine implements IVendingMachine {
     private IDisplay display = new Display();
     Shelfs shelfs = new Shelfs();
     Request currentRequest;
-    VendingMachineStateStrategies vendingMachineStateStrategies = new VendingMachineStateStrategies();
+    IVendingMachineStrategies vendingMachineStateStrategies = new VendingMachineStateStrategies();
 
     @Override
     public void insertCoinForCurrentRequest(Coin coin) {
@@ -32,25 +33,6 @@ public class VendingMachine implements IVendingMachine {
         }
     }
 
-    private void finalizeRequest(Double changeValue) {
-        if (cashBox.isAbleToReturnChangeFor(changeValue)) {
-            returnProduct();
-            cashBox.depositCurrentRequestCoins();
-            returnRestOfMoney(changeValue);
-            state = VendingMachineState.WAITING_FOR_SELECT_PRODUCT;
-            currentRequest = null;
-        } else {
-            display.showCantReturnChangeMessage();
-            cancelRequest();
-        }
-    }
-
-    @Override
-    public void cancelRequest() {
-        getStrategyForCurrentState().cancelRequest(cashBox, display);
-        state = VendingMachineState.WAITING_FOR_SELECT_PRODUCT;
-    }
-
     void tryToFinalizeRequest() {
         Double reamingValue = countReamingValueForCurrentRequest();
         if (reamingValue <= 0) {
@@ -58,6 +40,25 @@ public class VendingMachine implements IVendingMachine {
         } else {
             display.showRemainingValueForSelectedProductMessage(reamingValue);
         }
+    }
+
+    void finalizeRequest(Double changeValue) {
+        if (cashBox.isAbleToReturnChangeFor(changeValue)) {
+            returnProduct();
+            cashBox.depositCurrentRequestCoins();
+            returnRestOfMoney(changeValue);
+        } else {
+            display.showCantReturnChangeMessage();
+            getStrategyForCurrentState().cancelRequest(display, cashBox);
+        }
+        state = VendingMachineState.WAITING_FOR_SELECT_PRODUCT;
+        currentRequest = null;
+    }
+
+    @Override
+    public void cancelRequest() {
+        getStrategyForCurrentState().cancelRequest(display, cashBox);
+        state = VendingMachineState.WAITING_FOR_SELECT_PRODUCT;
     }
 
     Double countReamingValueForCurrentRequest() {
@@ -77,7 +78,7 @@ public class VendingMachine implements IVendingMachine {
     @Override
     public void selectProduct(int shelfNumber) {
         IShelf shelf = shelfs.get(shelfNumber);
-        currentRequest = getStrategyForCurrentState().selectProduct(shelf, display);
+        currentRequest = getStrategyForCurrentState().selectProduct(display, shelf);
         if (currentRequest != null) {
             state = VendingMachineState.PRODUCT_SELECTED;
         }
@@ -90,7 +91,7 @@ public class VendingMachine implements IVendingMachine {
     @Override
     public void insertProduct(int shelfNumber, Product product) throws CannotChangeShelfProductsTypeException {
         IShelf shelf = shelfs.get(shelfNumber);
-        getStrategyForCurrentState().insertProduct(shelf, product, display);
+        getStrategyForCurrentState().insertProduct(display, shelf, product);
     }
 
     void returnProduct() {

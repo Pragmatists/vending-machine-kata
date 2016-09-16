@@ -14,11 +14,11 @@ public class WaitingForSelectProductStrategy extends VendingMachineStrategyBase 
         return false;
     }
 
-    public void cancelRequest(ICashBox cashBox, IDisplay display) {
+    public void cancelRequest(IDisplay display, ICashBox cashBox) {
         displayFirstSelectProductMessage(display);
     }
 
-    public Request selectProduct(IShelf shelf, IDisplay display) {
+    public Request selectProduct(IDisplay display, IShelf shelf) {
         if (shelf != null && !shelf.isEmpty()) {
             Product productSelected = shelf.pop();
             display.showProductSelectedMessage(productSelected);

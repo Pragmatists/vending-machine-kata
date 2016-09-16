@@ -9,15 +9,15 @@ import tdd.vendingMachine.shelf.CannotChangeShelfProductsTypeException;
 import tdd.vendingMachine.shelf.IShelf;
 
 public abstract class VendingMachineStrategyBase implements IVendingMachineStrategy {
-    public void insertProduct(IShelf shelf, Product product, IDisplay display) throws CannotChangeShelfProductsTypeException {
+    public void insertProduct(IDisplay display, IShelf shelf, Product product) throws CannotChangeShelfProductsTypeException {
         showInvalidStateMessage(display);
     }
 
-    public void cancelRequest(ICashBox cashBox, IDisplay display) {
+    public void cancelRequest(IDisplay display, ICashBox cashBox) {
         showInvalidStateMessage(display);
     }
 
-    public Request selectProduct(IShelf shelf, IDisplay display) {
+    public Request selectProduct(IDisplay display, IShelf shelf) {
         showInvalidStateMessage(display);
         return null;
     }

@@ -17,9 +17,10 @@ import tdd.vendingMachine.shelf.CannotChangeShelfProductsTypeException;
 import tdd.vendingMachine.shelf.IShelf;
 import tdd.vendingMachine.shelf.Shelf;
 import tdd.vendingMachine.shelf.Shelfs;
+import tdd.vendingMachine.strategy.IVendingMachineStrategies;
+import tdd.vendingMachine.strategy.IVendingMachineStrategy;
 
 import java.util.Arrays;
-import java.util.Stack;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -36,186 +37,147 @@ public class VendingMachineTest {
     @Mock
     Shelfs shelfs;
     @Mock
-    IShelf mockedShelf;
-    private Product sampleProduct = new Product(ProductType.CHIPS);
+    IVendingMachineStrategy currentStateStrategy;
+    @Mock
+    IVendingMachineStrategies vendingMachineStrategies;
+    @Mock
+    IShelf shelf;
+
+    Product sampleProduct = new Product(ProductType.CHIPS);
+    VendingMachineState currentState;
 
     @Before
     public void setUp() throws Exception {
+        currentState = vendingMachine.state;
+        when(vendingMachineStrategies.get(currentState)).thenReturn(currentStateStrategy);
         vendingMachine.currentRequest = new Request(5, sampleProduct);
-        when(mockedShelf.pop()).thenReturn(sampleProduct);
-        when(mockedShelf.getNumber()).thenReturn(5);
     }
 
     @Test
-    public void shouldCreateRequestIfChosenShelfIsNotEmpty() throws Exception {
+    public void shouldChangeToProductSelectedStateWhenRequestWasCreatedWell() throws Exception {
         //given
         int validShelfNumber = 5;
-        when(shelfs.get(validShelfNumber)).thenReturn(mockedShelf);
-        when(mockedShelf.isEmpty()).thenReturn(false);
-        when(mockedShelf.getNumber()).thenReturn(validShelfNumber);
-        when(mockedShelf.pop()).thenReturn(sampleProduct);
-        vendingMachine.state = VendingMachineState.WAITING_FOR_SELECT_PRODUCT;
-        //when
-        vendingMachine.selectProduct(validShelfNumber);
-        //then
-        assertThat(vendingMachine.currentRequest.getShelfNumber()).isEqualTo(validShelfNumber);
-        assertThat(vendingMachine.currentRequest.getProduct()).isSameAs(sampleProduct);
-    }
-
-    @Test
-    public void shouldDisplayInformationWhenShelfDoesNotExist() throws Exception {
-        //given
-        int invalidShelf = 5;
-        when(shelfs.get(invalidShelf)).thenReturn(null);
-        when(mockedShelf.isEmpty()).thenReturn(false);
-        vendingMachine.state = VendingMachineState.WAITING_FOR_SELECT_PRODUCT;
-        //when
-        vendingMachine.selectProduct(invalidShelf);
-        //then
-        verify(display).showIncorrectProductSelectMessage();
-    }
-
-    @Test
-    public void shouldDisplayInformationWhenShelfIsEmpty() throws Exception {
-        //given
-        int invalidShelf = 5;
-        when(shelfs.get(invalidShelf)).thenReturn(mockedShelf);
-        when(mockedShelf.isEmpty()).thenReturn(true);
-        //when
-        vendingMachine.selectProduct(invalidShelf);
-        //then
-        verify(display).showIncorrectProductSelectMessage();
-    }
-
-    @Test
-    public void shouldDisplayIncorrectProductSelectMessageIfShelfChoiceIsCorrect() throws Exception {
-        //given
-        int validShelfNumber = 5;
-        when(shelfs.get(validShelfNumber)).thenReturn(mockedShelf);
-        Product product = new Product(ProductType.CHIPS);
-        when(mockedShelf.pop()).thenReturn(product);
-        when(mockedShelf.isEmpty()).thenReturn(true);
-        vendingMachine.state = VendingMachineState.WAITING_FOR_SELECT_PRODUCT;
-        //when
-        vendingMachine.selectProduct(validShelfNumber);
-        //then
-        verify(display).showIncorrectProductSelectMessage();
-    }
-
-    @Test
-    public void shouldChangeStateToProductSelectedIfShelfNumberIsCorrect() throws Exception {
-        //given
-        int validShelfNumber = 5;
-        when(shelfs.get(validShelfNumber)).thenReturn(mockedShelf);
-        when(mockedShelf.isEmpty()).thenReturn(false);
+        when(shelfs.get(validShelfNumber)).thenReturn(shelf);
+        Request createdRequest = new Request(validShelfNumber, sampleProduct);
+        when(currentStateStrategy.selectProduct(display, shelf)).thenReturn(createdRequest);
         //when
         vendingMachine.selectProduct(validShelfNumber);
         //then
         assertThat(vendingMachine.state).isEqualTo(VendingMachineState.PRODUCT_SELECTED);
+        assertThat(vendingMachine.currentRequest).isEqualTo(createdRequest);
     }
 
     @Test
-    public void shouldNotChangeStateToProductSelectedIfShelfNumberIsNotExist() throws Exception {
+    public void shouldNotChangeStateIfRequestDidNotCreatedWell() throws Exception {
         //given
-        int incorrectShelfNumber = 251;
-        assertThat(vendingMachine.state).isEqualTo(VendingMachineState.WAITING_FOR_SELECT_PRODUCT);
+        int invalidShelfNumber = 5;
+        when(shelfs.get(invalidShelfNumber)).thenReturn(shelf);
+        when(currentStateStrategy.selectProduct(display, shelf)).thenReturn(null);
         vendingMachine.state = VendingMachineState.WAITING_FOR_SELECT_PRODUCT;
         //when
-        vendingMachine.selectProduct(incorrectShelfNumber);
+        vendingMachine.selectProduct(invalidShelfNumber);
         //then
+        assertThat(vendingMachine.currentRequest).isNull();
         assertThat(vendingMachine.state).isEqualTo(VendingMachineState.WAITING_FOR_SELECT_PRODUCT);
     }
 
     @Test
-    public void shouldInsertCoin() throws Exception {
+    public void shouldFinalizeRequestIfCoinIsAddedWell() throws Exception {
         //given
         Coin coin = new Coin(5.0);
-        when(cashBox.isValidCoin(coin)).thenReturn(true);
         doNothing().when(vendingMachine).tryToFinalizeRequest();
-        vendingMachine.state = VendingMachineState.PRODUCT_SELECTED;
+        when(currentStateStrategy.insertCoinForCurrentRequest(display, cashBox, coin)).thenReturn(true);
         //when
         vendingMachine.insertCoinForCurrentRequest(coin);
         //then
-        verify(cashBox).addToCurrentRequestPocket(coin);
+        verify(vendingMachine).tryToFinalizeRequest();
     }
 
     @Test
-    public void shouldNotInsertCoinIfTheValueIsNotProper() throws Exception {
+    public void shouldReturnCoinIfCoinValueIsNotValid() throws Exception {
         //given
         Coin coin = new Coin(0.05);
-        when(cashBox.isValidCoin(coin)).thenReturn(false);
+        when(currentStateStrategy.insertCoinForCurrentRequest(display, cashBox, coin)).thenReturn(false);
         //when
         vendingMachine.insertCoinForCurrentRequest(coin);
         //then
-        verify(cashBox, never()).addToCurrentRequestPocket(coin);
+        verify(vendingMachine).returnCoin(coin);
     }
 
     @Test
-    public void shouldDisplayMessageAboutTheCoinIsInvalid() throws Exception {
+    public void shouldDisplayMessageAboutReamingValueForSelectedProduct() throws Exception {
         //given
-        Coin coin = new Coin(0.05);
-        when(cashBox.isValidCoin(coin)).thenReturn(false);
-        vendingMachine.state = VendingMachineState.PRODUCT_SELECTED;
-        //when
-        vendingMachine.insertCoinForCurrentRequest(coin);
-        //then
-        verify(display).showInvalidCoinFormatMessage();
-    }
-
-    @Test
-    public void shouldDisplayMessageAboutReamingValueToFInalizeRequest() throws Exception {
-        //given
-        when(vendingMachine.getCurrentRequestPrice()).thenReturn(5.0);
-        when(cashBox.getInsertedCoinsValueForCurrentRequest()).thenReturn(4.0);
+        double reamingValueForCurrentRequest = 2.0;
+        when(vendingMachine.countReamingValueForCurrentRequest()).thenReturn(reamingValueForCurrentRequest);
         //when
         vendingMachine.tryToFinalizeRequest();
         //then
-        verify(display).showRemainingValueForSelectedProductMessage(1.0);
+        verify(display).showRemainingValueForSelectedProductMessage(reamingValueForCurrentRequest);
     }
 
     @Test
-    public void shouldReturnProduct() throws Exception {
+    public void shouldReturnProductIfCashBoxCanReturnValueForCurrentRequest() throws Exception {
         //given
-        when(vendingMachine.getCurrentRequestPrice()).thenReturn(5.0);
-        when(cashBox.getInsertedCoinsValueForCurrentRequest()).thenReturn(6.0);
-        when(cashBox.isAbleToReturnChangeFor(1.0)).thenReturn(true);
+        double changeValue = 1.0;
+        when(cashBox.isAbleToReturnChangeFor(changeValue)).thenReturn(true);
         //when
-        vendingMachine.tryToFinalizeRequest();
+        vendingMachine.finalizeRequest(changeValue);
         //then
         verify(vendingMachine).returnProduct();
     }
 
     @Test
-    public void shouldReturnRestOfMoney() throws Exception {
+    public void shouldDisplayCantReturnChangeMessageWhenCashBoxCantReturnChange() throws Exception {
         //given
-        when(vendingMachine.getCurrentRequestPrice()).thenReturn(5.0);
-        when(cashBox.getInsertedCoinsValueForCurrentRequest()).thenReturn(6.0);
-        when(cashBox.isAbleToReturnChangeFor(any())).thenReturn(true);
+        double changeValue = 1.0;
+        when(cashBox.isAbleToReturnChangeFor(changeValue)).thenReturn(false);
         //when
-        vendingMachine.tryToFinalizeRequest();
+        vendingMachine.finalizeRequest(changeValue);
         //then
-        verify(vendingMachine).returnRestOfMoney(1.0);
+        verify(display).showCantReturnChangeMessage();
     }
 
     @Test
-    public void shouldSetNullAsCurrentRequest() throws Exception {
+    public void shouldCancelRequestIfCashBoxCantReturnChange() throws Exception {
         //given
-        when(cashBox.getInsertedCoinsValueForCurrentRequest()).thenReturn(6.0);
-        when(vendingMachine.getCurrentRequestPrice()).thenReturn(5.0);
-        when(cashBox.isAbleToReturnChangeFor(1.0)).thenReturn(true);
+        double changeValue = 1.0;
+        when(cashBox.isAbleToReturnChangeFor(changeValue)).thenReturn(false);
+        //when
+        vendingMachine.finalizeRequest(changeValue);
+        //then
+        verify(currentStateStrategy).cancelRequest(display, cashBox);
+    }
+
+    @Test
+    public void shouldFinalizeRequestIfReamingValueForCurrentRequestIsLessOrEqualsZero() throws Exception {
+        //given
+        double reamingValueForCurrentRequest = -1.0;
+        double valueToReturnToRequester = 1.0;
+        when(vendingMachine.countReamingValueForCurrentRequest()).thenReturn(reamingValueForCurrentRequest);
         //when
         vendingMachine.tryToFinalizeRequest();
+        //then
+        verify(vendingMachine).finalizeRequest(valueToReturnToRequester);
+    }
+
+    @Test
+    public void shouldSetNullAsCurrentRequestAfterFinalizeRequest() throws Exception {
+        //given
+        double changeValue = 1.0;
+        //when
+        vendingMachine.finalizeRequest(changeValue);
         //then
         assertThat(vendingMachine.currentRequest).isNull();
     }
 
     @Test
-    public void afterFinalizeRequestCurrentStateShouldBeSetToFree() throws Exception {
+    public void afterFinalizeRequestCurrentStateShouldBeSetToWaitingForSelectProduct() throws Exception {
         //given
-        when(vendingMachine.getCurrentRequestPrice()).thenReturn(5.0);
-        when(cashBox.getInsertedCoinsValueForCurrentRequest()).thenReturn(6.0);
+        vendingMachine.state = VendingMachineState.SET_UP_MACHINE;
+        double changeValue = 1.0;
+        when(cashBox.isAbleToReturnChangeFor(changeValue)).thenReturn(true);
         //when
-        vendingMachine.tryToFinalizeRequest();
+        vendingMachine.finalizeRequest(changeValue);
         //then
         assertThat(vendingMachine.state).isEqualTo(VendingMachineState.WAITING_FOR_SELECT_PRODUCT);
     }
@@ -232,61 +194,38 @@ public class VendingMachineTest {
     }
 
     @Test
-    public void shouldInsertProduct() throws Exception, CannotChangeShelfProductsTypeException {
+    public void shouldCountReamingValueForCurrentRequest() throws Exception {
         //given
-        Product product = new Product(ProductType.CHIPS);
-        Integer shelfNumber = 5;
-        when(shelfs.get(shelfNumber)).thenReturn(mockedShelf);
-        vendingMachine.state = VendingMachineState.SET_UP_MACHINE;
+        Product product = mock(Product.class);
+        when(product.getPrice()).thenReturn(4.5);
+        when(cashBox.getInsertedCoinsValueForCurrentRequest()).thenReturn(2.2);
+        vendingMachine.currentRequest = new Request(5, product);
         //when
-        vendingMachine.insertProduct(shelfNumber, product);
+        Double result = vendingMachine.countReamingValueForCurrentRequest();
         //then
-        verify(mockedShelf).push(product);
+        assertThat(result).isEqualTo(2.3);
     }
 
     @Test
-    public void shouldNotInsertProductOnOtherThanSetupMachineState() throws Exception, CannotChangeShelfProductsTypeException {
+    public void shouldUserStrategyToInsertProduct() throws Exception, CannotChangeShelfProductsTypeException {
         //given
         Product product = new Product(ProductType.CHIPS);
         Integer shelfNumber = 5;
-        when(shelfs.get(shelfNumber)).thenReturn(mockedShelf);
-        vendingMachine.state = VendingMachineState.PRODUCT_SELECTED;
+        when(shelfs.get(shelfNumber)).thenReturn(shelf);
         //when
         vendingMachine.insertProduct(shelfNumber, product);
         //then
-        verify(mockedShelf, never()).push(product);
-    }
-
-    @Test(expected = CannotChangeShelfProductsTypeException.class)
-    public void shouldNotInsertProductWhenShelfTypeIsMismatch() throws Exception, CannotChangeShelfProductsTypeException {
-        //given
-        vendingMachine.shelfs = new Shelfs();
-        Product chips = new Product(ProductType.CHIPS);
-        Product cola = new Product(ProductType.COLA);
-        Integer shelfNumber = 5;
-        vendingMachine.state = VendingMachineState.SET_UP_MACHINE;
-        vendingMachine.insertProduct(shelfNumber, cola);
-        //when
-        vendingMachine.insertProduct(shelfNumber, chips);
-        //then
+        verify(currentStateStrategy).insertProduct(display, shelf, product);
     }
 
     @Test()
-    public void shouldReturnInsertedCoins() throws Exception, CannotChangeShelfProductsTypeException {
+    public void shouldCancelRequestUsingCurrentStateStrategy() throws Exception, CannotChangeShelfProductsTypeException {
         //given
-        Coin firstCoin = new Coin(5.0);
-        Coin secondCoin = new Coin(2.0);
-        Stack<Coin> coins = new Stack();
-        coins.push(firstCoin);
-        coins.push(secondCoin);
-        when(cashBox.getCurrentRequestPocket()).thenReturn(coins);
-        when(cashBox.isValidCoin(any(Coin.class))).thenReturn(true);
-        vendingMachine.state = VendingMachineState.PRODUCT_SELECTED;
         //when
         vendingMachine.cancelRequest();
         //then
-        verify(display).showReturnCoinMessage(firstCoin);
-        verify(display).showReturnCoinMessage(secondCoin);
+        assertThat(vendingMachine.state).isEqualTo(VendingMachineState.WAITING_FOR_SELECT_PRODUCT);
+        verify(currentStateStrategy).cancelRequest(display, cashBox);
     }
 
     @Test
@@ -309,37 +248,13 @@ public class VendingMachineTest {
     }
 
     @Test
-    public void shouldNotReturnCoinIfMachineIsOnSelectedProductState() throws Exception {
-        Coin coin = new Coin(5.0);
-        vendingMachine.state = VendingMachineState.PRODUCT_SELECTED;
-        when(cashBox.isValidCoin(coin)).thenReturn(true);
-        //when
-        vendingMachine.insertCoinForCurrentRequest(coin);
-        //then
-        verify(vendingMachine, times(0)).returnCoin(coin);
-    }
-
-    @Test
     public void shouldInsertCoinToCashBox() throws Exception {
         //given
-        vendingMachine.state = VendingMachineState.SET_UP_MACHINE;
         Coin coin = new Coin(5.0);
         //when
         vendingMachine.insertCoinToCashBox(coin);
         //then
-        verify(cashBox).addToCashBoxPocket(coin);
-    }
-
-    @Test
-    public void shouldNotInsertCoinToCashBoxWhenStateIsDifferentThanSetUpMachine() throws Exception {
-        //given
-        vendingMachine.state = VendingMachineState.PRODUCT_SELECTED;
-        Coin coin = new Coin(5.0);
-        //when
-        vendingMachine.insertCoinToCashBox(coin);
-        //then
-        verify(cashBox, never()).addToCashBoxPocket(coin);
-        verify(display).showInvalidActionForMachineStateMessage();
+        verify(currentStateStrategy).insertCoinToCashBox(display, cashBox, coin);
     }
 
     @Test

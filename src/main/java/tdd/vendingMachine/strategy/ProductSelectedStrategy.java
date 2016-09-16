@@ -17,7 +17,7 @@ public class ProductSelectedStrategy extends VendingMachineStrategyBase {
         return false;
     }
 
-    public void cancelRequest(ICashBox cashBox, IDisplay display) {
+    public void cancelRequest(IDisplay display, ICashBox cashBox) {
         Stack<Coin> currentRequestPocket = cashBox.getCurrentRequestPocket();
         while (!currentRequestPocket.isEmpty()) {
             display.showReturnCoinMessage(currentRequestPocket.pop());
