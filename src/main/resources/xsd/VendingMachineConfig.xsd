@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:annotation>
+		<xs:appinfo>Vending machine configuration</xs:appinfo>
+		<xs:documentation xml:lang="en">
+			Assumptions taken for a vending machine:
+			- has 4 shelves
+			- each shelf has 6 slots for a product
+		</xs:documentation>
+	</xs:annotation>
+
+
+	<xs:element name="ProductsInVendingMachine">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">
+				Configuration of products in a vending machine.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="ProductsOnFourthShelf" type="ProductsOnFourthShelfType" />
+				<xs:element name="ProductsOnThirdShelf" type="ProductsOnThirdShelfType" />
+				<xs:element name="ProductsOnSecondShelf" type="ProductsOnSecondShelfType" />
+				<xs:element name="ProductsOnFirstShelf" type="ProductsOnFirstShelfType" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="ProductsOnFourthShelfType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">
+				Configuration of products in a vending machine on a forth shelf (top shelf).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ProductType" type="ProductTypeType" />
+			<xs:element name="ProductQuantitiesOnShelf" type="ProductQuantitiesOnShelfType" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ProductTypeType">
+		<xs:sequence>
+			<xs:element name="Price" type="moneyWihOneFractionalDigit" />
+			<xs:element name="Name" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:simpleType name="moneyWihOneFractionalDigit">
+		<xs:restriction base="xs:decimal">
+			<xs:fractionDigits value="1" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="ProductQuantitiesOnShelfType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">
+				First slot on shelf is the most left slot, last slot on shelf is the most right slot.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FirstSlotQuantity" type="xs:int" />
+			<xs:element name="SecondSlotQuantity" type="xs:int" />
+			<xs:element name="ThirdSlotQuantity" type="xs:int" />
+			<xs:element name="FourthSlotQuantity" type="xs:int" />
+			<xs:element name="FifthSlotQuantity" type="xs:int" />
+			<xs:element name="SixthSlotQuantity" type="xs:int" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ProductsOnThirdShelfType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">
+				Configuration of products in a vending machine on a third shelf.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ProductType" type="ProductTypeType" />
+			<xs:element name="ProductQuantitiesOnShelf" type="ProductQuantitiesOnShelfType" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ProductsOnSecondShelfType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">
+				Configuration of products in a vending machine on a second shelf.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ProductType" type="ProductTypeType" />
+			<xs:element name="ProductQuantitiesOnShelf" type="ProductQuantitiesOnShelfType" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ProductsOnFirstShelfType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">
+				Configuration of products in a vending machine on a first shelf (bottom shelf).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ProductType" type="ProductTypeType" />
+			<xs:element name="ProductQuantitiesOnShelf" type="ProductQuantitiesOnShelfType" />
+		</xs:sequence>
+	</xs:complexType>
+
+</xs:schema>
