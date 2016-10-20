@@ -105,6 +105,18 @@ public class ReturningChangePossibilityCheckerTest {
 	}
 
 	@Test
+	public void test_check_changeConsistingOfDifferentCoinsDenominations() throws Exception {
+		ReturningChangePossibilityResult result = returningChangePossibilityChecker.check(new BigDecimal("1.5"), prepareCoinsStore(0, 1, 4, 1, 0, 0));
+		Assertions.assertThat(result.isReturningChangePossible()).isTrue();
+		assertCoinsToReturn(result.getCoinsToReturn(), new int[] { 0, 0, 1, 1, 0, 0 });
+
+		result = returningChangePossibilityChecker.check(new BigDecimal("9.7"), prepareCoinsStore(5, 3, 4, 2, 1, 0));
+		Assertions.assertThat(result.isReturningChangePossible()).isTrue();
+		assertCoinsToReturn(result.getCoinsToReturn(), new int[] { 1, 2, 0, 1, 1, 0 });
+
+	}
+
+	@Test
 	public void test_check_noChangeFromMixedCoinsStore() throws Exception {
 		ReturningChangePossibilityResult result = returningChangePossibilityChecker.check(new BigDecimal("0.3"), prepareCoinsStore(0, 0, 0, 0, 2, 0));
 		Assertions.assertThat(result.isReturningChangePossible()).isFalse();

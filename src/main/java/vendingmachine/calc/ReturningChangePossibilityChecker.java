@@ -31,7 +31,7 @@ public class ReturningChangePossibilityChecker {
 			BigDecimal sum = new BigDecimal("0.0");
 			zeroCoinsToReturn(coinsToReturn);
 
-			SECOND_LOOP: for (int j = i; j < VendingMachineConstants.DENOMINATIONS_NR; ++j) {
+			for (int j = i; j < VendingMachineConstants.DENOMINATIONS_NR; ++j) {
 				for (int k = 0; k < currentCoinsStore.getCoinQuantity(CoinDenomination.getByCode(j)); ++k) {
 					sum = sum.add(VendingMachineConstants.COIN_DENOMINATION_VALUES[j]);
 					if (sum.compareTo(moneyToReturn) == -1) {
@@ -42,8 +42,7 @@ public class ReturningChangePossibilityChecker {
 						break FIRST_LOOP;
 					} else {
 						sum = sum.subtract(VendingMachineConstants.COIN_DENOMINATION_VALUES[j]);
-						coinsToReturn[j] = 0;
-						continue SECOND_LOOP;
+						break;
 					}
 				}
 			}
