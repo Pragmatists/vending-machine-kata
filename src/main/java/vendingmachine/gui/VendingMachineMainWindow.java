@@ -8,6 +8,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -34,6 +35,7 @@ import vendingmachine.gui.handlers.InsertedCoinHandler;
 import vendingmachine.model.Product;
 import vendingmachine.model.VendingMachine;
 
+@Dependent
 public class VendingMachineMainWindow {
 
 	private static final Logger LOG = LogManager.getLogger(VendingMachineMainWindow.class);

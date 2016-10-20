@@ -1,5 +1,6 @@
 package vendingmachine.gui.handlers;
 
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JTextPane;
@@ -12,6 +13,7 @@ import vendingmachine.model.VendingMachine;
 import vendingmachine.model.VendingMachineCoinsStore;
 import vendingmachine.utils.MessagesHelper;
 
+@Dependent
 public class CancelButtonHandler {
 
 	private static final Logger LOG = LogManager.getLogger(InsertedCoinHandler.class);

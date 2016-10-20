@@ -2,6 +2,8 @@ package vendingmachine.core;
 
 import java.math.BigDecimal;
 
+import javax.enterprise.context.Dependent;
+
 import vendingmachine.config.xsd.classes.ProductQuantitiesOnShelfType;
 import vendingmachine.config.xsd.classes.ProductsInVendingMachine;
 import vendingmachine.config.xsd.classes.ProductsOnFirstShelfType;
@@ -10,6 +12,7 @@ import vendingmachine.config.xsd.classes.ProductsOnSecondShelfType;
 import vendingmachine.config.xsd.classes.ProductsOnThirdShelfType;
 import vendingmachine.model.Product;
 
+@Dependent
 public class ConfigToModelAssembler {
 
 	public void assemble(ProductsInVendingMachine productsInVendingMachine, Product[][] products) {

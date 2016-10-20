@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -22,6 +23,7 @@ import org.xml.sax.SAXException;
 import vendingmachine.config.xsd.classes.ProductsInVendingMachine;
 import vendingmachine.model.VendingMachine;
 
+@Dependent
 public class VendingMachineInitializer {
 
 	private static final Logger LOG = LogManager.getLogger(VendingMachineInitializer.class);

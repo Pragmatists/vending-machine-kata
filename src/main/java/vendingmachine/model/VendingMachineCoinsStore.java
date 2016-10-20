@@ -3,8 +3,11 @@ package vendingmachine.model;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
+import javax.enterprise.context.Dependent;
+
 import vendingmachine.enums.CoinDenomination;
 
+@Dependent
 public class VendingMachineCoinsStore {
 	private int[] coinsQuantities = new int[VendingMachineConstants.DENOMINATIONS_NR];
 	private int[] currentSessionCoinsQuantities = new int[VendingMachineConstants.DENOMINATIONS_NR];

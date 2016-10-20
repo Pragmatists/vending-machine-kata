@@ -3,6 +3,8 @@ package vendingmachine.calc;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
+import javax.enterprise.context.Dependent;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,6 +12,7 @@ import vendingmachine.enums.CoinDenomination;
 import vendingmachine.model.VendingMachineCoinsStore;
 import vendingmachine.model.VendingMachineConstants;
 
+@Dependent
 public class ReturningChangePossibilityChecker {
 
 	private static final Logger LOG = LogManager.getLogger(ReturningChangePossibilityChecker.class);

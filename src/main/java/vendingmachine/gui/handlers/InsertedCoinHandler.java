@@ -2,6 +2,7 @@ package vendingmachine.gui.handlers;
 
 import java.math.BigDecimal;
 
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JTextPane;
@@ -19,6 +20,7 @@ import vendingmachine.model.VendingMachineCoinsStore;
 import vendingmachine.model.VendingMachineConstants;
 import vendingmachine.utils.MessagesHelper;
 
+@Dependent
 public class InsertedCoinHandler {
 
 	private static final Logger LOG = LogManager.getLogger(InsertedCoinHandler.class);

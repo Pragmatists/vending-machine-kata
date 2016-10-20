@@ -2,6 +2,7 @@ package vendingmachine.main;
 
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -13,6 +14,7 @@ import org.jboss.weld.environment.se.events.ContainerInitialized;
 import vendingmachine.core.VendingMachineInitializer;
 import vendingmachine.gui.VendingMachineMainWindow;
 
+@ApplicationScoped
 public class Main {
 
 	private static final Logger LOG = LogManager.getLogger(VendingMachineMainWindow.class);
