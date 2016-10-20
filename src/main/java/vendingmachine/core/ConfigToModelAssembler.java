@@ -12,11 +12,7 @@ import vendingmachine.model.Product;
 
 public class ConfigToModelAssembler {
 
-	private ConfigToModelAssembler() {
-
-	}
-
-	public static void assemble(ProductsInVendingMachine productsInVendingMachine, Product[][] products) {
+	public void assemble(ProductsInVendingMachine productsInVendingMachine, Product[][] products) {
 
 		ProductsOnFirstShelfType productsOnFirstShelf = productsInVendingMachine.getProductsOnFirstShelf();
 		assembleShelf(products, 0, productsOnFirstShelf.getProductType().getPrice(), productsOnFirstShelf.getProductType().getName(),
@@ -36,7 +32,7 @@ public class ConfigToModelAssembler {
 
 	}
 
-	private static void assembleShelf(Product[][] products, int i, BigDecimal productTypePrice, String productTypeName, ProductQuantitiesOnShelfType productQuantitiesOnShelf) {
+	private void assembleShelf(Product[][] products, int i, BigDecimal productTypePrice, String productTypeName, ProductQuantitiesOnShelfType productQuantitiesOnShelf) {
 		products[i][0] = createProduct(productTypePrice, productTypeName, productQuantitiesOnShelf.getFirstSlotQuantity());
 		products[i][1] = createProduct(productTypePrice, productTypeName, productQuantitiesOnShelf.getSecondSlotQuantity());
 		products[i][2] = createProduct(productTypePrice, productTypeName, productQuantitiesOnShelf.getThirdSlotQuantity());
@@ -46,7 +42,7 @@ public class ConfigToModelAssembler {
 
 	}
 
-	private static Product createProduct(BigDecimal price, String name, int quantity) {
+	private Product createProduct(BigDecimal price, String name, int quantity) {
 		return new Product(price, name, quantity);
 	}
 

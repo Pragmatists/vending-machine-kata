@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import javax.inject.Inject;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -25,15 +26,17 @@ public class VendingMachineInitializer {
 
 	private static final Logger LOG = LogManager.getLogger(VendingMachineInitializer.class);
 
-	private VendingMachineInitializer() {
+	@Inject
+	private VendingMachine vendingMachine;
 
-	}
+	@Inject
+	private ConfigToModelAssembler configToModelAssembler;
 
-	public static boolean init(String configPath) {
+	public boolean init(String configPath) {
 		return validateConfigFileAgainstXsd(configPath) && loadConfigFileAndCreateProducts(configPath);
 	}
 
-	private static boolean validateConfigFileAgainstXsd(String configPath) {
+	private boolean validateConfigFileAgainstXsd(String configPath) {
 		Source xmlFile = new StreamSource(new File(configPath));
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		try {
@@ -55,7 +58,7 @@ public class VendingMachineInitializer {
 		return true;
 	}
 
-	private static boolean loadConfigFileAndCreateProducts(String configPath) {
+	private boolean loadConfigFileAndCreateProducts(String configPath) {
 
 		ProductsInVendingMachine productsInVendingMachine = null;
 		try {
@@ -65,7 +68,7 @@ public class VendingMachineInitializer {
 			return false;
 		}
 
-		ConfigToModelAssembler.assemble(productsInVendingMachine, VendingMachine.getInstance().getProducts());
+		configToModelAssembler.assemble(productsInVendingMachine, vendingMachine.getProducts());
 		return true;
 	}
 

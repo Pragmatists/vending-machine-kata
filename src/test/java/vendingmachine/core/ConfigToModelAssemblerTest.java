@@ -10,21 +10,24 @@ import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import vendingmachine.config.xsd.classes.ProductsInVendingMachine;
-import vendingmachine.core.ConfigToModelAssembler;
 import vendingmachine.model.Product;
 import vendingmachine.model.VendingMachine;
+import vendingmachine.model.VendingMachineConstants;
 
 public class ConfigToModelAssemblerTest {
 
 	private static final File GOOD_VENDING_MACHINE_CONFIG_FILE = new File("src\\test\\resources\\xml\\VendingMachineConfigExample.xml");
+
+	private ConfigToModelAssembler configToModelAssembler = new ConfigToModelAssembler();
 
 	@Test
 	public void test_assemble() throws Exception {
 
 		ProductsInVendingMachine productsInVendingMachine = loadConfigFromFile();
 
-		Product[][] products = VendingMachine.getInstance().getProducts();
-		ConfigToModelAssembler.assemble(productsInVendingMachine, products);
+		VendingMachine vendingMachine = new VendingMachine();
+		Product[][] products = vendingMachine.getProducts();
+		configToModelAssembler.assemble(productsInVendingMachine, products);
 
 		assertShelf(products, 0, new BigDecimal("3.0"), "Coke 0.33l", 1, 2, 3, 3, 2, 1);
 		assertShelf(products, 1, new BigDecimal("5.0"), "Coke 0.5l", 4, 3, 2, 2, 1, 3);
@@ -37,7 +40,7 @@ public class ConfigToModelAssemblerTest {
 			int productQuantityInSecondColumn, int productQuantityInThirdColumn, int productQuantityInFourthColumn, int productQuantityInFifthColumn,
 			int productQuantityInSixthColumn) {
 
-		for (int i = 0; i < VendingMachine.PRODUCTS_PER_SHELF_NR; ++i) {
+		for (int i = 0; i < VendingMachineConstants.PRODUCTS_PER_SHELF_NR; ++i) {
 			Assertions.assertThat(products[shelfNr][i].getPrice()).isEqualTo(productTypePrice);
 			Assertions.assertThat(products[shelfNr][i].getName()).isEqualTo(productTypeName);
 		}
