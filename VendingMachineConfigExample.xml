@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ProductsInVendingMachine xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="src/main/resources/xsd/VendingMachineConfig.xsd">
+  <ProductsOnFourthShelf>
+    <ProductType>
+      <Price>2.5</Price>
+      <Name>7 Days</Name>
+    </ProductType>
+    <ProductQuantitiesOnShelf>
+      <FirstSlotQuantity>3</FirstSlotQuantity>
+      <SecondSlotQuantity>2</SecondSlotQuantity>
+      <ThirdSlotQuantity>4</ThirdSlotQuantity>
+      <FourthSlotQuantity>1</FourthSlotQuantity>
+      <FifthSlotQuantity>2</FifthSlotQuantity>
+      <SixthSlotQuantity>3</SixthSlotQuantity>
+    </ProductQuantitiesOnShelf>
+  </ProductsOnFourthShelf>
+  <ProductsOnThirdShelf>
+    <ProductType>
+      <Price>3</Price>
+      <Name>Snickers</Name>
+    </ProductType>
+    <ProductQuantitiesOnShelf>
+      <FirstSlotQuantity>2</FirstSlotQuantity>
+      <SecondSlotQuantity>2</SecondSlotQuantity>
+      <ThirdSlotQuantity>3</ThirdSlotQuantity>
+      <FourthSlotQuantity>4</FourthSlotQuantity>
+      <FifthSlotQuantity>5</FifthSlotQuantity>
+      <SixthSlotQuantity>2</SixthSlotQuantity>
+    </ProductQuantitiesOnShelf>
+  </ProductsOnThirdShelf>
+  <ProductsOnSecondShelf>
+    <ProductType>
+      <Price>5.0</Price>
+      <Name>Coke 0.5l</Name>
+    </ProductType>
+    <ProductQuantitiesOnShelf>
+      <FirstSlotQuantity>4</FirstSlotQuantity>
+      <SecondSlotQuantity>3</SecondSlotQuantity>
+      <ThirdSlotQuantity>2</ThirdSlotQuantity>
+      <FourthSlotQuantity>2</FourthSlotQuantity>
+      <FifthSlotQuantity>1</FifthSlotQuantity>
+      <SixthSlotQuantity>3</SixthSlotQuantity>
+    </ProductQuantitiesOnShelf>
+  </ProductsOnSecondShelf>
+  <ProductsOnFirstShelf>
+    <ProductType>
+      <Price>3.0</Price>
+      <Name>Coke 0.33l</Name>
+    </ProductType>
+    <ProductQuantitiesOnShelf>
+      <FirstSlotQuantity>1</FirstSlotQuantity>
+      <SecondSlotQuantity>2</SecondSlotQuantity>
+      <ThirdSlotQuantity>3</ThirdSlotQuantity>
+      <FourthSlotQuantity>3</FourthSlotQuantity>
+      <FifthSlotQuantity>2</FifthSlotQuantity>
+      <SixthSlotQuantity>1</SixthSlotQuantity>
+    </ProductQuantitiesOnShelf>
+  </ProductsOnFirstShelf>
+</ProductsInVendingMachine>
