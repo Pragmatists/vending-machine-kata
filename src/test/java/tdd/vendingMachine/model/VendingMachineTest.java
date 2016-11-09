@@ -1,7 +1,9 @@
-package tdd.vendingMachine;
+package tdd.vendingMachine.model;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
+
+import tdd.vendingMachine.model.VendingMachine;
 
 public class VendingMachineTest {
 

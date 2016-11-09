@@ -1,10 +1,10 @@
-package tdd.vendingMachine.builder;
+package tdd.vendingMachine.model.builder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import tdd.vendingMachine.Shelf;
-import tdd.vendingMachine.VendingMachine;
+import tdd.vendingMachine.model.Shelf;
+import tdd.vendingMachine.model.VendingMachine;
 
 public class VendingMachineBuilder implements IBuilder<VendingMachine> {
     private List<Shelf> shelfs = new ArrayList<>();

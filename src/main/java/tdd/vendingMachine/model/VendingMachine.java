@@ -1,4 +1,4 @@
-package tdd.vendingMachine;
+package tdd.vendingMachine.model;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package tdd.vendingMachine.builder;
+package tdd.vendingMachine.model.builder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -6,7 +6,8 @@ import java.math.BigDecimal;
 
 import org.junit.Test;
 
-import tdd.vendingMachine.Product;
+import tdd.vendingMachine.model.Product;
+import tdd.vendingMachine.model.builder.ProductBuilder;
 
 public class ProductBuilderTest {
 

@@ -1,11 +1,11 @@
-package tdd.vendingMachine.builder;
+package tdd.vendingMachine.model.builder;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import org.apache.commons.lang3.StringUtils;
 
-import tdd.vendingMachine.Product;
+import tdd.vendingMachine.model.Product;
 
 public class ProductBuilder implements IBuilder<Product> {
     private BigDecimal price;

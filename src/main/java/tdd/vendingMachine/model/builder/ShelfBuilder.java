@@ -1,9 +1,9 @@
-package tdd.vendingMachine.builder;
+package tdd.vendingMachine.model.builder;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import tdd.vendingMachine.Product;
-import tdd.vendingMachine.Shelf;
+import tdd.vendingMachine.model.Product;
+import tdd.vendingMachine.model.Shelf;
 
 public class ShelfBuilder implements IBuilder<Shelf> {
     private Product product;

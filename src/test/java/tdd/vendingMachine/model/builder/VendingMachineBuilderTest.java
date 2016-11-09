@@ -1,4 +1,4 @@
-package tdd.vendingMachine.builder;
+package tdd.vendingMachine.model.builder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -6,7 +6,10 @@ import java.util.stream.IntStream;
 
 import org.junit.Test;
 
-import tdd.vendingMachine.VendingMachine;
+import tdd.vendingMachine.model.VendingMachine;
+import tdd.vendingMachine.model.builder.IBuilder;
+import tdd.vendingMachine.model.builder.ShelfBuilder;
+import tdd.vendingMachine.model.builder.VendingMachineBuilder;
 
 public class VendingMachineBuilderTest {
     @Test

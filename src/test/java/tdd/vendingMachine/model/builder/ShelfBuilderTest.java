@@ -1,11 +1,14 @@
-package tdd.vendingMachine.builder;
+package tdd.vendingMachine.model.builder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
-import tdd.vendingMachine.Product;
-import tdd.vendingMachine.Shelf;
+import tdd.vendingMachine.model.Product;
+import tdd.vendingMachine.model.Shelf;
+import tdd.vendingMachine.model.builder.IBuilder;
+import tdd.vendingMachine.model.builder.ProductBuilder;
+import tdd.vendingMachine.model.builder.ShelfBuilder;
 
 public class ShelfBuilderTest {
 
