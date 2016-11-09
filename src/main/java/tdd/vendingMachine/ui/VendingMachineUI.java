@@ -1,5 +1,8 @@
 package tdd.vendingMachine.ui;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -7,8 +10,7 @@ import tdd.vendingMachine.model.Product;
 import tdd.vendingMachine.service.IDisplayService;
 import tdd.vendingMachine.service.IDropService;
 import tdd.vendingMachine.service.IMoneyService;
-import tdd.vendingMachine.service.IMoneyService.SupportedCoins;
-import tdd.vendingMachine.service.IStateService;
+import tdd.vendingMachine.service.IVendingMachineStateService;
 import tdd.vendingMachine.service.exception.CoinNotSupportedException;
 import tdd.vendingMachine.service.exception.InvalidShelfException;
 
@@ -19,11 +21,11 @@ public class VendingMachineUI implements IVendingMachineUI {
     private IDisplayService displayService;
 
     @Autowired
-    private IStateService stateService;
+    private IVendingMachineStateService stateService;
 
     @Autowired
     private IMoneyService moneyService;
-    
+
     @Autowired
     private IDropService dropService;
 
@@ -34,7 +36,9 @@ public class VendingMachineUI implements IVendingMachineUI {
         }
 
         try {
-            Product product = stateService.getProductOnShelf(shelfNo);
+            stateService.selectShelf(shelfNo);
+
+            Product product = stateService.getSelectedShelfProduct();
             displayService.print(product.getPrice().toPlainString());
         } catch (InvalidShelfException ise) {
             // TODO : add log4j
@@ -45,9 +49,11 @@ public class VendingMachineUI implements IVendingMachineUI {
 
     @Override
     public void putCoin(float denomination) {
-        SupportedCoins supportedCoin;
         try {
-            supportedCoin = moneyService.getCoinType(denomination);
+            moneyService.putCoin(denomination);
+            BigDecimal puttedSum = moneyService.getPuttedSum();
+            displayService.print(stateService.getSelectedShelfProduct().getPrice().subtract(puttedSum)
+                    .setScale(2, RoundingMode.HALF_UP).toPlainString());
         } catch (CoinNotSupportedException cnse) {
             // TODO : add log4j
             cnse.printStackTrace();
@@ -55,10 +61,4 @@ public class VendingMachineUI implements IVendingMachineUI {
         }
 
     }
-
-    /**
-     * Not supported coin is returned
-     * @param denomination
-     */
-    private void dropPuttedDenomination(float denomination) { }
 }

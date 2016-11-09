@@ -1,7 +1,12 @@
 package tdd.vendingMachine.service;
 
+import java.math.BigDecimal;
+
+import org.springframework.stereotype.Service;
+
 import tdd.vendingMachine.service.exception.CoinNotSupportedException;
 
+@Service
 public interface IMoneyService {
     
     //TODO: enum as dictionary from DB/xml
@@ -25,6 +30,8 @@ public interface IMoneyService {
         }
     }
 
-    SupportedCoins getCoinType(float denomination) throws CoinNotSupportedException;
+    void putCoin(float denomination) throws CoinNotSupportedException;
+
+    BigDecimal getPuttedSum();
 
 }

@@ -1,6 +1,11 @@
 package tdd.vendingMachine.ui;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 
@@ -9,14 +14,13 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import tdd.vendingMachine.model.Product;
 import tdd.vendingMachine.model.builder.ProductBuilder;
 import tdd.vendingMachine.service.IDisplayService;
 import tdd.vendingMachine.service.IDropService;
 import tdd.vendingMachine.service.IMoneyService;
-import tdd.vendingMachine.service.IMoneyService.SupportedCoins;
-import tdd.vendingMachine.service.IStateService;
+import tdd.vendingMachine.service.IVendingMachineStateService;
 import tdd.vendingMachine.service.exception.CoinNotSupportedException;
 import tdd.vendingMachine.service.exception.InvalidShelfException;
 
@@ -27,7 +31,7 @@ public class VendingMachineUITest {
     private IDisplayService displayService;
 
     @Mock
-    private IStateService stateService;
+    private IVendingMachineStateService stateService;
     
     @Mock
     private IMoneyService moneyService;
@@ -36,14 +40,13 @@ public class VendingMachineUITest {
     private IDropService dropService;
 
     @InjectMocks
-    @Autowired
     private VendingMachineUI vendingMachineUI;
 
     @Test
     public void select_shelf_should_display_product_price_test() throws InvalidShelfException {
         // given
         final String priceAsString = "123.45";
-        when(stateService.getProductOnShelf(1))
+        when(stateService.getSelectedShelfProduct())
                 .thenReturn(new ProductBuilder().withPrice(new BigDecimal(priceAsString)).build());
         // when
         vendingMachineUI.selectShelf(1);
@@ -55,7 +58,7 @@ public class VendingMachineUITest {
     public void select_shelf_without_product_test() throws InvalidShelfException {
         // given
         final int shelfNo = 10;
-        when(stateService.getProductOnShelf(shelfNo)).thenThrow(new InvalidShelfException());
+        doThrow(new InvalidShelfException()).when(stateService).selectShelf(shelfNo);
         // when
         vendingMachineUI.selectShelf(shelfNo);
         // then
@@ -65,12 +68,18 @@ public class VendingMachineUITest {
     @Test
     public void put_supported_coin() throws CoinNotSupportedException {
         // given
-        final float denomination = 2f;        
-        when(moneyService.getCoinType(denomination)).thenReturn(SupportedCoins.TWO);
+        Product product = mock(Product.class);
+        final float denomination = 2.2f;
+        final float price = 22f;
+        when(moneyService.getPuttedSum()).thenReturn(new BigDecimal(denomination));
+        when(stateService.getSelectedShelfProduct()).thenReturn(product);
+        when(product.getPrice()).thenReturn(new BigDecimal(price));
+        
         // when
         vendingMachineUI.putCoin(denomination);
         // then
         verifyZeroInteractions(dropService);
+        verify(displayService, times(1)).print("19.80");
     }
     
     @Test
@@ -78,7 +87,7 @@ public class VendingMachineUITest {
         // given
         final float denomination = 2f;
         final String excMsg = "exc msg";
-        when(moneyService.getCoinType(denomination)).thenThrow(new CoinNotSupportedException(excMsg));
+        doThrow(new CoinNotSupportedException(excMsg)).when(moneyService).putCoin(denomination);
         // when
         vendingMachineUI.putCoin(denomination);
         // then
