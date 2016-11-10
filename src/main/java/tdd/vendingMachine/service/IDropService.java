@@ -5,10 +5,10 @@ import java.util.List;
 import tdd.vendingMachine.model.Product;
 import tdd.vendingMachine.service.IMoneyService.SupportedCoins;
 
-public interface IDropService {
-    void dropCoins(List<SupportedCoins> coins);
+public interface IDropService extends Confirmable {
+    void addToDrop(List<SupportedCoins> coins);
     
-    void dropUnknownDenomination(float denomination);
+    void addToDrop(float denomination);
     
-    void dropProduct(Product product);
+    void addToDrop(Product product);
 }

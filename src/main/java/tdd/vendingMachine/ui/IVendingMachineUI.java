@@ -5,4 +5,8 @@ public interface IVendingMachineUI {
     void selectShelf(Integer shelfNo);
     
     void putCoin(float denomination);
+    
+    void confirm();
+    
+    void cancel();
 }
