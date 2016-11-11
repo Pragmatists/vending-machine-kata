@@ -1,11 +1,28 @@
 package tdd.vendingMachine.domain;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProductBox {
 
-    private Map<Integer, Tray> trays = new HashMap<>();
+    private List<Tray> trays = new ArrayList<>();
 
-    public getTray
+    public Integer getAvailableTrays() {
+        return trays.size();
+    }
+
+
+    public ProductBox addTray(Tray tray) {
+        trays.add(tray);
+
+        return this;
+    }
+
+    public Tray getTray(int i) {
+        if (trays.size() < i) {
+            throw(new IllegalArgumentException("Invalid tray selected"));
+        }
+
+        return trays.get(i);
+    }
 }

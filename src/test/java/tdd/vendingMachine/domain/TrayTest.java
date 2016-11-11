@@ -6,6 +6,7 @@ import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TrayTest {
 
@@ -42,24 +43,11 @@ public class TrayTest {
     }
 
     @Test
-    public void should_remove_product_from_tray_when_dispensed() {
-        Tray tray = new Tray(Products.COCA_COLA_0_33, 1);
-
-        assertEquals(1, tray.getProductCount());
-        assertFalse(tray.isEmpty());
-
-        tray.removeProduct(1);
-
-        assertEquals(0, tray.getProductCount());
-        assertTrue(tray.isEmpty());
-    }
-
-    @Test
     public void should_throw_exception_on_attempt_to_remove_more_products_than_available() {
         Tray tray = new Tray(Products.COCA_COLA_0_33, 1);
 
         exception.expect(IllegalArgumentException.class);
-        exception.expectMessage("Invalid tray selected");
+        exception.expectMessage("Not enough products on tray");
 
         tray.removeProduct(2);
     }
