@@ -1,8 +1,8 @@
 package tdd.vendingMachine.domain;
 
+import tdd.vendingMachine.domain.currency.Coins;
 import tdd.vendingMachine.domain.state.State;
 import tdd.vendingMachine.domain.state.States;
-import tdd.vendingMachine.domain.state.currency.Coin;
 
 public class VendingMachine {
 
@@ -76,7 +76,7 @@ public class VendingMachine {
 
     }
 
-    public void insertCoin(Coin coin) {
+    public void insertCoin(Coins coin) {
 
     }
 }

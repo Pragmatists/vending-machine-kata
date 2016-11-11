@@ -1,8 +1,8 @@
 package tdd.vendingMachine.domain;
 
 import org.junit.Test;
+import tdd.vendingMachine.domain.currency.Coins;
 import tdd.vendingMachine.domain.state.States;
-import tdd.vendingMachine.domain.state.currency.Coin;
 
 import static org.junit.Assert.assertEquals;
 
@@ -25,7 +25,7 @@ public class VendingMachineTest {
     public void should_be_in_coin_inserted_state_when_product_selected_and_coin_inserted() {
         VendingMachine machine = new VendingMachine();
         machine.pressTraySelectionButton(1);
-        machine.insertCoin(new Coin());
+        machine.insertCoin(Coins.COIN_0_1);
 
         assertEquals(States.COIN_INSERTED, new VendingMachine().getState());
     }
@@ -35,7 +35,7 @@ public class VendingMachineTest {
     public void should_return_to_base_state_on_cancel_pressed() {
         VendingMachine machine = new VendingMachine();
         machine.pressTraySelectionButton(1);
-        machine.insertCoin(new Coin());
+        machine.insertCoin(Coins.COIN_0_1);
         machine.pressCancelButton();
 
         assertEquals(States.BASE, new VendingMachine().getState());
@@ -46,7 +46,7 @@ public class VendingMachineTest {
     public void should_not_allow_to_change_product_when_money_inserted() {
         VendingMachine machine = new VendingMachine();
         machine.pressTraySelectionButton(1);
-        machine.insertCoin(new Coin());
+        machine.insertCoin(Coins.COIN_0_1);
         machine.pressTraySelectionButton(2);
 
         assertEquals(States.COIN_INSERTED, new VendingMachine().getState());
@@ -57,10 +57,10 @@ public class VendingMachineTest {
     public void should_dispense_product_and_be_back_in_base_state_when_correct_amount_of_money_inserted() {
         VendingMachine machine = new VendingMachine();
         machine.pressTraySelectionButton(1);
-        machine.insertCoin(new Coin());
-        machine.insertCoin(new Coin());
-        machine.insertCoin(new Coin());
-        machine.insertCoin(new Coin());
+        machine.insertCoin(Coins.COIN_0_1);
+        machine.insertCoin(Coins.COIN_0_1);
+        machine.insertCoin(Coins.COIN_0_1);
+        machine.insertCoin(Coins.COIN_0_1);
 
         assertEquals(States.BASE, new VendingMachine().getState());
     }
@@ -70,10 +70,10 @@ public class VendingMachineTest {
     public void should_not_dispense_product_give_back_money_and_get_back_to_base_state_when_unable_to_give_change() {
         VendingMachine machine = new VendingMachine();
         machine.pressTraySelectionButton(1);
-        machine.insertCoin(new Coin());
-        machine.insertCoin(new Coin());
-        machine.insertCoin(new Coin());
-        machine.insertCoin(new Coin());
+        machine.insertCoin(Coins.COIN_0_1);
+        machine.insertCoin(Coins.COIN_0_1);
+        machine.insertCoin(Coins.COIN_0_1);
+        machine.insertCoin(Coins.COIN_0_1);
 
         assertEquals(States.BASE, new VendingMachine().getState());
     }

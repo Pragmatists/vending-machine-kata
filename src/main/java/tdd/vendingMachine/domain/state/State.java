@@ -1,7 +1,7 @@
 package tdd.vendingMachine.domain.state;
 
 import tdd.vendingMachine.domain.VendingMachine;
-import tdd.vendingMachine.domain.state.currency.Coin;
+import tdd.vendingMachine.domain.currency.Coins;
 
 public interface State {
 
@@ -9,5 +9,5 @@ public interface State {
 
     public State cancelSelected(VendingMachine context);
 
-    public State coinInserted(VendingMachine context, Coin coin);
+    public State coinInserted(VendingMachine context, Coins coin);
 }

@@ -27,8 +27,8 @@ public class ChangeCalculatorTest {
         assertEquals(Integer.valueOf(1), change.get(Coins.COIN_2));
         assertEquals(Integer.valueOf(1), change.get(Coins.COIN_1));
         assertEquals(Integer.valueOf(1), change.get(Coins.COIN_0_5));
-        assertEquals(Integer.valueOf(1), change.get(Coins.COIN_0_2));
-        assertEquals(Integer.valueOf(10), change.get(Coins.COIN_0_1));
+        assertEquals(Integer.valueOf(2), change.get(Coins.COIN_0_2));
+        assertEquals(Integer.valueOf(4), change.get(Coins.COIN_0_1));
     }
 
     @Test

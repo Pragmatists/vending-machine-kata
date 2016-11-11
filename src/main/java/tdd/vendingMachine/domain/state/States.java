@@ -1,7 +1,7 @@
 package tdd.vendingMachine.domain.state;
 
 import tdd.vendingMachine.domain.VendingMachine;
-import tdd.vendingMachine.domain.state.currency.Coin;
+import tdd.vendingMachine.domain.currency.Coins;
 
 public enum States implements State{
 
@@ -17,7 +17,7 @@ public enum States implements State{
         }
 
         @Override
-        public State coinInserted(VendingMachine context, Coin coin) {
+        public State coinInserted(VendingMachine context, Coins coin) {
             return this;
         }
     },
@@ -33,7 +33,7 @@ public enum States implements State{
         }
 
         @Override
-        public State coinInserted(VendingMachine context, Coin coin) {
+        public State coinInserted(VendingMachine context, Coins coin) {
             return COIN_INSERTED;
         }
     },
@@ -49,7 +49,7 @@ public enum States implements State{
         }
 
         @Override
-        public State coinInserted(VendingMachine context, Coin coin) {
+        public State coinInserted(VendingMachine context, Coins coin) {
             return this;
         }
     }
