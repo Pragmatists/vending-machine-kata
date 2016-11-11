@@ -1,7 +1,11 @@
 package tdd.vendingMachine;
 
-/**
- * Created by gbudzyn on 11.11.16.
- */
+import tdd.vendingMachine.domain.VendingMachine;
+
 public class VendingMachineApplication {
+
+    public static void main(String[] args) {
+        VendingMachine machine = new VendingMachine();
+        machine.preFill();
+    }
 }
