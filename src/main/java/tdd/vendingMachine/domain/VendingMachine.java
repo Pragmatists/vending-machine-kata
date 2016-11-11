@@ -9,6 +9,8 @@ public class VendingMachine {
     private State state;
 
     private MoneyBox moneyBox;
+    private MoneyBox moneyBuffer;
+
     private ProductBox productBox;
     private Display display;
 
