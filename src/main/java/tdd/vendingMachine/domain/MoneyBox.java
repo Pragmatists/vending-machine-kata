@@ -16,19 +16,27 @@ public class MoneyBox {
     }};
 
 
-    public int getCoinCount(Coins coins) {
-        return 0;
+    public int getCoinCount(Coins coin) {
+        return coins.get(coin);
     }
 
     public MoneyBox insert(Coins coin, int count) {
+        coins.put(coin, coins.get(coin) + count);
+
         return this;
     }
 
-    public boolean isEmpty(Coins coin01) {
-        return false;
+    public boolean isEmpty(Coins coin) {
+        return coins.get(coin) == 0;
     }
 
     public MoneyBox remove(Coins coin, int count) {
+        if (coins.get(coin) < count) {
+            throw new IllegalArgumentException("Not enough coins");
+        }
+
+        coins.put(coin, coins.get(coin) - count);
+
         return this;
     }
 }
