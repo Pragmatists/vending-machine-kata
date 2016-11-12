@@ -37,4 +37,8 @@ public class MoneyBox {
 
         return this;
     }
+
+    public int getTotalAmount() {
+        return 0;
+    }
 }

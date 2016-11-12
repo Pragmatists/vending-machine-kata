@@ -3,8 +3,6 @@ package tdd.vendingMachine.domain.money;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import tdd.vendingMachine.domain.money.Coins;
-import tdd.vendingMachine.domain.money.MoneyBox;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
@@ -25,6 +23,7 @@ public class MoneyBoxTest {
         assertEquals(0, box.getCoinCount(Coins.COIN_1));
         assertEquals(0, box.getCoinCount(Coins.COIN_2));
         assertEquals(0, box.getCoinCount(Coins.COIN_5));
+        assertEquals(0, box.getTotalAmount());
     }
 
     @Test
@@ -35,6 +34,7 @@ public class MoneyBoxTest {
 
         assertEquals(1, box.getCoinCount(Coins.COIN_0_1));
         assertFalse(box.isEmpty(Coins.COIN_0_1));
+        assertEquals(1, box.getTotalAmount());
     }
 
     @Test
@@ -43,10 +43,12 @@ public class MoneyBoxTest {
 
         box.insert(Coins.COIN_0_1, 1);
         assertEquals(1, box.getCoinCount(Coins.COIN_0_1));
+        assertEquals(0.1, box.getTotalAmount());
 
         box.remove(Coins.COIN_0_1, 1);
         assertEquals(0, box.getCoinCount(Coins.COIN_0_1));
         assertTrue(box.isEmpty(Coins.COIN_0_1));
+        assertEquals(0, box.getTotalAmount());
     }
 
     @Test
@@ -55,10 +57,25 @@ public class MoneyBoxTest {
 
         box.insert(Coins.COIN_0_1, 1);
         assertEquals(1, box.getCoinCount(Coins.COIN_0_1));
+        assertEquals(1, box.getTotalAmount());
 
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage("Not enough coins");
 
         box.remove(Coins.COIN_0_1, 2);
+    }
+
+    @Test
+    public void should_correctly_calculate_total_amount_from_different_coins() {
+        MoneyBox box = new MoneyBox();
+
+        box.insert(Coins.COIN_0_1, 1);
+        box.insert(Coins.COIN_0_2, 3);
+        box.insert(Coins.COIN_0_5, 2);
+        box.insert(Coins.COIN_1, 15);
+        box.insert(Coins.COIN_2, 1);
+        box.insert(Coins.COIN_5, 8);
+
+        assertEquals(587, box.getTotalAmount());
     }
 }
