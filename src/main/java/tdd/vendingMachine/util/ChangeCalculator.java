@@ -1,6 +1,6 @@
 package tdd.vendingMachine.util;
 
-import tdd.vendingMachine.domain.currency.Coins;
+import tdd.vendingMachine.domain.money.Coins;
 
 import java.util.EnumMap;
 

@@ -1,6 +1,9 @@
 package tdd.vendingMachine.domain;
 
-import tdd.vendingMachine.domain.currency.Coins;
+import tdd.vendingMachine.domain.money.Coins;
+import tdd.vendingMachine.domain.display.Display;
+import tdd.vendingMachine.domain.money.MoneyBox;
+import tdd.vendingMachine.domain.product.ProductBox;
 import tdd.vendingMachine.domain.state.State;
 import tdd.vendingMachine.domain.state.States;
 
@@ -19,6 +22,9 @@ public class VendingMachine {
     public VendingMachine() {
         setState(States.BASE);
 
+        setProductBox(new ProductBox());
+        setMoneyBox(new MoneyBox());
+        setMoneyBuffer(new MoneyBox());
         setSelectedTray(null);
     }
 
@@ -38,6 +44,15 @@ public class VendingMachine {
 
     public VendingMachine setMoneyBox(MoneyBox moneyBox) {
         this.moneyBox = moneyBox;
+        return this;
+    }
+
+    public MoneyBox getMoneyBuffer() {
+        return moneyBuffer;
+    }
+
+    public VendingMachine setMoneyBuffer(MoneyBox moneyBuffer) {
+        this.moneyBuffer = moneyBuffer;
         return this;
     }
 
@@ -69,14 +84,14 @@ public class VendingMachine {
     }
 
     public void pressTraySelectionButton(int trayNo) {
-
+        setState(state.traySelected(this, trayNo));
     }
 
     public void pressCancelButton() {
-
+        setState(state.cancelSelected(this));
     }
 
     public void insertCoin(Coins coin) {
-
+        setState(state.coinInserted(this, coin));
     }
 }

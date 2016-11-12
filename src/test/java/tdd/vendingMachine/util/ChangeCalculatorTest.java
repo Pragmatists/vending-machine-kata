@@ -1,7 +1,7 @@
 package tdd.vendingMachine.util;
 
 import org.junit.Test;
-import tdd.vendingMachine.domain.currency.Coins;
+import tdd.vendingMachine.domain.money.Coins;
 
 import java.util.EnumMap;
 

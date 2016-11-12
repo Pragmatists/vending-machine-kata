@@ -1,9 +1,10 @@
-package tdd.vendingMachine.domain;
+package tdd.vendingMachine.domain.money;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import tdd.vendingMachine.domain.currency.Coins;
+import tdd.vendingMachine.domain.money.Coins;
+import tdd.vendingMachine.domain.money.MoneyBox;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;

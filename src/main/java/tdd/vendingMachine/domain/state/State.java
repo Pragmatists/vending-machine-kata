@@ -1,7 +1,7 @@
 package tdd.vendingMachine.domain.state;
 
 import tdd.vendingMachine.domain.VendingMachine;
-import tdd.vendingMachine.domain.currency.Coins;
+import tdd.vendingMachine.domain.money.Coins;
 
 public interface State {
 

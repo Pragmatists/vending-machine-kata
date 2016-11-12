@@ -1,4 +1,4 @@
-package tdd.vendingMachine.domain.currency;
+package tdd.vendingMachine.domain.money;
 
 public enum Coins {
 

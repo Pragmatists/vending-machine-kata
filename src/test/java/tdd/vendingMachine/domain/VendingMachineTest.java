@@ -1,7 +1,7 @@
 package tdd.vendingMachine.domain;
 
 import org.junit.Test;
-import tdd.vendingMachine.domain.currency.Coins;
+import tdd.vendingMachine.domain.money.Coins;
 import tdd.vendingMachine.domain.state.States;
 
 import static org.junit.Assert.assertEquals;
@@ -16,9 +16,10 @@ public class VendingMachineTest {
     @Test
     public void should_be_in_product_selected_state_after_product_choice() {
         VendingMachine machine = new VendingMachine();
-        machine.pressTraySelectionButton(1);
+        machine.pressTraySelectionButton(0);
 
         assertEquals(States.TRAY_SELECTED, new VendingMachine().getState());
+        assertEquals("Price: 20", machine.getDisplay().getMessage());
     }
 
     @Test

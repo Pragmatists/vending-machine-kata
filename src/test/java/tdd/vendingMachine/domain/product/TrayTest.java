@@ -1,8 +1,10 @@
-package tdd.vendingMachine.domain;
+package tdd.vendingMachine.domain.product;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import tdd.vendingMachine.domain.product.Products;
+import tdd.vendingMachine.domain.product.Tray;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

@@ -1,4 +1,4 @@
-package tdd.vendingMachine.domain;
+package tdd.vendingMachine.domain.product;
 
 public class Tray {
 

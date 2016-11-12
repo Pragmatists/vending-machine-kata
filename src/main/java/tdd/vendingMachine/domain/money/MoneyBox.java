@@ -1,6 +1,4 @@
-package tdd.vendingMachine.domain;
-
-import tdd.vendingMachine.domain.currency.Coins;
+package tdd.vendingMachine.domain.money;
 
 import java.util.EnumMap;
 
