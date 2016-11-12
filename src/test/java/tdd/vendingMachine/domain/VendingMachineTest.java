@@ -5,6 +5,7 @@ import tdd.vendingMachine.domain.display.Messages;
 import tdd.vendingMachine.domain.money.Coins;
 import tdd.vendingMachine.domain.product.Products;
 import tdd.vendingMachine.domain.state.States;
+import tdd.vendingMachine.util.Filler;
 
 import static org.junit.Assert.assertEquals;
 
@@ -24,14 +25,17 @@ public class VendingMachineTest {
     @Test
     public void should_be_in_product_selected_state_after_product_choice() {
         VendingMachine machine = new VendingMachine();
+        Filler.fill(machine, 10);
+
         machine.pressTraySelectionButton(0);
 
-        assertEquals(States.TRAY_SELECTED, new VendingMachine().getState());
+        assertEquals(Integer.valueOf(0), machine.getSelectedTray());
+        assertEquals(States.TRAY_SELECTED, machine.getState());
         assertEquals(
             String.format(
                 Messages.PRODUCT_SELECTED.getMessage(),
                 Products.COCA_COLA_0_33.name(),
-                Products.COCA_COLA_0_33.getPrice()
+                (float) Products.COCA_COLA_0_33.getPrice() / 100
             ), machine.getDisplay().getMessage()
         );
     }
@@ -71,7 +75,7 @@ public class VendingMachineTest {
         machine.pressTraySelectionButton(1);
 
         assertEquals(States.COIN_INSERTED, new VendingMachine().getState());
-        assertEquals(Messages.IDLE.getMessage(), machine.getDisplay().getMessage());
+        assertEquals(Messages.COINS_INSERTED.getMessage(), machine.getDisplay().getMessage());
         assertEquals(BASE_MONEY_AMOUNT, machine.getMoneyBox().getTotalAmount());
     }
 
