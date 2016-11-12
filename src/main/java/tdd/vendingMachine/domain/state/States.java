@@ -27,7 +27,7 @@ public enum States implements State{
                     product.name(),
                     (float) product.getPrice() / 100
                 )
-            );
+            ).display();
 
             return TRAY_SELECTED;
         }
@@ -35,8 +35,9 @@ public enum States implements State{
         @Override
         public State cancelSelected(VendingMachine context) {
             context.setSelectedTray(null);
-            context.getDisplay().setMessage(Messages.CANCELLED.getMessage());
-            context.getDisplay().setMessage(Messages.IDLE.getMessage());
+            context.getDisplay().setMessage(Messages.CANCELLED.getMessage()).display();
+            //TODO -  real implementation would include transition state or timeout here
+            context.getDisplay().setMessage(Messages.IDLE.getMessage()).display();
 
             return BASE;
         }
