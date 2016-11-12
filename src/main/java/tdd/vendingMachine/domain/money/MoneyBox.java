@@ -39,6 +39,12 @@ public class MoneyBox {
     }
 
     public int getTotalAmount() {
-        return 0;
+        int total = 0;
+
+        for (Coins coin : Coins.values()) {
+            total += coins.get(coin) * coin.getValue();
+        }
+
+        return total;
     }
 }

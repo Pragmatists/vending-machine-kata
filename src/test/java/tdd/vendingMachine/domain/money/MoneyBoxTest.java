@@ -43,7 +43,7 @@ public class MoneyBoxTest {
 
         box.insert(Coins.COIN_0_1, 1);
         assertEquals(1, box.getCoinCount(Coins.COIN_0_1));
-        assertEquals(0.1, box.getTotalAmount());
+        assertEquals(1, box.getTotalAmount());
 
         box.remove(Coins.COIN_0_1, 1);
         assertEquals(0, box.getCoinCount(Coins.COIN_0_1));
