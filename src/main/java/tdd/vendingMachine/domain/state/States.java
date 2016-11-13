@@ -3,7 +3,11 @@ package tdd.vendingMachine.domain.state;
 import tdd.vendingMachine.domain.VendingMachine;
 import tdd.vendingMachine.domain.display.Messages;
 import tdd.vendingMachine.domain.money.Coins;
+import tdd.vendingMachine.domain.money.MoneyBox;
 import tdd.vendingMachine.domain.product.Products;
+import tdd.vendingMachine.util.ChangeCalculator;
+
+import java.util.EnumMap;
 
 public enum States implements State{
 
@@ -72,8 +76,20 @@ public enum States implements State{
             context.getMoneyBuffer().insert(coin, 1);
             Products product = context.getProductBox().getTray(context.getSelectedTray()).getProduct();
 
-            //exact price, dispense
-            if (context.getMoneyBuffer().getTotalAmount() == product.getPrice()) {
+            //over price, dispense
+            if (context.getMoneyBuffer().getTotalAmount() >= product.getPrice()) {
+                int changeAmount = context.getMoneyBuffer().getTotalAmount() - product.getPrice();
+
+                MoneyBox mergedMoneyBox = new MoneyBox(context.getMoneyBox());
+                for (Coins coinType : Coins.values()) {
+                    mergedMoneyBox.insert(coinType, context.getMoneyBuffer().getCoinCount(coinType));
+                }
+
+                MoneyBox changeBox = ChangeCalculator.calculateChange(mergedMoneyBox, changeAmount);
+                if (changeBox == null) {
+                    //unable to give change back
+                }
+
                 context.getDisplay().setMessage(
                     String.format(Messages.DISPENSING.getMessage(), product.name())
                 ).display();
@@ -81,6 +97,7 @@ public enum States implements State{
                 for (Coins coinType : Coins.values()) {
                     context.getMoneyBox().insert(coinType, context.getMoneyBox().getCoinCount(coinType));
                 }
+                context.getMoneyBuffer().reset();
             }
 
             context.getDisplay().setMessage(

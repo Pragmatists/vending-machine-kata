@@ -1,32 +1,30 @@
 package tdd.vendingMachine.util;
 
 import tdd.vendingMachine.domain.money.Coins;
+import tdd.vendingMachine.domain.money.MoneyBox;
 
 import java.util.EnumMap;
 import java.util.Map;
 
 public class ChangeCalculator {
 
-    public static EnumMap calculateChange(EnumMap<Coins, Integer> moneyBox, final int change) {
-        EnumMap<Coins, Integer> coinsToReturn = new EnumMap<Coins, Integer>(Coins.class) {{
-            put(Coins.COIN_0_1, 0);
-            put(Coins.COIN_0_2, 0);
-            put(Coins.COIN_0_5, 0);
-            put(Coins.COIN_1, 0);
-            put(Coins.COIN_2, 0);
-            put(Coins.COIN_5, 0);
-        }};
+    public static MoneyBox calculateChange(MoneyBox moneyBox, final int change) {
+        MoneyBox coinsToReturn = new MoneyBox();
 
-        EnumMap<Coins, Integer> virtualMoneyBox = moneyBox.clone();
+        if (change == 0) {
+            return coinsToReturn;
+        }
+
+        MoneyBox virtualMoneyBox = new MoneyBox(moneyBox);
 
         int changeLeft = change;
         for (Coins coin : Coins.values()) {
             while (true) {
-                if (virtualMoneyBox.get(coin) <= 0 || changeLeft - coin.getValue() < 0) {
+                if (virtualMoneyBox.getCoinCount(coin) <= 0 || changeLeft - coin.getValue() < 0) {
                     break;
                 }
-                coinsToReturn.put(coin, coinsToReturn.get(coin) + 1);
-                virtualMoneyBox.put(coin, virtualMoneyBox.get(coin) - 1);
+                coinsToReturn.insert(coin, 1);
+                virtualMoneyBox.remove(coin, 1);
                 changeLeft -= coin.getValue();
             }
 

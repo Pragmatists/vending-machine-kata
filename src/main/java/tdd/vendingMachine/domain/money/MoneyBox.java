@@ -13,6 +13,14 @@ public class MoneyBox {
         put(Coins.COIN_5, 0);
     }};
 
+    public MoneyBox() {
+    }
+
+    public MoneyBox(MoneyBox box) {
+        for (Coins coin : Coins.values()) {
+            coins.put(coin, box.getCoinCount(coin));
+        }
+    }
 
     public int getCoinCount(Coins coin) {
         return coins.get(coin);
@@ -49,6 +57,15 @@ public class MoneyBox {
     }
 
     public MoneyBox reset() {
+        for (Coins coin : Coins.values()) {
+            coins.put(coin, 0);
+        }
+
+        return this;
+    }
+
+    public MoneyBox mergeWith(MoneyBox boxToMergeWith) {
+
         return this;
     }
 }
