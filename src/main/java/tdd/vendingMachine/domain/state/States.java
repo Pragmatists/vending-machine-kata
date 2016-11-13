@@ -77,9 +77,11 @@ public enum States implements State{
             context.getDisplay().setMessage(
                 String.format(
                     Messages.CANCELLED_WITH_RETURN.getMessage(),
-                    (float) context.getMoneyBuffer().getTotalAmount()
+                    (float) context.getMoneyBuffer().getTotalAmount() / 10
                 )
             ).display();
+
+            context.getMoneyBuffer().reset();
 
             context.getDisplay().setMessage(Messages.IDLE.getMessage()).display();
 
