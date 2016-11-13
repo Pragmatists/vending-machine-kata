@@ -50,3 +50,12 @@ The assignment
 11. After selecting a shelve and inserting insufficient money to buy a product, user has to press "Cancel" to get their money back.
 12. If machine does not have enough money to give the change it must show a warning message and return the money user has put, and it should not give the product.
 13. Machine can return change using only money that was put into it (or by someone at start or by people who bought goods). Machine cannot create it's own money!
+
+TODO Next:
+------------
+0) Add missing implementation of services.
+1) Log4j
+2) Simple (maybe in memory DB) / local DB
+3) Move supported coins and product info to 2) or to properties
+4) Add simple UI -> switch to springboot
+5) Configuration of precision and rounding in one place

@@ -2,5 +2,10 @@
 .idea/
 *.iml
 
+# Eclipse project configuration
+.settings/
+.classpath
+.project
+
 # Java build files
 target/
