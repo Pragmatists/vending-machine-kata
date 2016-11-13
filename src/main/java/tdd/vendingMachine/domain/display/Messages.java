@@ -4,6 +4,7 @@ public enum Messages {
 
     IDLE("Please choose product"),
     PRODUCT_SELECTED("Selected product: %s, price: %.2f"),
+    PRODUCT_TRAY_EMPTY("Product tray empty, choose another"),
     COINS_INSERTED("Inserted amount: %.2f, required more: %.2f"),
     DISPENSING("Dispensing product: %s"),
     GIVING_BACK_CHANGE("Giving back change: %.2f"),

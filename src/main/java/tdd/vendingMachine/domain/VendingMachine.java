@@ -29,7 +29,7 @@ public class VendingMachine {
         setDisplay(new Display());
         setSelectedTray(null);
 
-        display.setMessage(Messages.IDLE.getMessage());
+        display.setMessage(Messages.IDLE.getMessage()).display();
     }
 
     public State getState() {

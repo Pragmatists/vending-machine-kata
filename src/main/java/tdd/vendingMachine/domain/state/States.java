@@ -12,11 +12,11 @@ public enum States implements State{
     BASE {
         @Override
         public State traySelected(VendingMachine context, int trayNo) {
-            if (context.getSelectedTray() != null) {
-                return TRAY_SELECTED;
-            }
-
             if (context.getProductBox().getAvailableTrays() <= trayNo) {
+                return BASE;
+            } else if (context.getProductBox().getTray(trayNo).isEmpty()) {
+                context.getDisplay().setMessage(Messages.PRODUCT_TRAY_EMPTY.getMessage()).display();
+
                 return BASE;
             }
 
@@ -36,11 +36,6 @@ public enum States implements State{
 
         @Override
         public State cancelSelected(VendingMachine context) {
-            context.setSelectedTray(null);
-            context.getDisplay().setMessage(Messages.CANCELLED.getMessage()).display();
-            //real implementation would include transition state or timeout here
-            context.getDisplay().setMessage(Messages.IDLE.getMessage()).display();
-
             return BASE;
         }
 
@@ -52,11 +47,7 @@ public enum States implements State{
     TRAY_SELECTED {
         @Override
         public State traySelected(VendingMachine context, int trayNo) {
-            if (context.getSelectedTray() != null) {
-                return TRAY_SELECTED;
-            } else {
-                return BASE;
-            }
+            return TRAY_SELECTED;
         }
 
         @Override
@@ -64,6 +55,32 @@ public enum States implements State{
             context.setSelectedTray(null);
             context.getDisplay().setMessage(Messages.CANCELLED.getMessage()).display();
             //real implementation would include transition state or timeout here
+            context.getDisplay().setMessage(Messages.IDLE.getMessage()).display();
+
+            return BASE;
+        }
+
+        @Override
+        public State coinInserted(VendingMachine context, Coins coin) {
+            return COIN_INSERTED.coinInserted(context, coin);
+        }
+    },
+    COIN_INSERTED {
+        @Override
+        public State traySelected(VendingMachine context, int trayNo) {
+            return COIN_INSERTED;
+        }
+
+        @Override
+        public State cancelSelected(VendingMachine context) {
+            context.setSelectedTray(null);
+            context.getDisplay().setMessage(
+                String.format(
+                    Messages.CANCELLED_WITH_RETURN.getMessage(),
+                    (float) context.getMoneyBuffer().getTotalAmount()
+                )
+            ).display();
+
             context.getDisplay().setMessage(Messages.IDLE.getMessage()).display();
 
             return BASE;
@@ -89,60 +106,53 @@ public enum States implements State{
 
             return COIN_INSERTED;
         }
-    },
-    COIN_INSERTED {
-        @Override
-        public State traySelected(VendingMachine context, int trayNo) {
-            return this;
-        }
 
-        @Override
-        public State cancelSelected(VendingMachine context) {
+        private State processPurchase(VendingMachine context, Products product) {
+            int changeAmount = context.getMoneyBuffer().getTotalAmount() - product.getPrice();
+
+            MoneyBox mergedMoneyBox = new MoneyBox(context.getMoneyBox()).mergeWith(context.getMoneyBuffer());
+
+            MoneyBox changeBox = ChangeCalculator.calculateChange(mergedMoneyBox, changeAmount);
+            if (changeBox == null) {
+                context.getDisplay().setMessage(
+                    String.format(
+                        Messages.NOT_ENOUGH_MONEY_TO_GIVE_BACK_CHANGE.getMessage(),
+                        (float) context.getMoneyBuffer().getTotalAmount() / 10)
+                ).display();
+                context.setSelectedTray(null);
+
+                context.getDisplay().setMessage(Messages.IDLE.getMessage()).display();
+
+                return BASE;
+            }
+
+            dispenseProduct(context, product);
+            returnChange(context, changeBox);
+
+            context.getDisplay().setMessage(Messages.IDLE.getMessage()).display();
+
             return BASE;
         }
 
-        @Override
-        public State coinInserted(VendingMachine context, Coins coin) {
-            return this;
-        }
-    };
-
-    private static State processPurchase(VendingMachine context, Products product) {
-        int changeAmount = context.getMoneyBuffer().getTotalAmount() - product.getPrice();
-
-        MoneyBox mergedMoneyBox = new MoneyBox(context.getMoneyBox()).mergeWith(context.getMoneyBuffer());
-
-        MoneyBox changeBox = ChangeCalculator.calculateChange(mergedMoneyBox, changeAmount);
-        if (changeBox == null) {
-            context.getDisplay().setMessage(
-                String.format(
-                    Messages.NOT_ENOUGH_MONEY_TO_GIVE_BACK_CHANGE.getMessage(),
-                    context.getMoneyBuffer().getTotalAmount())
-            ).display();
+        private void dispenseProduct(VendingMachine context, Products product) {
+            context.getProductBox().getTray(context.getSelectedTray()).removeProduct(1);
             context.setSelectedTray(null);
-
-            return BASE;
+            context.getDisplay().setMessage(
+                String.format(Messages.DISPENSING.getMessage(), product.name())
+            ).display();
         }
 
-        dispenseProduct(context, product);
-        returnChange(context, changeAmount);
+        private void returnChange(VendingMachine context, MoneyBox changeBox) {
+            context.getMoneyBox().mergeWith(context.getMoneyBuffer());
+            context.getMoneyBuffer().reset();
 
-        return BASE;
-    }
+            for (Coins coin : Coins.values()) {
+                context.getMoneyBox().remove(coin, changeBox.getCoinCount(coin));
+            }
 
-    private static void dispenseProduct(VendingMachine context, Products product) {
-        context.getProductBox().getTray(context.getSelectedTray()).removeProduct(1);
-        context.setSelectedTray(null);
-        context.getDisplay().setMessage(
-            String.format(Messages.DISPENSING.getMessage(), product.name())
-        ).display();
-    }
-
-    private static void returnChange(VendingMachine context, int changeAmount) {
-        context.getMoneyBox().mergeWith(context.getMoneyBuffer());
-        context.getMoneyBuffer().reset();
-        context.getDisplay().setMessage(
-            String.format(Messages.GIVING_BACK_CHANGE.getMessage(), changeAmount)
-        ).display();
+            context.getDisplay().setMessage(
+                String.format(Messages.GIVING_BACK_CHANGE.getMessage(), (float) changeBox.getTotalAmount() / 10)
+            ).display();
+        }
     }
 }
