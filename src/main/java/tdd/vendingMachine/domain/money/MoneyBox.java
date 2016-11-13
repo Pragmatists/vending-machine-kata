@@ -47,4 +47,8 @@ public class MoneyBox {
 
         return total;
     }
+
+    public MoneyBox reset() {
+        return this;
+    }
 }

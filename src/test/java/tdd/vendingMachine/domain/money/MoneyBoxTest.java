@@ -78,4 +78,18 @@ public class MoneyBoxTest {
 
         assertEquals(587, box.getTotalAmount());
     }
+
+    @Test
+    public void should_reset_money_counts() {
+        MoneyBox box = new MoneyBox();
+
+        box.insert(Coins.COIN_0_1, 1);
+        box.insert(Coins.COIN_0_2, 3);
+        box.insert(Coins.COIN_0_5, 2);
+        box.insert(Coins.COIN_1, 15);
+        box.insert(Coins.COIN_2, 1);
+        box.insert(Coins.COIN_5, 8);
+
+        assertEquals(0, box.reset().getTotalAmount());
+    }
 }
