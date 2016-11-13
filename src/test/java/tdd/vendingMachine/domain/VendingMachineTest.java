@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 
 public class VendingMachineTest {
 
-    private static int BASE_MONEY_AMOUNT = 100;
+    private static int BASE_MONEY_AMOUNT = 880;
     private static int BASE_COCA_COLA_0_33_COUNT = 10;
 
     @Test
@@ -35,7 +35,7 @@ public class VendingMachineTest {
             String.format(
                 Messages.PRODUCT_SELECTED.getMessage(),
                 Products.COCA_COLA_0_33.name(),
-                (float) Products.COCA_COLA_0_33.getPrice() / 100
+                (float) Products.COCA_COLA_0_33.getPrice() / 10
             ), machine.getDisplay().getMessage()
         );
     }
@@ -43,10 +43,12 @@ public class VendingMachineTest {
     @Test
     public void should_be_in_coin_inserted_state_when_product_selected_and_coin_inserted() {
         VendingMachine machine = new VendingMachine();
-        machine.pressTraySelectionButton(1);
+        Filler.fill(machine, 10);
+
+        machine.pressTraySelectionButton(0);
         machine.insertCoin(Coins.COIN_0_1);
 
-        assertEquals(States.COIN_INSERTED, new VendingMachine().getState());
+        assertEquals(States.COIN_INSERTED, machine.getState());
         assertEquals(
             String.format(
                 Messages.COINS_INSERTED.getMessage(),
@@ -70,12 +72,19 @@ public class VendingMachineTest {
     @Test
     public void should_not_allow_to_change_product_when_money_inserted() {
         VendingMachine machine = new VendingMachine();
+        Filler.fill(machine, 10);
         machine.pressTraySelectionButton(0);
         machine.insertCoin(Coins.COIN_0_1);
         machine.pressTraySelectionButton(1);
 
-        assertEquals(States.COIN_INSERTED, new VendingMachine().getState());
-        assertEquals(Messages.COINS_INSERTED.getMessage(), machine.getDisplay().getMessage());
+        assertEquals(States.COIN_INSERTED, machine.getState());
+        assertEquals(
+            String.format(
+                Messages.COINS_INSERTED.getMessage(),
+                0.1,
+                (Products.COCA_COLA_0_33.getPrice() / 10 - 0.1)),
+            machine.getDisplay().getMessage()
+        );
         assertEquals(BASE_MONEY_AMOUNT, machine.getMoneyBox().getTotalAmount());
     }
 

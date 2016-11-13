@@ -7,8 +7,6 @@ import tdd.vendingMachine.domain.money.MoneyBox;
 import tdd.vendingMachine.domain.product.Products;
 import tdd.vendingMachine.util.ChangeCalculator;
 
-import java.util.EnumMap;
-
 public enum States implements State{
 
     BASE {
@@ -29,7 +27,7 @@ public enum States implements State{
                 String.format(
                     Messages.PRODUCT_SELECTED.getMessage(),
                     product.name(),
-                    (float) product.getPrice() / 100
+                    (float) product.getPrice() / 10
                 )
             ).display();
 
@@ -78,33 +76,14 @@ public enum States implements State{
 
             //over price, dispense
             if (context.getMoneyBuffer().getTotalAmount() >= product.getPrice()) {
-                int changeAmount = context.getMoneyBuffer().getTotalAmount() - product.getPrice();
-
-                MoneyBox mergedMoneyBox = new MoneyBox(context.getMoneyBox());
-                for (Coins coinType : Coins.values()) {
-                    mergedMoneyBox.insert(coinType, context.getMoneyBuffer().getCoinCount(coinType));
-                }
-
-                MoneyBox changeBox = ChangeCalculator.calculateChange(mergedMoneyBox, changeAmount);
-                if (changeBox == null) {
-                    //unable to give change back
-                }
-
-                context.getDisplay().setMessage(
-                    String.format(Messages.DISPENSING.getMessage(), product.name())
-                ).display();
-
-                for (Coins coinType : Coins.values()) {
-                    context.getMoneyBox().insert(coinType, context.getMoneyBox().getCoinCount(coinType));
-                }
-                context.getMoneyBuffer().reset();
+                return processPurchase(context, product);
             }
 
             context.getDisplay().setMessage(
                 String.format(
                     Messages.COINS_INSERTED.getMessage(),
-                    product.name(),
-                    (float) product.getPrice() / 100
+                    (float) context.getMoneyBuffer().getTotalAmount() / 10,
+                    (float) (product.getPrice() - context.getMoneyBuffer().getTotalAmount()) / 10
                 )
             ).display();
 
@@ -126,5 +105,44 @@ public enum States implements State{
         public State coinInserted(VendingMachine context, Coins coin) {
             return this;
         }
+    };
+
+    private static State processPurchase(VendingMachine context, Products product) {
+        int changeAmount = context.getMoneyBuffer().getTotalAmount() - product.getPrice();
+
+        MoneyBox mergedMoneyBox = new MoneyBox(context.getMoneyBox()).mergeWith(context.getMoneyBuffer());
+
+        MoneyBox changeBox = ChangeCalculator.calculateChange(mergedMoneyBox, changeAmount);
+        if (changeBox == null) {
+            context.getDisplay().setMessage(
+                String.format(
+                    Messages.NOT_ENOUGH_MONEY_TO_GIVE_BACK_CHANGE.getMessage(),
+                    context.getMoneyBuffer().getTotalAmount())
+            ).display();
+            context.setSelectedTray(null);
+
+            return BASE;
+        }
+
+        dispenseProduct(context, product);
+        returnChange(context, changeAmount);
+
+        return BASE;
+    }
+
+    private static void dispenseProduct(VendingMachine context, Products product) {
+        context.getProductBox().getTray(context.getSelectedTray()).removeProduct(1);
+        context.setSelectedTray(null);
+        context.getDisplay().setMessage(
+            String.format(Messages.DISPENSING.getMessage(), product.name())
+        ).display();
+    }
+
+    private static void returnChange(VendingMachine context, int changeAmount) {
+        context.getMoneyBox().mergeWith(context.getMoneyBuffer());
+        context.getMoneyBuffer().reset();
+        context.getDisplay().setMessage(
+            String.format(Messages.GIVING_BACK_CHANGE.getMessage(), changeAmount)
+        ).display();
     }
 }

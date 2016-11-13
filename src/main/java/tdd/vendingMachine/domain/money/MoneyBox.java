@@ -65,6 +65,9 @@ public class MoneyBox {
     }
 
     public MoneyBox mergeWith(MoneyBox boxToMergeWith) {
+        for (Coins coin : Coins.values()) {
+            coins.put(coin, coins.get(coin) + boxToMergeWith.getCoinCount(coin));
+        }
 
         return this;
     }
