@@ -106,16 +106,19 @@ public class StandardVendingMachine implements VendingMachine {
 	}
 
 	private boolean tryReleaseChange() {
-		ArrayList<Money> changeMoney = new ArrayList<>();
 		ArrayList<Money> availableMoney = new ArrayList<>();
 		availableMoney.addAll(storedMoney);
 		availableMoney.addAll(currentlyPaidMoney);
 
+		ArrayList<Money> changeMoney = new ArrayList<>();
 		float changeAmount = round(currentlyPaidAmount - currentProduct.getProductPrice(), 1);
+		
+		// keep adding change until change amount will reduce to 0, or there is no available money
 		while (changeAmount > 0) {
-			Money change = findHighestButEqualOrLessThan(changeAmount, availableMoney);
+			// pick highest available money, but less or equal than change itself
+			Money change = determineChangeMoney(changeAmount, availableMoney);
 			if (change == null) {
-				// there is no money available for change
+				// there is no money available for change, change releasing failed
 				return false;
 			}
 			changeAmount = round(changeAmount - change.getValue(), 1);
@@ -126,13 +129,13 @@ public class StandardVendingMachine implements VendingMachine {
 		return true;
 	}
 
-	private Money findHighestButEqualOrLessThan(float equalOrlessThanAmount, ArrayList<Money> availableMoney) {
+	private Money determineChangeMoney(float changeAmount, ArrayList<Money> availableMoney) {
 		Money highestValue = null;
 		for (Money money : availableMoney) {
-			if (money.getValue() == equalOrlessThanAmount) {
+			if (money.getValue() == changeAmount) {
 				return money;
 			}
-			if (money.getValue() < equalOrlessThanAmount
+			if (money.getValue() < changeAmount
 					&& (highestValue == null || highestValue.getValue() < money.getValue())) {
 				highestValue = money;
 			}
