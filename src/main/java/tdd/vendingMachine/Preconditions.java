@@ -9,5 +9,5 @@ public class Preconditions {
         if (!expr)
             throw new IllegalArgumentException(msg);
     }
-    
+
 }
