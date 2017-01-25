@@ -10,4 +10,9 @@ public class Preconditions {
             throw new IllegalArgumentException(msg);
     }
 
+    public static void checkState(boolean expr, String msg) {
+        if (!expr)
+            throw new IllegalStateException(msg);
+    }
+
 }

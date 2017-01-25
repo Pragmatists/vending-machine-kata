@@ -23,4 +23,5 @@ public enum Product {
     public long getPrice() {
         return price;
     }
+
 }

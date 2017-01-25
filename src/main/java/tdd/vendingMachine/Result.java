@@ -1,6 +1,6 @@
 package tdd.vendingMachine;
 
-import java.util.List;
+import java.util.EnumMap;
 
 /**
  * Created by dzalunin on 2017-01-25.
@@ -8,18 +8,18 @@ import java.util.List;
 public class Result {
 
     private Product product;
-    private List<Denomination> change;
+    private EnumMap<Denomination, Integer> change;
 
-    public Result(Product product, List<Denomination> change) {
+    public Result(Product product, EnumMap<Denomination, Integer> change) {
         this.product = product;
-        this.change = change;
+        this.change = change.clone();
     }
 
     public Product getProduct() {
         return product;
     }
 
-    public List<Denomination> getChange() {
+    public EnumMap<Denomination, Integer> getChange() {
         return change;
     }
 }
