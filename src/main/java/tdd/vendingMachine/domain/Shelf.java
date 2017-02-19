@@ -10,12 +10,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Shelf {
 
     public final String id;
-    public final String type;
+    public final Product product;
     public final int capacity;
     private final AtomicInteger itemCount;
 
-    Shelf(String id, String type, int capacity, int itemCount) {
-        this.type = type;
+    Shelf(String id, Product product, int capacity, int itemCount) {
+        this.product = product;
         this.capacity = capacity;
         this.itemCount = new AtomicInteger(itemCount);
         this.id = id;
