@@ -8,8 +8,8 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import tdd.vendingMachine.dto.CashImport;
 import tdd.vendingMachine.dto.ProductImport;
-import tdd.vendingMachine.dto.ProductImportTest;
 
 import java.io.InputStream;
 import java.util.List;
@@ -35,7 +35,7 @@ public class FileReaderHelperTest {
     }
 
     @Test
-    public void should_parse_list_imports() {
+    public void should_parse_list_productImports() {
         String file = "products_test.csv";
         InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(file);
         Optional<List<ProductImport>> productImportsOpt = FileReaderHelper.retrieveProductsImportFromFileStream(resourceAsStream);
@@ -51,10 +51,35 @@ public class FileReaderHelperTest {
     }
 
     @Test
-    public void should_retrieve_empty_since_invalid_file_selected() {
+    public void should_retrieve_empty_since_invalid_productImport_file_selected() {
         String file = "products_test.csv1";
         InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(file);
         Optional<List<ProductImport>> productImports = FileReaderHelper.retrieveProductsImportFromFileStream(resourceAsStream);
+        Assert.assertFalse(productImports.isPresent());
+    }
+
+
+    @Test
+    public void should_parse_list_cashImports() {
+        String file = "cash_test.csv";
+        InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(file);
+        Optional<List<CashImport>> cashImportsList = FileReaderHelper.retrieveCashImportFromFileStream(resourceAsStream);
+
+        Assert.assertTrue(cashImportsList.isPresent());
+
+        List<CashImport> cashImportOpt = cashImportsList.get();
+
+        Assert.assertEquals(2, cashImportOpt.size());
+        CashImport cashImport = cashImportOpt.get(0);
+        Assert.assertEquals("0.1", cashImport.getLabel());
+        Assert.assertEquals(10, cashImport.getAmount());
+    }
+
+    @Test
+    public void should_retrieve_empty_since_invalid_cashImports_file_selected() {
+        String file = "cash_test.csv1";
+        InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(file);
+        Optional<List<CashImport>> productImports = FileReaderHelper.retrieveCashImportFromFileStream(resourceAsStream);
         Assert.assertFalse(productImports.isPresent());
     }
 }

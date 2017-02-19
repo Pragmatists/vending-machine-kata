@@ -2,6 +2,7 @@ package tdd.vendingMachine.domain;
 
 import org.junit.Assert;
 import org.junit.Test;
+import tdd.vendingMachine.util.Constants;
 
 /**
  * Created by Agustin on 2/19/2017.
@@ -15,6 +16,6 @@ public class ProductTest {
         Product productStub = new Product(productPrice, productType);
         Assert.assertNotEquals(null, productStub);
         Assert.assertEquals(productType, productStub.getType());
-        Assert.assertEquals(productPrice, productStub.getPrice(), 0.0001);
+        Assert.assertEquals(productPrice, productStub.getPrice(), Constants.ACCURACY);
     }
 }
