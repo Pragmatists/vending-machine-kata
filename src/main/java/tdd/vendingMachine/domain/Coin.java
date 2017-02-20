@@ -5,7 +5,7 @@ package tdd.vendingMachine.domain;
  * @since 1.0
  * Enum representing the coins available/acceptable by the vending machine
  */
-public enum Coin {
+public enum Coin implements ShelfItem {
     ONE("1.0", 1.0),
     TWO("2.0", 2.0),
     FIVE("5.0", 5.0),
@@ -26,5 +26,16 @@ public enum Coin {
     Coin(String label, double denomination) {
         this.label = label;
         this.denomination = denomination;
+    }
+
+
+    @Override
+    public String provideType() {
+        return label;
+    }
+
+    @Override
+    public double provideValue() {
+        return denomination;
     }
 }
