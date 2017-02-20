@@ -9,7 +9,7 @@ import java.util.InputMismatchException;
  * @since 1.0
  * This is an utility factory class to build shelves
  */
-public class ShelfFactory {
+public class ShelfProductFactory {
 
     private static void validateShelfInput(String id, Product product, int capacity, int itemCount) {
         if (StringUtils.isEmpty(id)) {
@@ -33,8 +33,8 @@ public class ShelfFactory {
      * @param capacity the capacity of the shelf
      * @return a Shelf object
      */
-    public static Shelf buildShelf(String id, Product product, int capacity) {
-        return ShelfFactory.build(id, product, capacity, 0);
+    public static Shelf<Product> buildShelf(String id, Product product, int capacity) {
+        return ShelfProductFactory.build(id, product, capacity, 0);
     }
 
     /**
@@ -45,8 +45,8 @@ public class ShelfFactory {
      * @param itemCount the amount of items loaded on the shelf
      * @return a Shelf object
      */
-    public static Shelf buildShelf(String id, Product product, int capacity, int itemCount) {
-        return ShelfFactory.build(id, product, capacity, itemCount);
+    public static Shelf<Product> buildShelf(String id, Product product, int capacity, int itemCount) {
+        return ShelfProductFactory.build(id, product, capacity, itemCount);
     }
 
     /**
@@ -56,8 +56,8 @@ public class ShelfFactory {
      * @param itemCount the amount of items loaded on the shelf
      * @return a Shelf object
      */
-    private static Shelf build(String id, Product product, int capacity, int itemCount) {
+    private static Shelf<Product> build(String id, Product product, int capacity, int itemCount) {
         validateShelfInput(id, product, capacity, itemCount);
-        return new Shelf(id, product, capacity, itemCount);
+        return new Shelf<>(id, product, capacity, itemCount);
     }
 }
