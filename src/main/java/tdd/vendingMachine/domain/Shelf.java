@@ -104,4 +104,24 @@ public class Shelf<T extends ShelfItem> {
     public int dispense() {
         return dispense(1);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Shelf<?> shelf = (Shelf<?>) o;
+        return capacity == shelf.capacity
+            && id.equals(shelf.id)
+            && type.equals(shelf.type)
+            && itemCount.equals(shelf.itemCount);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + type.hashCode();
+        result = 31 * result + capacity;
+        result = 31 * result + itemCount.hashCode();
+        return result;
+    }
 }
