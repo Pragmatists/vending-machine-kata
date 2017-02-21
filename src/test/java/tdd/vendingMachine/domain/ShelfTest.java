@@ -25,9 +25,9 @@ public class ShelfTest {
         Mockito.doReturn("type").when(productMock).provideType();
         Mockito.doReturn("type").when(productMock).getType();
 
-        emptyShelf = ShelfProductFactory.buildShelf("empty", productMock, 20, 0);
-        nonEmptyShelf = ShelfProductFactory.buildShelf("non-empty", productMock, 20, 5);
-        fullShelf = ShelfProductFactory.buildShelf("full", productMock, 20, 20);
+        emptyShelf = ShelfProductFactory.buildShelf(0, productMock, 20, 0);
+        nonEmptyShelf = ShelfProductFactory.buildShelf(0, productMock, 20, 5);
+        fullShelf = ShelfProductFactory.buildShelf(0, productMock, 20, 20);
 
         Mockito.verify(productMock, Mockito.times(3)).getType();
     }

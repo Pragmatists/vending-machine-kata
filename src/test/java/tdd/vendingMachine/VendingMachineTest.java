@@ -2,9 +2,8 @@ package tdd.vendingMachine;
 
 import org.junit.Assert;
 import org.junit.Test;
-import tdd.vendingMachine.domain.Product;
-import tdd.vendingMachine.domain.Shelf;
-import tdd.vendingMachine.domain.ShelfProductFactory;
+import tdd.vendingMachine.domain.*;
+import tdd.vendingMachine.dto.CashImport;
 import tdd.vendingMachine.state.NoCreditState;
 import tdd.vendingMachine.state.SoldOutState;
 
@@ -22,12 +21,22 @@ public class VendingMachineTest {
 
     @Test
     public void should_be_no_credit_state_for_non_empty_created_vending_machine() {
-        VendingMachine nonEmptyVendingMachine = new VendingMachine(buildShelvesOneItem(), new HashMap<>());
+        VendingMachine nonEmptyVendingMachine = new VendingMachine(buildShelvesOneItem(), Collections.emptyMap());
         Assert.assertTrue(nonEmptyVendingMachine.getCurrentState() instanceof NoCreditState);
     }
 
-    private Map<String, Shelf<Product>> buildShelvesOneItem() {
-        Shelf<Product> shelf = ShelfProductFactory.buildShelf("shelf1", new Product(1.99, "cola"), 10, 1);
-        return new HashMap<String, Shelf<Product>>(){{put(shelf.id, shelf);}};
+    @Test(expected = NullPointerException.class)
+    public void should_fail_on_null_products_shelves_given() {
+        new VendingMachine(null, Collections.emptyMap());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void should_fail_on_null_coins_shelves_given() {
+        new VendingMachine(Collections.emptyMap(), null);
+    }
+
+    private Map<Integer, Shelf<Product>> buildShelvesOneItem() {
+        Shelf<Product> shelf = ShelfProductFactory.buildShelf(0, new Product(1.99, "cola"), 10, 1);
+        return new HashMap<Integer, Shelf<Product>>(){{put(shelf.id, shelf);}};
     }
 }
