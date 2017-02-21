@@ -51,9 +51,8 @@ public class FileReaderHelper {
     public static Optional<List<CashImport>> retrieveCashImportFromFileStream(InputStream inputStream) {
         try (BufferedReader bf = new BufferedReader(new InputStreamReader(inputStream))){
             String line;
-            String cashImport[] = StringUtils.split(bf.readLine(), ',');
-            int totalDenominations = asInt(cashImport[0]);
-            List<CashImport> list = new ArrayList<>(totalDenominations);
+            String cashImport[];
+            List<CashImport> list = new ArrayList<>();
             while((line = bf.readLine())!=null) {
                 cashImport = StringUtils.split(line, ',');
                 list.add(new CashImport(cashImport[0], asInt(cashImport[1])));
