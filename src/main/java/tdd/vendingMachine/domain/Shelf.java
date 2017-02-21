@@ -10,12 +10,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Shelf<T extends ShelfItem> {
 
-    public final String id;
+    public final int id;
     public final T type;
     public final int capacity;
     private final AtomicInteger itemCount;
 
-    Shelf(String id, T type, int capacity, int itemCount) {
+    Shelf(int id, T type, int capacity, int itemCount) {
         this.type = type;
         this.capacity = capacity;
         this.itemCount = new AtomicInteger(itemCount);
@@ -111,15 +111,14 @@ public class Shelf<T extends ShelfItem> {
         if (o == null || getClass() != o.getClass()) return false;
         Shelf<?> shelf = (Shelf<?>) o;
         return capacity == shelf.capacity
-            && id.equals(shelf.id)
+            && id == shelf.id
             && type.equals(shelf.type)
             && itemCount.equals(shelf.itemCount);
     }
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + type.hashCode();
+        int result = id * 31 + type.hashCode();
         result = 31 * result + capacity;
         result = 31 * result + itemCount.hashCode();
         return result;

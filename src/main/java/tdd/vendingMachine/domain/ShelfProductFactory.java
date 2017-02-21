@@ -7,14 +7,11 @@ import java.util.InputMismatchException;
 /**
  * @author Agustin on 2/19/2017.
  * @since 1.0
- * This is an utility factory class to build shelves
+ * This is an utility factory class to build shelves of products
  */
 public class ShelfProductFactory {
 
-    private static void validateShelfInput(String id, Product product, int capacity, int itemCount) {
-        if (StringUtils.isEmpty(id)) {
-            throw new InputMismatchException("Invalid shelf id must not be empty");
-        }
+    private static void validateShelfInput(Product product, int capacity, int itemCount) {
         if (product == null || StringUtils.isEmpty(product.getType())) {
             throw new InputMismatchException("Invalid product must not be empty");
         }
@@ -33,7 +30,7 @@ public class ShelfProductFactory {
      * @param capacity the capacity of the shelf
      * @return a Shelf object
      */
-    public static Shelf<Product> buildShelf(String id, Product product, int capacity) {
+    public static Shelf<Product> buildShelf(int id, Product product, int capacity) {
         return ShelfProductFactory.build(id, product, capacity, 0);
     }
 
@@ -45,7 +42,7 @@ public class ShelfProductFactory {
      * @param itemCount the amount of items loaded on the shelf
      * @return a Shelf object
      */
-    public static Shelf<Product> buildShelf(String id, Product product, int capacity, int itemCount) {
+    public static Shelf<Product> buildShelf(int id, Product product, int capacity, int itemCount) {
         return ShelfProductFactory.build(id, product, capacity, itemCount);
     }
 
@@ -56,8 +53,8 @@ public class ShelfProductFactory {
      * @param itemCount the amount of items loaded on the shelf
      * @return a Shelf object
      */
-    private static Shelf<Product> build(String id, Product product, int capacity, int itemCount) {
-        validateShelfInput(id, product, capacity, itemCount);
+    private static Shelf<Product> build(int id, Product product, int capacity, int itemCount) {
+        validateShelfInput(product, capacity, itemCount);
         return new Shelf<>(id, product, capacity, itemCount);
     }
 }
