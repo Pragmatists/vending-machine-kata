@@ -3,6 +3,7 @@ package tdd.vendingMachine.domain;
 import org.junit.Assert;
 import org.junit.Test;
 import tdd.vendingMachine.dto.CashImport;
+import tdd.vendingMachine.util.TestUtils.TestUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +33,7 @@ public class CoinDispenserBuilderTest {
         final int expectedCapacity = 5;
         final int expectedSize = Coin.values().length;
         final int expectedAmount = 5;
-        Collection<CashImport> stubCashImportsFull = getStubCashImportsFull(expectedAmount);
+        Collection<CashImport> stubCashImportsFull = TestUtils.getStubCashImportsFull(expectedAmount);
         Map<Coin, Shelf<Coin>> cashDispenser = new CoinDispenserBuilder(expectedCapacity)
             .withCashImport(stubCashImportsFull)
             .buildShelf();
@@ -75,18 +76,5 @@ public class CoinDispenserBuilderTest {
         Assert.assertEquals(stubCashImport.getAmount(), cashDispenser.get(fiftyCents).getItemCount());
         Assert.assertEquals(expectedDiscardedItems, stubCashImport.getAmount() - cashDispenser.get(fiftyCents).getItemCount());
         Assert.assertEquals(expectedCapacity - stubCashImport.getAmount(), cashDispenser.get(fiftyCents).countFreeSlots());
-    }
-
-    /**
-     * Builds a full list of cash imports for the given capacity for every coin available
-     * @param amount the amount of items per import created
-     * @return a list of imports for every coin with the given amount
-     */
-    private Collection<CashImport> getStubCashImportsFull(final int amount) {
-        Collection<CashImport> list = new ArrayList<>();
-        for (Coin c: Coin.values()) {
-            list.add(new CashImport(c.label, amount));
-        }
-        return list;
     }
 }

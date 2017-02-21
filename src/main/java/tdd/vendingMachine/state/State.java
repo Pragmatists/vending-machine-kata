@@ -30,11 +30,11 @@ public interface State {
     void insertCoin(Coin coin);
 
     /**
-     * 1. Displays the product price related to the shelfLabel.
+     * 1. Displays the product price related to the shelfNumber.
      * 2. Sets the product at selected.
-     * @param shelfLabel the label visible to the customer on the vending machine
+     * @param shelfNumber the label visible to the customer on the vending machine
      */
-    void selectProduct(String shelfLabel);
+    void selectShelfNumber(int shelfNumber);
 
     /**
      * The operations performs the changes to the VendingMachine state as follows:

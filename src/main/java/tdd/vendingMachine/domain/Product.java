@@ -7,8 +7,8 @@ package tdd.vendingMachine.domain;
  */
 public class Product implements ShelfItem{
 
-    public final double price;
     public final String type;
+    public final double price;
 
     public Product(double price, String type) {
         this.price = price;
@@ -31,5 +31,10 @@ public class Product implements ShelfItem{
     @Override
     public double provideValue() {
         return getPrice();
+    }
+
+    @Override
+    public String toString() {
+        return type + ": " + price;
     }
 }

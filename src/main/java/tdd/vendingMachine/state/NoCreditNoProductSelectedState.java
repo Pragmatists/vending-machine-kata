@@ -8,27 +8,29 @@ import java.util.NoSuchElementException;
 /**
  * @author Agustin Cabra on 2/20/2017.
  * @since 1.0
- * State representing a Vending Machine with Empty shelves (sold out).
  */
-public class SoldOutState implements State {
+public class NoCreditNoProductSelectedState implements State {
 
-    public final String label = "SOLD OUT";
+    public final String label = "NO CREDIT STATE";
     private final VendingMachine vendingMachine;
 
-    public SoldOutState(VendingMachine vendingMachine) {
+    public NoCreditNoProductSelectedState(VendingMachine vendingMachine) {
         this.vendingMachine = vendingMachine;
     }
 
     @Override
     public void insertCoin(Coin coin) {
-        vendingMachine.showMessageOnDisplay(String.format("WARNING: %s returned back to cash bucket, machine is sold out", coin.label));
-        vendingMachine.showMessageOnDisplay(label);
+        if (vendingMachine.addCoinToCredit(coin)) {
+            vendingMachine.setCurrentState(vendingMachine.getHasCreditNoProductSelectedState());
+        }
     }
 
     @Override
     public void selectShelfNumber(int shelfNumber) {
         try {
             vendingMachine.displayProductPrice(shelfNumber);
+            vendingMachine.selectProductGivenShelfNumber(shelfNumber);
+            vendingMachine.setCurrentState(vendingMachine.getNoCreditProductSelectedState());
         } catch (NoSuchElementException nse) {
             vendingMachine.showMessageOnDisplay(nse.getMessage());
         }
@@ -36,8 +38,6 @@ public class SoldOutState implements State {
 
     @Override
     public void cancel() {
-        if (vendingMachine.getCredit() > 0) {
-
-        }
+        vendingMachine.returnAllCreditToBucket();
     }
 }

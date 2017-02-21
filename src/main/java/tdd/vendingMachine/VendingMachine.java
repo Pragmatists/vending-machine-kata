@@ -3,19 +3,12 @@ package tdd.vendingMachine;
 import com.google.common.util.concurrent.AtomicDouble;
 import lombok.NonNull;
 import org.apache.log4j.Logger;
-import tdd.vendingMachine.domain.Coin;
-import tdd.vendingMachine.domain.Product;
-import tdd.vendingMachine.domain.Shelf;
-import tdd.vendingMachine.domain.VendingMachineConfiguration;
-import tdd.vendingMachine.state.NoCreditState;
-import tdd.vendingMachine.state.SoldOutState;
-import tdd.vendingMachine.state.State;
+import tdd.vendingMachine.domain.*;
+import tdd.vendingMachine.state.*;
 
-import java.util.InputMismatchException;
-import java.util.Map;
-import java.util.Observable;
+import java.util.*;
 
-public class VendingMachine extends Observable implements State {
+public class VendingMachine implements State {
 
     private static final Logger logger = Logger.getLogger(VendingMachine.class);
 
@@ -23,12 +16,17 @@ public class VendingMachine extends Observable implements State {
 
     //States
     public final SoldOutState soldOutState;
-    public final NoCreditState noCreditState;
+    public final NoCreditNoProductSelectedState noCreditNoProductSelectedState;
+    public final HasCreditProductSelectedState hasCreditProductSelectedState;
+    private final NoCreditProductSelectedState noCreditProductSelectedState;
+    private final HasCreditNoProductSelectedState hasCreditNoProductSelectedState;
 
+    private final VendingMachineDisplay display;
     private Product selectedProduct;
     private AtomicDouble credit;
-    private Map<Integer, Shelf<Product>> productShelves;
-    private Map<String, Integer> productShelfLabelsToIds;
+    private Stack<Coin> creditStack;
+    private final Map<Integer, Shelf<Product>> productShelves;
+    private final Map<Coin, Shelf<Coin>> coinShelves;
 
     private State currentState;
 
@@ -38,33 +36,66 @@ public class VendingMachine extends Observable implements State {
                 VENDING_MACHINE_CONFIGURATION.getShelfCount(), productShelves.size()));
         }
         this.productShelves = productShelves;
+        this.coinShelves = coinShelves;
         this.credit = new AtomicDouble(0.0);
         this.selectedProduct = null;
+        this.display = new VendingMachineDisplay();
+        this.creditStack = new Stack<>();
 
         this.soldOutState = new SoldOutState(this);
-        this.noCreditState = new NoCreditState(this);
+        this.noCreditNoProductSelectedState = new NoCreditNoProductSelectedState(this);
+        this.noCreditProductSelectedState = new NoCreditProductSelectedState(this);
+        this.hasCreditProductSelectedState = new HasCreditProductSelectedState(this);
+        this.hasCreditNoProductSelectedState = new HasCreditNoProductSelectedState(this);
 
         if (productShelves.size() == 0) {
             this.currentState = soldOutState;
         } else {
             int availableProducts = productShelves.values().stream().map(Shelf::getItemCount).reduce(0, (a, b) -> a + b);
-            this.currentState = availableProducts > 0 ? noCreditState : soldOutState;
+            this.currentState = availableProducts > 0 ? noCreditNoProductSelectedState : soldOutState;
         }
     }
 
-    @Override
-    public void insertCoin(Coin money) {
-        currentState.insertCoin(money);
+    private void validShelfNumber(int shelfNumber) {
+        if (null == productShelves.get(shelfNumber)) {
+            throw new NoSuchElementException("WARN Shelf number not available:" + shelfNumber);
+        }
     }
 
-    @Override
-    public void selectProduct(String shelfLabel) {
-        currentState.selectProduct(shelfLabel);
+    public State getCurrentState() {
+        return currentState;
     }
 
-    @Override
-    public void cancel() {
-        currentState.cancel();
+    public void setCurrentState(State state) {
+        this.currentState = state;
+    }
+
+    public SoldOutState getSoldOutState() {
+        return soldOutState;
+    }
+
+    public HasCreditNoProductSelectedState getHasCreditNoProductSelectedState() {
+        return hasCreditNoProductSelectedState;
+    }
+
+    public NoCreditNoProductSelectedState getNoCreditNoProductSelectedState() {
+        return noCreditNoProductSelectedState;
+    }
+
+    public NoCreditProductSelectedState getNoCreditProductSelectedState() {
+        return noCreditProductSelectedState;
+    }
+
+    public HasCreditProductSelectedState getHasCreditProductSelectedState() {
+        return this.hasCreditProductSelectedState;
+    }
+
+    public VendingMachineDisplay getDisplay() {
+        return display;
+    }
+
+    public Product getSelectedProduct() {
+        return selectedProduct;
     }
 
     /**
@@ -76,14 +107,113 @@ public class VendingMachine extends Observable implements State {
     }
 
     /**
-     * Provision cash to vending machine if space is available
-     * @param coin the coin shelf to provision
-     * @param amount the amount of coins
+     * Provides the credit stack of coins
+     * @return the credit stack for the current vending machine
      */
-    public void provisionCoinShelf(Coin coin, int amount) {
+    public Stack<Coin> getCreditStack() {
+        return creditStack;
     }
 
-    public State getCurrentState() {
-        return currentState;
+    @Override
+    public void insertCoin(Coin money) {
+        currentState.insertCoin(money);
+    }
+
+    @Override
+    public void selectShelfNumber(int shelfNumber) {
+        currentState.selectShelfNumber(shelfNumber);
+    }
+
+    @Override
+    public void cancel() {
+        currentState.cancel();
+    }
+
+    /**
+     * Displays the product price
+     * @param shelfNumber the selected option on the keypad of the vending machine
+     * @throws NoSuchElementException in shelf number is not available
+     */
+    public void displayProductPrice(int shelfNumber) {
+        validShelfNumber(shelfNumber);
+        display.update(productShelves.get(shelfNumber).getType().toString());
+    }
+
+    public void showMessageOnDisplay(String message) {
+        this.display.update(message);
+    }
+
+
+    /**
+     * If there is room in the coin dispenser for the given coin is credited otherwise is sent back to cash bucket
+     * @param coin coin to insert
+     * @return boolean indicating whether the coin was inserted or not
+     */
+    public boolean addCoinToCredit(Coin coin) {
+        if (dispenserHasCoinSlotAvailable(coin)) {
+            credit.addAndGet(coin.denomination);
+            creditStack.push(coin);
+            this.display.update(String.format("Received %s, credit: %.2f", coin.label, credit.get()));
+            return true;
+        }
+        this.display.update(String.format("WARN: %s returned to bucket (dispenser full try other denominations), credit: %.2f", coin.label, credit));
+        return false;
+    }
+
+    /**
+     * Drops the current credit stack and sets the credit to zero
+     */
+    public void returnAllCreditToBucket() {
+        if (creditStack.isEmpty()) {
+            display.update("No credit available to return.");
+        } else {
+            while(!creditStack.isEmpty()) {
+                credit.addAndGet(-creditStack.peek().denomination);
+                display.update(String.format("Returned %s to bucket, credit: %.2f", creditStack.pop().label, credit.get()));
+            }
+        }
+    }
+
+    /**
+     * Given a shelfNumber selects the product
+     * @param shelfNumber the number of the shelve to retrieve the product from.
+     */
+    public void selectProductGivenShelfNumber(int shelfNumber) {
+        validShelfNumber(shelfNumber);
+        selectedProduct = productShelves.get(shelfNumber).getType();
+    }
+
+    /**
+     * Moves the money from the stack to the vending machine and clear the credit
+     */
+    public void provisionCreditStackToDispenser() {
+        while (!creditStack.isEmpty()) {
+            Coin pop = creditStack.pop();
+            coinShelves.get(pop).provision();
+            credit.addAndGet(-pop.denomination);
+        }
+    }
+
+    /**
+     * Dispenses product to the pickup bucket
+     */
+    public void dispenseSelectedProductToBucket() {
+        display.update(String.format("Product %s dispensed to pickup bucket", this.selectedProduct));
+    }
+
+    /**
+     * Sets the selected product to null
+     */
+    public void undoProductSelection() {
+        this.selectedProduct = null;
+    }
+
+    /**
+     * Utility method to evaluate if there is room to store given coin
+     * @param coin coin to insert in the machine
+     * @return true if room is available for given coin
+     */
+    public boolean dispenserHasCoinSlotAvailable(Coin coin) {
+        return coinShelves.get(coin).countFreeSlots() > 0;
     }
 }
