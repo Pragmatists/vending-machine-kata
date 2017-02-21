@@ -13,7 +13,7 @@ import java.util.InputMismatchException;
 public class ShelfProductFactoryTest {
 
     private String type;
-    private String shelfId;
+    private int shelfId;
     private int capacity;
     private int itemCount;
     private Product product;
@@ -24,7 +24,7 @@ public class ShelfProductFactoryTest {
         type = "type";
         product = new Product(10, type);
         emptyProduct = new Product(0.5, "");
-        shelfId = "1";
+        shelfId = 1;
         capacity = 10;
         itemCount = 5;
     }
@@ -57,23 +57,21 @@ public class ShelfProductFactoryTest {
 
     @Test(expected = InputMismatchException.class)
     public void should_fail_building_shelf_id_empty(){
-        ShelfProductFactory.buildShelf("", emptyProduct, 10);
+        ShelfProductFactory.buildShelf(0, emptyProduct, 10);
     }
 
     @Test(expected = InputMismatchException.class)
     public void should_fail_building_shelf_id_null(){
-        ShelfProductFactory.buildShelf(null, emptyProduct, 10);
+        ShelfProductFactory.buildShelf(0, emptyProduct, 10);
     }
 
     @Test(expected = InputMismatchException.class)
     public void should_fail_building_shelf_type_empty(){
-        String shelfId = "1";
         ShelfProductFactory.buildShelf(shelfId, emptyProduct, 10);
     }
 
     @Test(expected = InputMismatchException.class)
     public void should_fail_building_shelf_product_null(){
-        String shelfId = "1";
         ShelfProductFactory.buildShelf(shelfId, null, 10);
     }
 
