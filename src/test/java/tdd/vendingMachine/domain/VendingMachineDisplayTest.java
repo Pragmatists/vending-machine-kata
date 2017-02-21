@@ -29,7 +29,7 @@ public class VendingMachineDisplayTest {
 
         Assert.assertEquals("", vmd.getCurrentMessage());
 
-        vmd.update(null, notification);
+        vmd.update(notification);
 
         Assert.assertEquals(notification, vmd.getCurrentMessage());
     }

@@ -11,7 +11,7 @@ import java.util.Observer;
  *
  * Class Representing Vending machine display.
  */
-public class VendingMachineDisplay implements Observer {
+public class VendingMachineDisplay {
 
     private static final Logger logger = Logger.getLogger(VendingMachineDisplay.class);
 
@@ -21,8 +21,7 @@ public class VendingMachineDisplay implements Observer {
         return this.currentMessage;
     }
 
-    @Override
-    public void update(Observable o, Object message) {
+    public void update(String message) {
         this.currentMessage = message.toString();
         logger.info(currentMessage);
     }

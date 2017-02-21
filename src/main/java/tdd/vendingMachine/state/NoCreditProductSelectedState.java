@@ -4,15 +4,15 @@ import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.Coin;
 
 /**
- * @author Agustin Cabra on 2/20/2017.
+ * @author Agustin Cabra on 2/21/2017.
  * @since 1.0
  */
-public class NoCreditState implements State {
+public class NoCreditProductSelectedState implements State {
 
-    public final String label = "NO_CREDIT_STATE";
+    public static final String label = "NO CREDIT PRODUCT SELECTED";
     private final VendingMachine vendingMachine;
 
-    public NoCreditState(VendingMachine vendingMachine) {
+    public NoCreditProductSelectedState(VendingMachine vendingMachine) {
         this.vendingMachine = vendingMachine;
     }
 
@@ -22,11 +22,12 @@ public class NoCreditState implements State {
     }
 
     @Override
-    public void selectProduct(String shelfLabel) {
+    public void selectShelfNumber(int shelfNumber) {
 
     }
 
     @Override
     public void cancel() {
+
     }
 }
