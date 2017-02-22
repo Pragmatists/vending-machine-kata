@@ -30,8 +30,8 @@ public class TestUtils {
         return list;
     }
 
-    public static Map<Coin, Shelf<Coin>> buildCoinDispenserWithGivenItemsPerShelf(int capacity, int itemsPerShelf) {
-        return new CoinDispenserBuilder(capacity).withCashImport(getStubCashImportsFull(itemsPerShelf)).buildShelf();
+    public static Map<Coin, Shelf<Coin>> buildCoinDispenserWithGivenItemsPerShelf(int capacity, int initialCoinsOnShelf) {
+        return new CoinDispenserBuilder(capacity).withCashImport(getStubCashImportsFull(initialCoinsOnShelf)).buildShelf();
     }
 
     /**
