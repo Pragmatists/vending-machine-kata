@@ -1,5 +1,6 @@
 package tdd.vendingMachine;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -63,7 +64,7 @@ public class VendingMachineTest {
     @Test
     public void should_display_product_price_for_valid_shelf_number() {
         vendingMachine.displayProductPrice(0);
-        Assert.assertTrue(vendingMachine.getDisplay().getCurrentMessage().startsWith("Price"));
+        Assert.assertTrue(vendingMachine.getDisplayCurrentMessage().startsWith("Price"));
     }
 
     @Test
@@ -79,7 +80,6 @@ public class VendingMachineTest {
         Assert.assertEquals(fiftyCents, vendingMachine.getCreditStack().peek());
 
     }
-
 
     @Test
     public void should_not_add_fiftyCents_coin_to_credit_stack_slot_full() {
@@ -122,12 +122,17 @@ public class VendingMachineTest {
     }
 
     @Test
+    public void should_return_empty_since_no_messages_have_been_sent() {
+        Assert.assertTrue(StringUtils.isEmpty(vendingMachine.getDisplayCurrentMessage()));
+    }
+
+    @Test
     public void should_update_message_on_display() {
         String message = "message";
 
         vendingMachine.showMessageOnDisplay(message);
 
-        Assert.assertEquals(message, vendingMachine.getDisplay().getCurrentMessage());
+        Assert.assertEquals(message, vendingMachine.getDisplayCurrentMessage());
     }
 
     @Test
@@ -147,7 +152,7 @@ public class VendingMachineTest {
 
         Assert.assertTrue(vendingMachine.getCreditStack().isEmpty());
         Assert.assertEquals(0, vendingMachine.getCredit(), ACCURACY);
-        Assert.assertNotEquals(VendingMachine.MSG_NO_CREDIT_AVAILABLE, vendingMachine.getDisplay().getCurrentMessage());
+        Assert.assertNotEquals(VendingMachine.MSG_NO_CREDIT_AVAILABLE, vendingMachine.getDisplayCurrentMessage());
     }
 
     @Test
@@ -158,7 +163,7 @@ public class VendingMachineTest {
 
         Assert.assertTrue(vendingMachine.getCreditStack().isEmpty());
         Assert.assertEquals(0, vendingMachine.getCredit(), ACCURACY);
-        Assert.assertEquals(VendingMachine.MSG_NO_CREDIT_AVAILABLE, vendingMachine.getDisplay().getCurrentMessage());
+        Assert.assertEquals(VendingMachine.MSG_NO_CREDIT_AVAILABLE, vendingMachine.getDisplayCurrentMessage());
     }
 
     @Test
@@ -260,7 +265,7 @@ public class VendingMachineTest {
     public void should_dispense_selected_product_to_bucket() {
         vendingMachine.selectProductGivenShelfNumber(0);
         vendingMachine.dispenseSelectedProductToBucket();
-        Assert.assertTrue(vendingMachine.getDisplay().getCurrentMessage().contains("dispensed"));
+        Assert.assertTrue(vendingMachine.getDisplayCurrentMessage().contains("dispensed"));
     }
 
     @Test(expected = NoSuchElementException.class)
