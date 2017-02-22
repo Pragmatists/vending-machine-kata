@@ -5,14 +5,16 @@ import lombok.NonNull;
 import org.apache.log4j.Logger;
 import tdd.vendingMachine.domain.*;
 import tdd.vendingMachine.state.*;
+import tdd.vendingMachine.util.Constants;
 
 import java.util.*;
 
-public class VendingMachine implements State {
+public final class VendingMachine implements State {
 
     private static final Logger logger = Logger.getLogger(VendingMachine.class);
 
     public static final VendingMachineConfiguration VENDING_MACHINE_CONFIGURATION = new VendingMachineConfiguration();
+    public static final String MSG_NO_CREDIT_AVAILABLE = "WARN: No credit available to return.";
 
     //States
     public final SoldOutState soldOutState;
@@ -51,7 +53,9 @@ public class VendingMachine implements State {
         if (productShelves.size() == 0) {
             this.currentState = soldOutState;
         } else {
-            int availableProducts = productShelves.values().stream().map(Shelf::getItemCount).reduce(0, (a, b) -> a + b);
+            int availableProducts = productShelves.values().stream()
+                .mapToInt(Shelf::getItemCount)
+                .reduce(Constants.SUM_INT_IDENTITY, Constants.SUM_INT_BINARY_OPERATOR);
             this.currentState = availableProducts > 0 ? noCreditNoProductSelectedState : soldOutState;
         }
     }
@@ -134,12 +138,12 @@ public class VendingMachine implements State {
      * @param shelfNumber the selected option on the keypad of the vending machine
      * @throws NoSuchElementException in shelf number is not available
      */
-    public void displayProductPrice(int shelfNumber) {
+    public final void displayProductPrice(int shelfNumber) throws NoSuchElementException {
         validShelfNumber(shelfNumber);
-        display.update(productShelves.get(shelfNumber).getType().toString());
+        display.update("Price :" + productShelves.get(shelfNumber).getType().provideValue());
     }
 
-    public void showMessageOnDisplay(String message) {
+    public final void showMessageOnDisplay(String message) {
         this.display.update(message);
     }
 
@@ -149,27 +153,27 @@ public class VendingMachine implements State {
      * @param coin coin to insert
      * @return boolean indicating whether the coin was inserted or not
      */
-    public boolean addCoinToCredit(Coin coin) {
+    public final boolean addCoinToCredit(Coin coin) {
         if (dispenserHasCoinSlotAvailable(coin)) {
             credit.addAndGet(coin.denomination);
             creditStack.push(coin);
             this.display.update(String.format("Received %s, credit: %.2f", coin.label, credit.get()));
             return true;
         }
-        this.display.update(String.format("WARN: %s returned to bucket (dispenser full try other denominations), credit: %.2f", coin.label, credit));
+        this.display.update(String.format("WARN: %s returned to bucket (dispenser full try other denominations), credit: %.2f", coin.label, credit.get()));
         return false;
     }
 
     /**
      * Drops the current credit stack and sets the credit to zero
      */
-    public void returnAllCreditToBucket() {
+    public final void returnAllCreditToBucket() {
         if (creditStack.isEmpty()) {
-            display.update("No credit available to return.");
+            display.update(MSG_NO_CREDIT_AVAILABLE);
         } else {
             while(!creditStack.isEmpty()) {
                 credit.addAndGet(-creditStack.peek().denomination);
-                display.update(String.format("Returned %s to bucket, credit: %.2f", creditStack.pop().label, credit.get()));
+                display.update(String.format("Returned %s to bucket, credit: %.2f", creditStack.pop().label, getCredit()));
             }
         }
     }
@@ -177,16 +181,18 @@ public class VendingMachine implements State {
     /**
      * Given a shelfNumber selects the product
      * @param shelfNumber the number of the shelve to retrieve the product from.
+     * @throws NoSuchElementException if shelfNumber is not valid
      */
-    public void selectProductGivenShelfNumber(int shelfNumber) {
+    public final void selectProductGivenShelfNumber(int shelfNumber)throws NoSuchElementException {
         validShelfNumber(shelfNumber);
         selectedProduct = productShelves.get(shelfNumber).getType();
     }
 
     /**
-     * Moves the money from the stack to the vending machine and clear the credit
+     * Moves the money from the stack to the vending machine's cash dispenser and clears the credit
+     * @throws InputMismatchException if unable to provision because no free slots are available
      */
-    public void provisionCreditStackToDispenser() {
+    public final void provisionCreditStackToDispenser() throws InputMismatchException {
         while (!creditStack.isEmpty()) {
             Coin pop = creditStack.pop();
             coinShelves.get(pop).provision();
@@ -196,15 +202,19 @@ public class VendingMachine implements State {
 
     /**
      * Dispenses product to the pickup bucket
+     * @throws NoSuchElementException if no product was previously selected
      */
-    public void dispenseSelectedProductToBucket() {
+    public final void dispenseSelectedProductToBucket() throws NoSuchElementException {
+        if(null == this.selectedProduct) {
+            throw new NoSuchElementException("WARN: No product is selected");
+        }
         display.update(String.format("Product %s dispensed to pickup bucket", this.selectedProduct));
     }
 
     /**
      * Sets the selected product to null
      */
-    public void undoProductSelection() {
+    public final void undoProductSelection() {
         this.selectedProduct = null;
     }
 
@@ -213,7 +223,18 @@ public class VendingMachine implements State {
      * @param coin coin to insert in the machine
      * @return true if room is available for given coin
      */
-    public boolean dispenserHasCoinSlotAvailable(Coin coin) {
+    protected final boolean dispenserHasCoinSlotAvailable(Coin coin) {
         return coinShelves.get(coin).countFreeSlots() > 0;
+    }
+
+    /**
+     * Counts the total cash in the cashDispenser
+     * @return a double resulting of the sum of every coin.shelf.denomination times amounts of coins of that denomination
+     */
+    protected final double countCashInDispenser() {
+        return coinShelves.entrySet().stream()
+            .filter(entry -> !entry.getValue().isEmpty())
+            .mapToDouble(nonEmptyEntry -> nonEmptyEntry.getKey().denomination * nonEmptyEntry.getValue().getItemCount())
+            .reduce(Constants.SUM_DOUBLE_IDENTITY, Constants.SUM_DOUBLE_BINARY_OPERATOR);
     }
 }
