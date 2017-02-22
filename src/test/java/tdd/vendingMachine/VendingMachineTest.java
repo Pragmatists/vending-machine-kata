@@ -97,6 +97,31 @@ public class VendingMachineTest {
     }
 
     @Test
+    public void should_only_accept_coins_until_capacity_for_coin_shelf_is_reached() {
+        Coin fiftyCents = Coin.FIFTY_CENTS;
+        int capacity = 10;
+        int initialShelfCount = 7;
+        VendingMachine vendingMachineCashDispenserFull = new VendingMachine(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
+            TestUtils.buildCoinDispenserWithGivenItemsPerShelf(capacity, initialShelfCount));
+
+        int insertsBeforeFull = capacity - initialShelfCount;
+        double previousCredit = vendingMachineCashDispenserFull.getCredit();
+        int previousSize = vendingMachineCashDispenserFull.getCreditStack().size();
+
+        for (int i = 0; i < insertsBeforeFull; i++) {
+            Assert.assertTrue(vendingMachineCashDispenserFull.addCoinToCredit(fiftyCents));
+        }
+        //after this point FIFTY_CENT shelf can't receive any more coins
+
+        Assert.assertFalse(vendingMachineCashDispenserFull.addCoinToCredit(fiftyCents));
+        Assert.assertFalse(vendingMachineCashDispenserFull.addCoinToCredit(fiftyCents));
+        Assert.assertFalse(vendingMachineCashDispenserFull.addCoinToCredit(fiftyCents));
+
+        Assert.assertEquals(previousSize + insertsBeforeFull, vendingMachineCashDispenserFull.getCreditStack().size());
+        Assert.assertEquals(previousCredit + insertsBeforeFull * fiftyCents.denomination, vendingMachineCashDispenserFull.getCredit(), ACCURACY);
+    }
+
+    @Test
     public void should_update_message_on_display() {
         String message = "message";
 

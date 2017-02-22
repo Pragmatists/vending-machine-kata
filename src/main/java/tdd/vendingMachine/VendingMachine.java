@@ -215,8 +215,9 @@ public final class VendingMachine implements State {
      * @param coin coin to insert in the machine
      * @return true if room is available for given coin
      */
-    protected final boolean dispenserHasCoinSlotAvailable(Coin coin) {
-        return coinShelves.get(coin).countFreeSlots() > 0;
+    protected final boolean dispenserHasCoinSlotAvailable(final Coin coin) {
+        long existingCoinsOnCreditStack = creditStack.stream().filter(coin::equals).count();
+        return coinShelves.get(coin).countFreeSlots() - existingCoinsOnCreditStack > 0;
     }
 
     /**
