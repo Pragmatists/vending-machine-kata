@@ -36,8 +36,10 @@ public class NoCreditNoProductSelectedState implements State {
         }
     }
 
+    /**
+     * On this state cancelling will not trigger any actions on the vending machine
+     */
     @Override
     public void cancel() {
-        vendingMachine.returnAllCreditToBucket();
     }
 }
