@@ -23,7 +23,7 @@ public class HasCreditProductSelectedState implements State {
                 vendingMachine.provisionCreditStackToDispenser();
                 vendingMachine.dispenseSelectedProductToBucket();
                 vendingMachine.undoProductSelection();
-                vendingMachine.setCurrentState(vendingMachine.noCreditNoProductSelectedState);
+                vendingMachine.setCurrentState(vendingMachine.getNoCreditNoProductSelectedState());
             }
         }
     }

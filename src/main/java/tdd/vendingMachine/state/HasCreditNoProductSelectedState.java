@@ -13,7 +13,7 @@ import java.util.NoSuchElementException;
 public class HasCreditNoProductSelectedState implements State {
 
     private static final Logger logger = Logger.getLogger(HasCreditNoProductSelectedState.class);
-    private final VendingMachine vendingMachine;
+    final VendingMachine vendingMachine;
 
     public HasCreditNoProductSelectedState(VendingMachine vendingMachine) {
         this.vendingMachine = vendingMachine;
