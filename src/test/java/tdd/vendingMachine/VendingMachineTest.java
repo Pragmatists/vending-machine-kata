@@ -64,7 +64,7 @@ public class VendingMachineTest {
     @Test
     public void should_display_product_price_for_valid_shelf_number() {
         vendingMachine.displayProductPrice(0);
-        Assert.assertTrue(vendingMachine.getDisplayCurrentMessage().startsWith("Price"));
+        Assert.assertTrue(vendingMachine.getDisplayCurrentMessage().contains("Price"));
     }
 
     @Test

@@ -22,7 +22,6 @@ public class SoldOutState implements State {
     @Override
     public void insertCoin(Coin coin) {
         vendingMachine.showMessageOnDisplay(String.format("WARNING: %s returned back to cash bucket, machine is sold out", coin.label));
-        vendingMachine.showMessageOnDisplay(label);
     }
 
     @Override
