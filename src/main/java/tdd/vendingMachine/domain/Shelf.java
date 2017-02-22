@@ -64,6 +64,7 @@ public class Shelf<T extends ShelfItem> {
      * Provisions the given amount items to the shelf
      * @param amount the amount of items to provision
      * @return int representing the current amount of items after provision.
+     * @throws InputMismatchException if unable to provision because no free slots are available
      */
     public int provision(int amount) {
         validatePositiveAmount(amount);
@@ -77,8 +78,9 @@ public class Shelf<T extends ShelfItem> {
     /**
      * Helper method to provision only one item
      * @return int the amount of items after provision
+     * @throws InputMismatchException if unable to provision because no free slots are available
      */
-    public int provision() {
+    public int provision() throws InputMismatchException {
         return provision(1);
     }
 
