@@ -53,7 +53,7 @@ public class NoCreditProductSelectedStateTest {
         noCreditNoProductSelectedVendingMachine.insertCoin(tenCents);
 
         Assert.assertEquals(tenCents.denomination, noCreditNoProductSelectedVendingMachine.getCredit(), ACCURACY);
-        Assert.assertEquals(1, noCreditNoProductSelectedVendingMachine.getCreditStack().size());
+        Assert.assertEquals(1, noCreditNoProductSelectedVendingMachine.getCreditStackSize());
         Assert.assertNull(noCreditNoProductSelectedVendingMachine.getSelectedProduct());
         Assert.assertTrue(noCreditNoProductSelectedVendingMachine.getCurrentState() instanceof HasCreditNoProductSelectedState);
     }
@@ -63,7 +63,7 @@ public class NoCreditProductSelectedStateTest {
 
         noCreditNoProductSelectedVendingMachine.selectShelfNumber(0);
 
-        Assert.assertEquals(0, noCreditNoProductSelectedVendingMachine.getCreditStack().size());
+        Assert.assertEquals(0, noCreditNoProductSelectedVendingMachine.getCreditStackSize());
         Assert.assertNotNull(noCreditNoProductSelectedVendingMachine.getSelectedProduct());
         Assert.assertTrue(noCreditNoProductSelectedVendingMachine.getCurrentState() instanceof NoCreditProductSelectedState);
     }
@@ -73,7 +73,7 @@ public class NoCreditProductSelectedStateTest {
 
         noCreditNoProductSelectedVendingMachine.selectShelfNumber(582);
 
-        Assert.assertEquals(0, noCreditNoProductSelectedVendingMachine.getCreditStack().size());
+        Assert.assertEquals(0, noCreditNoProductSelectedVendingMachine.getCreditStackSize());
         Assert.assertNull(noCreditNoProductSelectedVendingMachine.getSelectedProduct());
         Assert.assertTrue(noCreditNoProductSelectedVendingMachine.getCurrentState() instanceof NoCreditNoProductSelectedState);
     }

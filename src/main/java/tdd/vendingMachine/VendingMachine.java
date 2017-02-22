@@ -17,9 +17,9 @@ public final class VendingMachine implements State {
     public static final String MSG_NO_CREDIT_AVAILABLE = "WARN: No credit available to return.";
 
     //States
-    public final SoldOutState soldOutState;
-    public final NoCreditNoProductSelectedState noCreditNoProductSelectedState;
-    public final HasCreditProductSelectedState hasCreditProductSelectedState;
+    private final SoldOutState soldOutState;
+    private final NoCreditNoProductSelectedState noCreditNoProductSelectedState;
+    private final HasCreditProductSelectedState hasCreditProductSelectedState;
     private final NoCreditProductSelectedState noCreditProductSelectedState;
     private final HasCreditNoProductSelectedState hasCreditNoProductSelectedState;
 
@@ -108,14 +108,6 @@ public final class VendingMachine implements State {
      */
     public double getCredit() {
         return credit.get();
-    }
-
-    /**
-     * Provides the credit stack of coins
-     * @return the credit stack for the current vending machine
-     */
-    public Stack<Coin> getCreditStack() {
-        return creditStack;
     }
 
     @Override
@@ -236,5 +228,31 @@ public final class VendingMachine implements State {
             .filter(entry -> !entry.getValue().isEmpty())
             .mapToDouble(nonEmptyEntry -> nonEmptyEntry.getKey().denomination * nonEmptyEntry.getValue().getItemCount())
             .reduce(Constants.SUM_DOUBLE_IDENTITY, Constants.SUM_DOUBLE_BINARY_OPERATOR);
+    }
+
+    /**
+     * Returns the credit stack, this method is intended to be used by the class vendingMachine
+     * the use of helper methods getCreditStackSize and isCreditStackEmpty should be enough.
+     * @return stack of credit inserted to the machine.
+     */
+    protected Stack<Coin> getCreditStack() {
+        return creditStack;
+    }
+
+    /**
+     * Informs if the credit stack is empty
+     * @return boolean true if isEmpty of false otherwise
+     */
+    public final boolean isCreditStackEmpty() {
+        return creditStack.empty();
+    }
+
+
+    /**
+     * Provides the credit stack size
+     * @return the amount of elements in the credit stack
+     */
+    public final int getCreditStackSize() {
+        return creditStack.size();
     }
 }

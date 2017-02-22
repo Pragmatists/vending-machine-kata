@@ -7,12 +7,11 @@ import org.junit.Test;
 import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.Coin;
 import tdd.vendingMachine.domain.Product;
+import tdd.vendingMachine.util.Constants;
 import tdd.vendingMachine.util.TestUtils.TestUtils;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static tdd.vendingMachine.util.Constants.ACCURACY;
 
@@ -54,15 +53,15 @@ public class NoCreditNoProductSelectedStateTest {
 
         coinsToInsert.forEach(noCreditVendingMachine::insertCoin);
 
-        Assert.assertEquals(6, noCreditVendingMachine.getCreditStack().size());
-        Optional<Double> total = coinsToInsert.stream()
-            .map(coin -> coin.denomination)
-            .reduce((a, b) -> a + b);
-        Assert.assertEquals(total.isPresent()? total.get() : 0, noCreditVendingMachine.getCredit(), ACCURACY);
+        Assert.assertEquals(6, noCreditVendingMachine.getCreditStackSize());
+        double total = coinsToInsert.stream()
+            .mapToDouble(coin -> coin.denomination)
+            .reduce(Constants.SUM_DOUBLE_IDENTITY, Constants.SUM_DOUBLE_BINARY_OPERATOR);
+        Assert.assertEquals(total, noCreditVendingMachine.getCredit(), ACCURACY);
 
         noCreditVendingMachine.cancel();
 
-        Assert.assertTrue(noCreditVendingMachine.getCreditStack().isEmpty());
+        Assert.assertTrue(noCreditVendingMachine.isCreditStackEmpty());
         Assert.assertEquals(0, noCreditVendingMachine.getCredit(), ACCURACY);
         Assert.assertTrue(noCreditVendingMachine.getCurrentState() instanceof NoCreditNoProductSelectedState);
     }
