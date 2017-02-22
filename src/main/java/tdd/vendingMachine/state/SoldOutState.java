@@ -13,7 +13,7 @@ import java.util.NoSuchElementException;
 public class SoldOutState implements State {
 
     public final String label = "SOLD OUT";
-    private final VendingMachine vendingMachine;
+    final VendingMachine vendingMachine;
 
     public SoldOutState(VendingMachine vendingMachine) {
         this.vendingMachine = vendingMachine;

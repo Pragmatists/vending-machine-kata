@@ -11,8 +11,8 @@ import java.util.NoSuchElementException;
  */
 public class NoCreditNoProductSelectedState implements State {
 
-    public final String label = "NO CREDIT STATE";
-    private final VendingMachine vendingMachine;
+    public static final String label = "NO CREDIT STATE NO PRODUCT SELECTED";
+    final VendingMachine vendingMachine;
 
     public NoCreditNoProductSelectedState(VendingMachine vendingMachine) {
         this.vendingMachine = vendingMachine;

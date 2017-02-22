@@ -10,7 +10,7 @@ import tdd.vendingMachine.domain.Coin;
 public class HasCreditProductSelectedState implements State {
 
     public static final String label = "HAS CREDIT PRODUCT SELECTED";
-    private final VendingMachine vendingMachine;
+    final VendingMachine vendingMachine;
 
     public HasCreditProductSelectedState(VendingMachine vendingMachine) {
         this.vendingMachine = vendingMachine;

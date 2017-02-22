@@ -20,10 +20,10 @@ import static tdd.vendingMachine.util.Constants.ACCURACY;
  */
 public class HasCreditProductSelectedStateTest {
 
-    VendingMachine hasCreditProductSelectedVendingMachine;
     private Product COLA_199_025;
     private Product CHIPS_025;
     private Product CHOCOLATE_BAR;
+    private HasCreditProductSelectedState hasCreditProductSelectedState;
 
     @Before
     public void setup() {
@@ -31,16 +31,22 @@ public class HasCreditProductSelectedStateTest {
         CHIPS_025 = new Product(1.29, "CHIPS_025");
         CHOCOLATE_BAR = new Product(1.49, "CHOCOLATE_BAR");
         Collection<Product> products = Arrays.asList(COLA_199_025, CHIPS_025, CHOCOLATE_BAR);
-        hasCreditProductSelectedVendingMachine = new VendingMachine(TestUtils.buildShelvesWithItems(products, 3), TestUtils.buildCoinDispenserWithGivenItemsPerShelf(20, 5));
+        VendingMachine vendingMachine = new VendingMachine(TestUtils.buildShelvesWithItems(products, 3), TestUtils.buildCoinDispenserWithGivenItemsPerShelf(20, 5));
+        Assert.assertEquals(0, vendingMachine.getCredit(), ACCURACY); //no credit
+        Assert.assertNull(vendingMachine.getSelectedProduct()); //no product
+        Assert.assertTrue(vendingMachine.getCurrentState() instanceof NoCreditNoProductSelectedState);
+        NoCreditNoProductSelectedState initialState = (NoCreditNoProductSelectedState) vendingMachine.getCurrentState();
 
-        //add credit to machine
+        //modify to get desired state
         Coin tenCents = Coin.TEN_CENTS;
-        hasCreditProductSelectedVendingMachine.insertCoin(tenCents);
-        hasCreditProductSelectedVendingMachine.selectShelfNumber(1);
+        initialState.insertCoin(tenCents);
+        initialState.selectShelfNumber(1);
 
-        Assert.assertEquals(tenCents.denomination, hasCreditProductSelectedVendingMachine.getCredit(), ACCURACY);
-        Assert.assertNotNull(hasCreditProductSelectedVendingMachine.getSelectedProduct());
-        Assert.assertTrue(hasCreditProductSelectedVendingMachine.getCurrentState() instanceof HasCreditProductSelectedState);
+        //validate initial state
+        Assert.assertEquals(tenCents.denomination, initialState.vendingMachine.getCredit(), ACCURACY);
+        Assert.assertNotNull(initialState.vendingMachine.getSelectedProduct());
+        Assert.assertTrue(initialState.vendingMachine.getCurrentState() instanceof HasCreditProductSelectedState);
+        hasCreditProductSelectedState = (HasCreditProductSelectedState) initialState.vendingMachine.getCurrentState();
     }
 
     @After
@@ -48,7 +54,7 @@ public class HasCreditProductSelectedStateTest {
         COLA_199_025 = null;
         CHIPS_025 = null;
         CHOCOLATE_BAR = null;
-        hasCreditProductSelectedVendingMachine = null;
+        hasCreditProductSelectedState = null;
     }
 
     @Test

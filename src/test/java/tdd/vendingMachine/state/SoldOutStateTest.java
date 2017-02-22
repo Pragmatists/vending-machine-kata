@@ -25,36 +25,35 @@ import static tdd.vendingMachine.util.Constants.ACCURACY;
 @PowerMockIgnore(value = {"javax.management.*"})
 public class SoldOutStateTest {
 
-    private VendingMachine emptyVendingMachine;
+    private SoldOutState soldOutState;
 
     @Before
     public void setup() {
-        emptyVendingMachine = new VendingMachine(Collections.emptyMap(), Collections.emptyMap());
+        VendingMachine vendingMachine = new VendingMachine(Collections.emptyMap(), Collections.emptyMap());
+
+        //validate initial state
+        Assert.assertEquals(0, vendingMachine.getCredit(), ACCURACY); //no credit
+        Assert.assertNull(vendingMachine.getSelectedProduct()); //no product
+        Assert.assertTrue(vendingMachine.getCurrentState() instanceof SoldOutState);
+        soldOutState = (SoldOutState) vendingMachine.getCurrentState();
     }
 
     @After
     public void tearDown() {
-        emptyVendingMachine = null;
+        soldOutState = null;
     }
 
     @Test
     public void should_have_no_credit_after_inserting_coin_on_sold_out_machine() {
-        emptyVendingMachine.insertCoin(Coin.FIFTY_CENTS);
-        Assert.assertEquals(0.0, emptyVendingMachine.getCredit(), Constants.ACCURACY);
-    }
-
-    @Test
-    public void should_be_sold_out_state_for_empty_created_vending_machine() {
-        Assert.assertTrue(emptyVendingMachine.getCurrentState() instanceof SoldOutState);
+        soldOutState.insertCoin(Coin.FIFTY_CENTS);
+        Assert.assertEquals(0.0, soldOutState.vendingMachine.getCredit(), Constants.ACCURACY);
     }
 
     @Test
     public void should_on_sold_out_state_after_inserting_coin_credit_should_be_zero() {
-        Assert.assertTrue(emptyVendingMachine.getCurrentState() instanceof SoldOutState);
+        soldOutState.insertCoin(Coin.FIFTY_CENTS);
 
-        emptyVendingMachine.insertCoin(Coin.FIFTY_CENTS);
-
-        Assert.assertTrue(emptyVendingMachine.getCurrentState() instanceof SoldOutState);
-        Assert.assertEquals(0, emptyVendingMachine.getCredit(), ACCURACY);
+        Assert.assertTrue(soldOutState.vendingMachine.getCurrentState() instanceof SoldOutState);
+        Assert.assertEquals(0, soldOutState.vendingMachine.getCredit(), ACCURACY);
     }
 }
