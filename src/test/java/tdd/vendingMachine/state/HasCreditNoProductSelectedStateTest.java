@@ -7,11 +7,11 @@ import org.junit.Test;
 import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.Coin;
 import tdd.vendingMachine.domain.Product;
+import tdd.vendingMachine.util.Constants;
 import tdd.vendingMachine.util.TestUtils.TestUtils;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static tdd.vendingMachine.util.Constants.ACCURACY;
 
@@ -49,45 +49,61 @@ public class HasCreditNoProductSelectedStateTest {
     }
 
     @Test
-    public void should_not_add_credit_return_all_inserted_credit_after_cancel_and_change_to_noCreditState() {
-        hasCreditNoProductSelectedVendingMachine.cancel();
-
-        Assert.assertTrue(hasCreditNoProductSelectedVendingMachine.getCreditStack().isEmpty());
-        Assert.assertEquals(0, hasCreditNoProductSelectedVendingMachine.getCredit(), ACCURACY);
-        Assert.assertTrue(hasCreditNoProductSelectedVendingMachine.getCurrentState() instanceof NoCreditNoProductSelectedState);
-    }
-
-    @Test
     public void should_insert_credit_remain_same_state() {
         Coin tenCents = Coin.TEN_CENTS;
-        int previousStackCreditSize = hasCreditNoProductSelectedVendingMachine.getCreditStack().size();
+        int previousStackCreditSize = hasCreditNoProductSelectedVendingMachine.getCreditStackSize();
         double previousCredit = hasCreditNoProductSelectedVendingMachine.getCredit();
 
         hasCreditNoProductSelectedVendingMachine.insertCoin(tenCents);
 
-        Assert.assertEquals(previousStackCreditSize + 1, hasCreditNoProductSelectedVendingMachine.getCreditStack().size());
+        Assert.assertEquals(previousStackCreditSize + 1, hasCreditNoProductSelectedVendingMachine.getCreditStackSize());
         Assert.assertEquals(tenCents.denomination + previousCredit, hasCreditNoProductSelectedVendingMachine.getCredit(), ACCURACY);
         Assert.assertTrue(hasCreditNoProductSelectedVendingMachine.getCurrentState() instanceof HasCreditNoProductSelectedState);
+    }
+
+    @Test
+    public void should_fail_insert_credit_notAvailableSlotsDispenser_remain_same_state() {
+        Coin tenCents = Coin.TEN_CENTS;
+        int previousStackCreditSize = hasCreditNoProductSelectedVendingMachine.getCreditStackSize();
+        double previousCredit = hasCreditNoProductSelectedVendingMachine.getCredit();
+
+        /**
+         *
+         */
+        hasCreditNoProductSelectedVendingMachine.insertCoin(tenCents);
+
+        Assert.assertEquals(previousStackCreditSize + 1, hasCreditNoProductSelectedVendingMachine.getCreditStackSize());
+        Assert.assertEquals(tenCents.denomination + previousCredit, hasCreditNoProductSelectedVendingMachine.getCredit(), ACCURACY);
+        Assert.assertTrue(hasCreditNoProductSelectedVendingMachine.getCurrentState() instanceof HasCreditNoProductSelectedState);
+    }
+
+    @Test
+    public void should_not_add_credit_return_all_inserted_credit_after_cancel_and_change_to_noCreditState() {
+        hasCreditNoProductSelectedVendingMachine.cancel();
+
+        Assert.assertTrue(hasCreditNoProductSelectedVendingMachine.isCreditStackEmpty());
+        Assert.assertEquals(0, hasCreditNoProductSelectedVendingMachine.getCredit(), ACCURACY);
+        Assert.assertTrue(hasCreditNoProductSelectedVendingMachine.getCurrentState() instanceof NoCreditNoProductSelectedState);
     }
 
     @Test
     public void should_add_credit_return_all_inserted_credit_after_cancel_and_change_to_noCreditState() {
         List<Coin> coinsToInsert = Arrays.asList(Coin.FIFTY_CENTS, Coin.TEN_CENTS, Coin.TWENTY_CENTS, Coin.TWO, Coin.ONE, Coin.FIVE);
 
-        int previousStackCreditSize = hasCreditNoProductSelectedVendingMachine.getCreditStack().size();
+        int previousStackCreditSize = hasCreditNoProductSelectedVendingMachine.getCreditStackSize();
         double previousCredit = hasCreditNoProductSelectedVendingMachine.getCredit();
 
         coinsToInsert.forEach(hasCreditNoProductSelectedVendingMachine::insertCoin);
 
-        Assert.assertEquals(previousStackCreditSize + coinsToInsert.size(), hasCreditNoProductSelectedVendingMachine.getCreditStack().size());
+        Assert.assertEquals(previousStackCreditSize + coinsToInsert.size(), hasCreditNoProductSelectedVendingMachine.getCreditStackSize());
         Double total = coinsToInsert.stream()
-            .map(coin -> coin.denomination)
-            .reduce((a, b) -> a + b).orElse(0.0);
+            .mapToDouble(coin -> coin.denomination)
+            .reduce(Constants.SUM_DOUBLE_IDENTITY, Constants.SUM_DOUBLE_BINARY_OPERATOR);
         Assert.assertEquals(total + previousCredit, hasCreditNoProductSelectedVendingMachine.getCredit(), ACCURACY);
 
         hasCreditNoProductSelectedVendingMachine.cancel();
 
-        Assert.assertTrue(hasCreditNoProductSelectedVendingMachine.getCreditStack().isEmpty());
+        Assert.assertTrue(hasCreditNoProductSelectedVendingMachine.isCreditStackEmpty());
         Assert.assertEquals(0, hasCreditNoProductSelectedVendingMachine.getCredit(), ACCURACY);
         Assert.assertTrue(hasCreditNoProductSelectedVendingMachine.getCurrentState() instanceof NoCreditNoProductSelectedState);
     }
