@@ -128,7 +128,8 @@ public final class VendingMachine implements State {
      */
     public final void displayProductPrice(int shelfNumber) throws NoSuchElementException {
         validShelfNumber(shelfNumber);
-        display.update("Price :" + productShelves.get(shelfNumber).getType().provideValue());
+        Product product = productShelves.get(shelfNumber).getType();
+        display.update(String.format("[%s] Price: %.2f", product.provideType(), product.getPrice()));
     }
 
     public final void showMessageOnDisplay(String message) {
