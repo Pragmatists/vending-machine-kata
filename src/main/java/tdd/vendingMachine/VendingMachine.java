@@ -94,10 +94,6 @@ public final class VendingMachine implements State {
         return this.hasCreditProductSelectedState;
     }
 
-    public VendingMachineDisplay getDisplay() {
-        return display;
-    }
-
     public Product getSelectedProduct() {
         return selectedProduct;
     }
@@ -255,5 +251,13 @@ public final class VendingMachine implements State {
      */
     public final int getCreditStackSize() {
         return creditStack.size();
+    }
+
+    /**
+     * Provide the message displayed on the display.
+     * @return the las message received by the display
+     */
+    public String getDisplayCurrentMessage() {
+        return display.getCurrentMessage();
     }
 }
