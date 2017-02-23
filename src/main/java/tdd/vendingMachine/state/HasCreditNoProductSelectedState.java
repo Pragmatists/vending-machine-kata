@@ -3,6 +3,7 @@ package tdd.vendingMachine.state;
 import org.apache.log4j.Logger;
 import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.Coin;
+import tdd.vendingMachine.view.VendingMachineMessages;
 
 import java.util.NoSuchElementException;
 
@@ -33,7 +34,7 @@ public class HasCreditNoProductSelectedState implements State {
             vendingMachine.setCurrentState(vendingMachine.getHasCreditProductSelectedState());
         } catch (NoSuchElementException nse) {
             logger.error(nse);
-            vendingMachine.showMessageOnDisplay(nse.getMessage());
+            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithCause(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber));
         }
     }
 

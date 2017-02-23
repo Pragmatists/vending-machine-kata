@@ -18,7 +18,7 @@ public class VendingMachineDisplay {
     private String currentMessage = "";
 
     /**
-     * Returns the last requested message to be displayed on the screen
+     * Returns the last requested label to be displayed on the screen
      * @return
      */
     public String getCurrentMessage() {
@@ -26,8 +26,8 @@ public class VendingMachineDisplay {
     }
 
     /**
-     * Displays the message and updates the currentMessage variable
-     * @param message the message to display
+     * Displays the label and updates the currentMessage variable
+     * @param message the label to display
      */
     public void update(String message) { //TODO: TODO01 perhaps improve the storage to a more concise approach using an event stack.
         this.currentMessage = message.toString();

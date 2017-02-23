@@ -14,6 +14,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import tdd.vendingMachine.domain.*;
 import tdd.vendingMachine.util.Constants;
 import tdd.vendingMachine.util.TestUtils.TestUtils;
+import tdd.vendingMachine.view.VendingMachineMessages;
 
 import java.util.*;
 
@@ -64,7 +65,8 @@ public class VendingMachineTest {
     @Test
     public void should_display_product_price_for_valid_shelf_number() {
         vendingMachine.displayProductPrice(0);
-        Assert.assertTrue(vendingMachine.getDisplayCurrentMessage().contains("Price"));
+        Assert.assertTrue(vendingMachine.getDisplayCurrentMessage()
+            .contains(VendingMachineMessages.PRICE.label));
     }
 
     @Test
@@ -128,7 +130,7 @@ public class VendingMachineTest {
 
     @Test
     public void should_update_message_on_display() {
-        String message = "message";
+        String message = "label";
 
         vendingMachine.showMessageOnDisplay(message);
 
@@ -152,7 +154,7 @@ public class VendingMachineTest {
 
         Assert.assertTrue(vendingMachine.getCreditStack().isEmpty());
         Assert.assertEquals(0, vendingMachine.getCredit(), ACCURACY);
-        Assert.assertNotEquals(VendingMachine.MSG_NO_CREDIT_AVAILABLE, vendingMachine.getDisplayCurrentMessage());
+        Assert.assertNotEquals(VendingMachineMessages.NO_CREDIT_AVAILABLE, vendingMachine.getDisplayCurrentMessage());
     }
 
     @Test
@@ -163,7 +165,7 @@ public class VendingMachineTest {
 
         Assert.assertTrue(vendingMachine.getCreditStack().isEmpty());
         Assert.assertEquals(0, vendingMachine.getCredit(), ACCURACY);
-        Assert.assertEquals(VendingMachine.MSG_NO_CREDIT_AVAILABLE, vendingMachine.getDisplayCurrentMessage());
+        Assert.assertEquals(VendingMachineMessages.NO_CREDIT_AVAILABLE.label, vendingMachine.getDisplayCurrentMessage());
     }
 
     @Test
@@ -265,7 +267,8 @@ public class VendingMachineTest {
     public void should_dispense_selected_product_to_bucket() {
         vendingMachine.selectProductGivenShelfNumber(0);
         vendingMachine.dispenseSelectedProductToBucket();
-        Assert.assertTrue(vendingMachine.getDisplayCurrentMessage().contains("dispensed"));
+        Assert.assertTrue(vendingMachine.getDisplayCurrentMessage()
+            .endsWith(VendingMachineMessages.DISPENSED_TO_BUCKET.label));
     }
 
     @Test(expected = NoSuchElementException.class)

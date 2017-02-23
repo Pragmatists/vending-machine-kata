@@ -15,7 +15,7 @@ import tdd.vendingMachine.domain.Coin;
  *         The product should be dropped to pickup shelf
  *         The change (credit-selectedProduct price) is dropped to cash pickup shelf.
  *      c. If credit > selected product price and machine can NOT give total change:
- *         Warning message is displayed 'No Change Available'
+ *         Warning label is displayed 'No Change Available'
  *         The total credit is dropped to cash pickup shelf and transaction is canceled.
  *      d. If credit < selectedProduct price:
  *          a. Displays current credit.

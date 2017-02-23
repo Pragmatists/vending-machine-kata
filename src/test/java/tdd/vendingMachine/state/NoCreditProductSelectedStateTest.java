@@ -53,36 +53,4 @@ public class NoCreditProductSelectedStateTest {
         CHOCOLATE_BAR = null;
         noCreditProductSelectedState = null;
     }
-
-    @Test
-    public void should_have_credit_after_insert_coin() {
-        Coin tenCents = Coin.TEN_CENTS;
-
-        noCreditProductSelectedState.insertCoin(tenCents);
-
-        Assert.assertEquals(tenCents.denomination, noCreditProductSelectedState.vendingMachine.getCredit(), ACCURACY);
-        Assert.assertEquals(1, noCreditProductSelectedState.vendingMachine.getCreditStackSize());
-        Assert.assertNull(noCreditProductSelectedState.vendingMachine.getSelectedProduct());
-        Assert.assertTrue(noCreditProductSelectedState.vendingMachine.getCurrentState() instanceof HasCreditNoProductSelectedState);
-    }
-
-    @Test
-    public void should_have_selected_product_after_selecting_valid_shelfNumber() {
-
-        noCreditProductSelectedState.selectShelfNumber(0);
-
-        Assert.assertEquals(0, noCreditProductSelectedState.vendingMachine.getCreditStackSize());
-        Assert.assertNotNull(noCreditProductSelectedState.vendingMachine.getSelectedProduct());
-        Assert.assertTrue(noCreditProductSelectedState.vendingMachine.getCurrentState() instanceof NoCreditProductSelectedState);
-    }
-
-    @Test
-    public void should_not_have_selected_product_after_selecting_invalid_shelfNumber() {
-
-        noCreditProductSelectedState.selectShelfNumber(582);
-
-        Assert.assertEquals(0, noCreditProductSelectedState.vendingMachine.getCreditStackSize());
-        Assert.assertNull(noCreditProductSelectedState.vendingMachine.getSelectedProduct());
-        Assert.assertTrue(noCreditProductSelectedState.vendingMachine.getCurrentState() instanceof NoCreditNoProductSelectedState);
-    }
 }

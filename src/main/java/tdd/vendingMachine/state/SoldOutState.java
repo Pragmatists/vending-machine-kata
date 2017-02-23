@@ -1,7 +1,9 @@
 package tdd.vendingMachine.state;
 
+import org.apache.log4j.Logger;
 import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.Coin;
+import tdd.vendingMachine.view.VendingMachineMessages;
 
 import java.util.NoSuchElementException;
 
@@ -12,6 +14,7 @@ import java.util.NoSuchElementException;
  */
 public class SoldOutState implements State {
 
+    private static final Logger logger = Logger.getLogger(SoldOutState.class);
     public final String label = "SOLD OUT";
     final VendingMachine vendingMachine;
 
@@ -21,7 +24,7 @@ public class SoldOutState implements State {
 
     @Override
     public void insertCoin(Coin coin) {
-        vendingMachine.showMessageOnDisplay(String.format("WARNING: %s returned back to cash bucket, machine is sold out", coin.label));
+        vendingMachine.showMessageOnDisplay(String.format("WARN: [%s] %s", VendingMachineMessages.CASH_NOT_ACCEPTED_MACHINE_SOLD_OUT.label, coin.label));
     }
 
     @Override
@@ -29,7 +32,8 @@ public class SoldOutState implements State {
         try {
             vendingMachine.displayProductPrice(shelfNumber);
         } catch (NoSuchElementException nse) {
-            vendingMachine.showMessageOnDisplay(nse.getMessage());
+            logger.error(nse);
+            vendingMachine.showMessageOnDisplay(String.format("WARN: %s: [%d]", VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber));
         }
     }
 
