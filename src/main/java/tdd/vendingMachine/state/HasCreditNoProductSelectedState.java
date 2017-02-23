@@ -29,12 +29,12 @@ public class HasCreditNoProductSelectedState implements State {
     @Override
     public void selectShelfNumber(int shelfNumber) {
         try {
-            vendingMachine.displayProductPrice(shelfNumber);
             vendingMachine.selectProductGivenShelfNumber(shelfNumber);
-            vendingMachine.setCurrentState(vendingMachine.getHasCreditProductSelectedState());
+            vendingMachine.displayProductPrice(shelfNumber);
+            vendingMachine.setCurrentState(vendingMachine.getInsufficientCreditState());
         } catch (NoSuchElementException nse) {
             logger.error(nse);
-            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithCause(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber));
+            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithSubject(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber));
         }
     }
 

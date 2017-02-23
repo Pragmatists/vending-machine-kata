@@ -24,8 +24,6 @@ import java.util.Optional;
 @PowerMockIgnore(value = {"javax.management.*"})
 public class FileReaderHelperTest {
 
-    private static final double ACCURACY = 0.0001;
-
     @Before
     public void setup() {
     }
@@ -46,7 +44,7 @@ public class FileReaderHelperTest {
         Assert.assertEquals(2, productImports.size());
         ProductImport productImport = productImports.get(0);
         Assert.assertEquals(10, productImport.getItemCount());
-        Assert.assertEquals(0.99, productImport.getPrice(), ACCURACY);
+        Assert.assertEquals(99, productImport.getPrice());
         Assert.assertEquals("product1", productImport.getType());
     }
 

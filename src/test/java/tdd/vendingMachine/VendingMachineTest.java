@@ -1,24 +1,21 @@
 package tdd.vendingMachine;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import tdd.vendingMachine.domain.*;
+import tdd.vendingMachine.domain.Coin;
+import tdd.vendingMachine.domain.Product;
 import tdd.vendingMachine.util.Constants;
 import tdd.vendingMachine.util.TestUtils.TestUtils;
 import tdd.vendingMachine.view.VendingMachineMessages;
 
 import java.util.*;
 
-import static tdd.vendingMachine.util.Constants.ACCURACY;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({VendingMachine.class})
@@ -26,15 +23,11 @@ import static tdd.vendingMachine.util.Constants.ACCURACY;
 public class VendingMachineTest {
 
     private Product COLA_199_025;
-    private Product CHIPS_025;
-    private Product CHOCOLATE_BAR;
     VendingMachine vendingMachine;
 
     @Before
     public void setup() {
-        COLA_199_025 = new Product(1.99, "COLA_199_025");
-        CHIPS_025 = new Product(1.29, "CHIPS_025");
-        CHOCOLATE_BAR = new Product(1.49, "CHOCOLATE_BAR");
+        COLA_199_025 = new Product(199, "COLA_199_025");
         vendingMachine = new VendingMachine(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
             TestUtils.buildCoinDispenserWithGivenItemsPerShelf(10, 5));
     }
@@ -42,8 +35,6 @@ public class VendingMachineTest {
     @After
     public void tearDown() {
         COLA_199_025 = null;
-        CHIPS_025 = null;
-        CHOCOLATE_BAR = null;
         vendingMachine = null;
     }
 
@@ -72,13 +63,13 @@ public class VendingMachineTest {
     @Test
     public void should_add_coin_to_credit_stack() {
         Coin fiftyCents = Coin.FIFTY_CENTS;
-        double previousCredit = vendingMachine.getCredit();
+        int previousCredit = vendingMachine.getCredit();
         int previousSize = vendingMachine.getCreditStack().size();
 
         Assert.assertTrue(vendingMachine.addCoinToCredit(fiftyCents));
 
         Assert.assertEquals(previousSize + 1, vendingMachine.getCreditStack().size());
-        Assert.assertEquals(previousCredit + fiftyCents.denomination, vendingMachine.getCredit(), ACCURACY);
+        Assert.assertEquals(previousCredit + fiftyCents.denomination, vendingMachine.getCredit());
         Assert.assertEquals(fiftyCents, vendingMachine.getCreditStack().peek());
 
     }
@@ -89,13 +80,13 @@ public class VendingMachineTest {
         VendingMachine vendingMachineCashDispenserFull = new VendingMachine(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
             TestUtils.buildCoinDispenserWithGivenItemsPerShelf(10, 10));
 
-        double previousCredit = vendingMachineCashDispenserFull.getCredit();
+        int previousCredit = vendingMachineCashDispenserFull.getCredit();
         int previousSize = vendingMachineCashDispenserFull.getCreditStack().size();
 
         Assert.assertFalse(vendingMachineCashDispenserFull.addCoinToCredit(fiftyCents));
 
         Assert.assertEquals(previousSize, vendingMachineCashDispenserFull.getCreditStack().size());
-        Assert.assertEquals(previousCredit, vendingMachineCashDispenserFull.getCredit(), ACCURACY);
+        Assert.assertEquals(previousCredit, vendingMachineCashDispenserFull.getCredit());
     }
 
     @Test
@@ -107,7 +98,7 @@ public class VendingMachineTest {
             TestUtils.buildCoinDispenserWithGivenItemsPerShelf(capacity, initialShelfCount));
 
         int insertsBeforeFull = capacity - initialShelfCount;
-        double previousCredit = vendingMachineCashDispenserFull.getCredit();
+        int previousCredit = vendingMachineCashDispenserFull.getCredit();
         int previousSize = vendingMachineCashDispenserFull.getCreditStack().size();
 
         for (int i = 0; i < insertsBeforeFull; i++) {
@@ -120,7 +111,7 @@ public class VendingMachineTest {
         Assert.assertFalse(vendingMachineCashDispenserFull.addCoinToCredit(fiftyCents));
 
         Assert.assertEquals(previousSize + insertsBeforeFull, vendingMachineCashDispenserFull.getCreditStack().size());
-        Assert.assertEquals(previousCredit + insertsBeforeFull * fiftyCents.denomination, vendingMachineCashDispenserFull.getCredit(), ACCURACY);
+        Assert.assertEquals(previousCredit + insertsBeforeFull * fiftyCents.denomination, vendingMachineCashDispenserFull.getCredit());
     }
 
     @Test
@@ -153,7 +144,7 @@ public class VendingMachineTest {
         vendingMachine.returnAllCreditToBucket();
 
         Assert.assertTrue(vendingMachine.getCreditStack().isEmpty());
-        Assert.assertEquals(0, vendingMachine.getCredit(), ACCURACY);
+        Assert.assertEquals(0, vendingMachine.getCredit());
         Assert.assertNotEquals(VendingMachineMessages.NO_CREDIT_AVAILABLE, vendingMachine.getDisplayCurrentMessage());
     }
 
@@ -164,7 +155,7 @@ public class VendingMachineTest {
         vendingMachine.returnAllCreditToBucket();
 
         Assert.assertTrue(vendingMachine.getCreditStack().isEmpty());
-        Assert.assertEquals(0, vendingMachine.getCredit(), ACCURACY);
+        Assert.assertEquals(0, vendingMachine.getCredit());
         Assert.assertEquals(VendingMachineMessages.NO_CREDIT_AVAILABLE.label, vendingMachine.getDisplayCurrentMessage());
     }
 
@@ -174,7 +165,7 @@ public class VendingMachineTest {
         Assert.assertNotNull(vendingMachine.getNoCreditNoProductSelectedState());
         Assert.assertNotNull(vendingMachine.getHasCreditNoProductSelectedState());
         Assert.assertNotNull(vendingMachine.getNoCreditProductSelectedState());
-        Assert.assertNotNull(vendingMachine.getHasCreditProductSelectedState());
+        Assert.assertNotNull(vendingMachine.getInsufficientCreditState());
         Assert.assertNotNull(vendingMachine.getSoldOutState());
     }
 
@@ -198,11 +189,11 @@ public class VendingMachineTest {
         VendingMachine vendingMachine = new VendingMachine(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
             TestUtils.buildCoinDispenserWithGivenItemsPerShelf(10, coinsPerShelf));
 
-        double totalAmountOnDispenser = Arrays.stream(Coin.values())
-            .mapToDouble(coin -> coin.denomination * coinsPerShelf)
-            .reduce(Constants.SUM_DOUBLE_IDENTITY, Constants.SUM_DOUBLE_BINARY_OPERATOR);
+        int totalAmountOnDispenser = Arrays.stream(Coin.values())
+            .mapToInt(coin -> coin.denomination * coinsPerShelf)
+            .reduce(Constants.SUM_INT_IDENTITY, Constants.SUM_INT_BINARY_OPERATOR);
 
-        Assert.assertEquals(totalAmountOnDispenser, vendingMachine.countCashInDispenser(), ACCURACY);
+        Assert.assertEquals(totalAmountOnDispenser, vendingMachine.countCashInDispenser());
 
     }
 
@@ -226,41 +217,41 @@ public class VendingMachineTest {
     public void should_provision_non_empty_credit_stack_to_cash_dispenser() {
         List<Coin> coins = Arrays.asList(Coin.TEN_CENTS, Coin.TWENTY_CENTS, Coin.TWO, Coin.ONE, Coin.FIFTY_CENTS, Coin.FIVE);
 
-        double creditBeforeInserting = vendingMachine.getCredit();
+        int creditBeforeInserting = vendingMachine.getCredit();
         int stackSizeBeforeInserting = vendingMachine.getCreditStack().size();
-        double totalInsertedCash = coins.stream()
-            .mapToDouble(coin -> coin.denomination)
-            .reduce(Constants.SUM_DOUBLE_IDENTITY, Constants.SUM_DOUBLE_BINARY_OPERATOR);
-        double cashInDispenserBeforeInserting = vendingMachine.countCashInDispenser();
+        int totalInsertedCash = coins.stream()
+            .mapToInt(coin -> coin.denomination)
+            .reduce(Constants.SUM_INT_IDENTITY, Constants.SUM_INT_BINARY_OPERATOR);
+        int cashInDispenserBeforeInserting = vendingMachine.countCashInDispenser();
 
         Assert.assertTrue(totalInsertedCash > 0);
         coins.forEach(vendingMachine::addCoinToCredit);
 
         Assert.assertEquals(stackSizeBeforeInserting + coins.size(), vendingMachine.getCreditStack().size());
-        Assert.assertEquals(creditBeforeInserting + totalInsertedCash, vendingMachine.getCredit(), ACCURACY);
+        Assert.assertEquals(creditBeforeInserting + totalInsertedCash, vendingMachine.getCredit());
 
         vendingMachine.provisionCreditStackToDispenser();
 
         Assert.assertTrue(vendingMachine.getCreditStack().isEmpty());
-        Assert.assertEquals(0, vendingMachine.getCredit(), ACCURACY);
-        Assert.assertEquals(cashInDispenserBeforeInserting + totalInsertedCash, vendingMachine.countCashInDispenser(), ACCURACY);
+        Assert.assertEquals(0, vendingMachine.getCredit());
+        Assert.assertEquals(cashInDispenserBeforeInserting + totalInsertedCash, vendingMachine.countCashInDispenser());
     }
 
     @Test
     public void should_provision_empty_credit_stack_to_cash_dispenser() {
-        double creditBeforeInserting = vendingMachine.getCredit();
+        int creditBeforeInserting = vendingMachine.getCredit();
         int stackSizeBeforeInserting = vendingMachine.getCreditStack().size();
-        double cashInDispenserBeforeInserting = vendingMachine.countCashInDispenser();
+        int cashInDispenserBeforeInserting = vendingMachine.countCashInDispenser();
 
         Assert.assertTrue(vendingMachine.getCreditStack().isEmpty());
-        Assert.assertEquals(0, vendingMachine.getCredit(), ACCURACY);
+        Assert.assertEquals(0, vendingMachine.getCredit());
 
         vendingMachine.provisionCreditStackToDispenser();
 
         Assert.assertEquals(stackSizeBeforeInserting, vendingMachine.getCreditStack().size());
         Assert.assertTrue(vendingMachine.getCreditStack().isEmpty());
-        Assert.assertEquals(creditBeforeInserting, vendingMachine.getCredit(), ACCURACY);
-        Assert.assertEquals(cashInDispenserBeforeInserting, vendingMachine.countCashInDispenser(), ACCURACY);
+        Assert.assertEquals(creditBeforeInserting, vendingMachine.getCredit());
+        Assert.assertEquals(cashInDispenserBeforeInserting, vendingMachine.countCashInDispenser());
     }
 
     @Test
@@ -305,6 +296,45 @@ public class VendingMachineTest {
         Assert.assertNotNull(vendingMachine.getSelectedProduct());
         vendingMachine.undoProductSelection();
         Assert.assertNull(vendingMachine.getSelectedProduct());
+    }
+
+    @Test
+    public void should_give_pending_balance_as_selected_product_price_minus_total_credit() {
+        Product expectedSelectedProduct = COLA_199_025;
+
+        vendingMachine.selectProductGivenShelfNumber(0);
+
+        Assert.assertNotNull(vendingMachine.getSelectedProduct());
+        Assert.assertEquals(expectedSelectedProduct, vendingMachine.getSelectedProduct());
+
+        Assert.assertEquals(expectedSelectedProduct.getPrice(), vendingMachine.calculatePendingBalance());
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void should_fail_calculating_pending_balance_since_no_product_was_selected() {
+        Assert.assertNull(vendingMachine.getSelectedProduct());
+        vendingMachine.calculatePendingBalance();
+    }
+
+    @Test @Ignore
+    public void should_return_false_cant_give_change_not_enough_cash_available() {
+        Product cheap_product = new Product((880), "cheap_product");
+        VendingMachine vendingMachine = new VendingMachine(TestUtils.buildShelvesWithItems(cheap_product, 2),
+            TestUtils.buildCoinDispenserWithGivenItemsPerShelf(10, 1));
+
+        vendingMachine.addCoinToCredit(Coin.FIVE);
+        vendingMachine.addCoinToCredit(Coin.FIVE);
+        vendingMachine.selectProductGivenShelfNumber(0);
+
+        Assert.assertFalse(vendingMachine.canGiveChange(vendingMachine.calculatePendingBalance()));
+    }
+
+    @Test
+    public void should_convert_value_to_screen_decimal_to_present() {
+        Assert.assertEquals("0.99$", VendingMachine.provideCashToDisplay(99));
+        Assert.assertEquals("0.05$", VendingMachine.provideCashToDisplay(5));
+        Assert.assertEquals("0.78$", VendingMachine.provideCashToDisplay(78));
+        Assert.assertEquals("5.00$", VendingMachine.provideCashToDisplay(500));
     }
 
 }

@@ -63,7 +63,7 @@ public class CoinDispenserBuilder {
      * Builds a cash dispenser as a map of shelves based on the cash imports loaded.
      * If the amount in a cash import exceeds the shelf's capacity the shelf will get full and
      * the remaining amount will be discarded back.
-     * @return
+     * @return a map of key Coin and value a Shelf of that Coin
      */
     public Map<Coin, Shelf<Coin>> buildShelf() {
         Map<Coin, Shelf<Coin>> cashDispenser = new HashMap<>();

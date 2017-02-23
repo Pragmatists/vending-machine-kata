@@ -36,7 +36,7 @@ public class NoCreditNoProductSelectedState implements State {
             vendingMachine.setCurrentState(vendingMachine.getNoCreditProductSelectedState());
         } catch (NoSuchElementException nse) {
             logger.error(nse);
-            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithCause(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber));
+            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithSubject(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber));
         }
     }
 

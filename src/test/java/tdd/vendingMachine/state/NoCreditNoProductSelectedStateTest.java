@@ -10,8 +10,6 @@ import tdd.vendingMachine.domain.Product;
 import tdd.vendingMachine.util.TestUtils.TestUtils;
 import tdd.vendingMachine.view.VendingMachineMessages;
 
-import static tdd.vendingMachine.util.Constants.ACCURACY;
-
 /**
  * @author Agustin Cabra on 2/21/2017.
  * @since 1.0
@@ -28,17 +26,17 @@ public class NoCreditNoProductSelectedStateTest implements StateTest {
 
     @Override
     public NoCreditNoProductSelectedState transformToInitialState(VendingMachine vendingMachine) {
-        Assert.assertEquals(0, vendingMachine.getCredit(), ACCURACY); //no credit
+        Assert.assertEquals(0, vendingMachine.getCredit()); //no credit
         Assert.assertNull(vendingMachine.getSelectedProduct()); //no product
         Assert.assertTrue(vendingMachine.getCurrentState() instanceof NoCreditNoProductSelectedState);
         return (NoCreditNoProductSelectedState) vendingMachine.getCurrentState();
     }
 
-    @Before
+    @Before @Override
     public void setup(){
-        COLA_199_025 = new Product(1.99, "COLA_199_025");
-        CHIPS_025 = new Product(1.29, "CHIPS_025");
-        CHOCOLATE_BAR = new Product(1.49, "CHOCOLATE_BAR");
+        COLA_199_025 = new Product(199, "COLA_199_025");
+        CHIPS_025 = new Product(129, "CHIPS_025");
+        CHOCOLATE_BAR = new Product(149, "CHOCOLATE_BAR");
         coinShelfCapacity = 10;
         initialCoinsOnShelf = 5;
         VendingMachine vendingMachine = new VendingMachine(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
@@ -46,7 +44,7 @@ public class NoCreditNoProductSelectedStateTest implements StateTest {
         noCreditNoProductSelectedState = transformToInitialState(vendingMachine);
     }
 
-    @After
+    @After @Override
     public void tearDown(){
         COLA_199_025 = null;
         CHIPS_025 = null;
@@ -62,7 +60,7 @@ public class NoCreditNoProductSelectedStateTest implements StateTest {
 
         noCreditNoProductSelectedState.insertCoin(tenCents);
 
-        Assert.assertEquals(tenCents.denomination, noCreditNoProductSelectedState.vendingMachine.getCredit(), ACCURACY);
+        Assert.assertEquals(tenCents.denomination, noCreditNoProductSelectedState.vendingMachine.getCredit());
         Assert.assertTrue(noCreditNoProductSelectedState.vendingMachine.getCurrentState() instanceof HasCreditNoProductSelectedState);
     }
 
@@ -75,7 +73,7 @@ public class NoCreditNoProductSelectedStateTest implements StateTest {
 
         noCreditNoProductSelectedState.insertCoin(tenCents);
 
-        Assert.assertEquals(0, noCreditNoProductSelectedState.vendingMachine.getCredit(), ACCURACY);
+        Assert.assertEquals(0, noCreditNoProductSelectedState.vendingMachine.getCredit());
         Assert.assertEquals(0, noCreditNoProductSelectedState.vendingMachine.getCreditStackSize());
         Assert.assertTrue(noCreditNoProductSelectedState.vendingMachine.getCurrentState() instanceof NoCreditNoProductSelectedState);
     }

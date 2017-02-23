@@ -40,4 +40,14 @@ public class CoinTest {
     public void should_fail_retrieving_coin_since_label_sent_does_not_belong() {
         Coin.retrieveCoinByLabel("some_label");
     }
+
+    @Test
+    public void should_return_a_coin_given_order() {
+        Assert.assertEquals(Coin.TEN_CENTS, Coin.retrieveCoinByOrder(0));
+        Assert.assertEquals(Coin.TWENTY_CENTS, Coin.retrieveCoinByOrder(1));
+        Assert.assertEquals(Coin.FIFTY_CENTS, Coin.retrieveCoinByOrder(2));
+        Assert.assertEquals(Coin.ONE, Coin.retrieveCoinByOrder(3));
+        Assert.assertEquals(Coin.TWO, Coin.retrieveCoinByOrder(4));
+        Assert.assertEquals(Coin.FIVE, Coin.retrieveCoinByOrder(5));
+    }
 }

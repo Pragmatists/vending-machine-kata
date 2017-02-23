@@ -9,16 +9,15 @@ import org.junit.Test;
  */
 public class ProductImportTest {
 
-    private static final double ACCURACY = 0.0001;
 
     @Test
     public void should_validate_creation_productImport() {
         String importType = "testImport";
-        double price = 0.0;
+        int price = 0;
         int itemCount = 1;
         ProductImport productImport = new ProductImport(importType, price, itemCount);
         Assert.assertEquals(importType, productImport.getType());
-        Assert.assertEquals(price, productImport.getPrice(), ACCURACY);
+        Assert.assertEquals(price, productImport.getPrice());
         Assert.assertEquals(itemCount, productImport.getItemCount());
     }
 }
