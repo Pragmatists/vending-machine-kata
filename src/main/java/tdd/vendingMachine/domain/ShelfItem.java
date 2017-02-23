@@ -15,8 +15,8 @@ public interface ShelfItem {
     String provideType();
 
     /**
-     * The value of the item on the shelve
-     * @return double
+     * The value in cents of the item on the shelve
+     * @return int
      */
-    double provideValue();
+    int provideValue();
 }

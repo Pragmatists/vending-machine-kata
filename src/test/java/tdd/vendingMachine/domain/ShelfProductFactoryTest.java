@@ -23,7 +23,7 @@ public class ShelfProductFactoryTest {
     public void setup() {
         type = "type";
         product = new Product(10, type);
-        emptyProduct = new Product(0.5, "");
+        emptyProduct = new Product(50, "");
         shelfId = 1;
         capacity = 10;
         itemCount = 5;

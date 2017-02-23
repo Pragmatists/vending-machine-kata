@@ -1,5 +1,7 @@
 package tdd.vendingMachine.state;
 
+import org.junit.After;
+import org.junit.Before;
 import tdd.vendingMachine.VendingMachine;
 
 /**
@@ -17,4 +19,14 @@ public interface StateTest<T extends State> {
      * @return the state of the given vendingMachine after actions
      */
     T transformToInitialState(VendingMachine vendingMachine);
+
+    /**
+     * Method meant to be annotated with @Before, to declare initial variables required for tests
+     */
+    void setup();
+
+    /**
+     * Method meant to be annotated with @After, to clear the variables after test performed
+     */
+    void tearDown();
 }

@@ -11,14 +11,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.Coin;
 import tdd.vendingMachine.domain.Product;
-import tdd.vendingMachine.util.Constants;
 import tdd.vendingMachine.util.TestUtils.TestUtils;
 import tdd.vendingMachine.view.VendingMachineMessages;
-
-import java.util.Collection;
-import java.util.Collections;
-
-import static tdd.vendingMachine.util.Constants.ACCURACY;
 
 /**
  * @author Agustin Cabra on 2/20/2017.
@@ -33,19 +27,19 @@ public class SoldOutStateTest implements StateTest {
 
     @Override
     public SoldOutState transformToInitialState(VendingMachine vendingMachine) {
-        Assert.assertEquals(0, vendingMachine.getCredit(), ACCURACY); //no credit
+        Assert.assertEquals(0, vendingMachine.getCredit()); //no credit
         Assert.assertNull(vendingMachine.getSelectedProduct()); //no product
         Assert.assertTrue(vendingMachine.getCurrentState() instanceof SoldOutState);
         return (SoldOutState) vendingMachine.getCurrentState();
     }
 
-    @Before
+    @Before @Override
     public void setup() {
-        Product COLA = new Product(1.00, "COLA_025cl");
+        Product COLA = new Product(100, "COLA_025cl");
         soldOutState = transformToInitialState(new VendingMachine(TestUtils.buildShelvesWithItems(COLA, 0), TestUtils.buildCoinDispenserWithGivenItemsPerShelf(10, 5)));
     }
 
-    @After
+    @After @Override
     public void tearDown() {
         soldOutState = null;
     }
@@ -54,7 +48,7 @@ public class SoldOutStateTest implements StateTest {
     public void should_remain_sold_out_after_inserting_coin_and_return_coin_to_pickup_shelf() {
         soldOutState.insertCoin(Coin.FIFTY_CENTS);
 
-        Assert.assertEquals(0.0, soldOutState.vendingMachine.getCredit(), Constants.ACCURACY);
+        Assert.assertEquals(0, soldOutState.vendingMachine.getCredit());
         Assert.assertTrue(soldOutState.vendingMachine.getCurrentState() instanceof SoldOutState);
     }
 
@@ -64,7 +58,7 @@ public class SoldOutStateTest implements StateTest {
 
         Assert.assertTrue(soldOutState.vendingMachine.getDisplayCurrentMessage()
             .contains(VendingMachineMessages.PRICE.label));//TODO: view todo list on googlespreadsheets
-        Assert.assertEquals(0.0, soldOutState.vendingMachine.getCredit(), Constants.ACCURACY);
+        Assert.assertEquals(0, soldOutState.vendingMachine.getCredit());
         Assert.assertTrue(soldOutState.vendingMachine.getCurrentState() instanceof SoldOutState);
     }
 
@@ -74,14 +68,14 @@ public class SoldOutStateTest implements StateTest {
 
         Assert.assertTrue(soldOutState.vendingMachine.getDisplayCurrentMessage()
             .contains(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label));//TODO: view todo list on googlespreadsheets
-        Assert.assertEquals(0.0, soldOutState.vendingMachine.getCredit(), Constants.ACCURACY);
+        Assert.assertEquals(0, soldOutState.vendingMachine.getCredit());
         Assert.assertTrue(soldOutState.vendingMachine.getCurrentState() instanceof SoldOutState);
     }
 
     @Test
     public void should_perform_no_actions_on_cancel_operation() {
         soldOutState.cancel();
-        Assert.assertEquals(0.0, soldOutState.vendingMachine.getCredit(), Constants.ACCURACY);
+        Assert.assertEquals(0, soldOutState.vendingMachine.getCredit());
         Assert.assertTrue(soldOutState.vendingMachine.getCurrentState() instanceof SoldOutState);
     }
 }

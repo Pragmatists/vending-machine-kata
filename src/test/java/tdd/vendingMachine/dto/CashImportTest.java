@@ -18,7 +18,7 @@ public class CashImportTest {
         String label = "0.5";
         int amount = 4;
         CashImport cashImport = new CashImport(label, amount);
-        Assert.assertEquals(amount, cashImport.getAmount(), Constants.ACCURACY);
+        Assert.assertEquals(amount, cashImport.getAmount());
         Assert.assertEquals(label, cashImport.getLabel());
     }
 

@@ -11,20 +11,27 @@ public enum VendingMachineMessages { //TODO TODO02 evaluate the possibility to i
     CASH_NOT_ACCEPTED_MACHINE_SOLD_OUT("returned back to cash bucket, machine is sold out"),
     DISPENSED_TO_BUCKET("dispensed to pickup bucket"),
     NO_CREDIT_AVAILABLE("WARN: No credit available to return."),
+    NO_PRODUCT_SELECTED("No product is selected"),
+    NOT_ENOUGH_CASH_TO_GIVE_CHANGE("Not available cash to give change"),
     PENDING("Pending"),
     PRICE("Price"),
     RETURN_TO_BUCKET_CREDIT("Returned to bucket, credit"),
-    SHELF_NUMBER_NOT_AVAILABLE("Shelf number not available"),
-    NO_PRODUCT_SELECTED("No product is selected");
+    SHELF_NUMBER_NOT_AVAILABLE("Shelf number not available");
 
-    private static final String WARN_CAUSE_STRUCTURE = "WARN: %s [%s]";
+    private static final String WARN_SUBJECT_STRUCTURE = "WARN: %s [%s]";
+    private static final String WARN_NO_SUBJECT_STRUCTURE = "WARN: %s";
+
     public final String label;
 
     VendingMachineMessages(String label) {
         this.label = label;
     }
 
-    public static String buildWarningMessageWithCause(String problem, int subject) {
-        return String.format(WARN_CAUSE_STRUCTURE, problem, subject);
+    public static String buildWarningMessageWithSubject(String problem, int subject) {
+        return String.format(WARN_SUBJECT_STRUCTURE, problem, subject);
+    }
+
+    public static String buildWarningMessageWithoutSubject(String problem) {
+        return String.format(WARN_NO_SUBJECT_STRUCTURE, problem);
     }
 }

@@ -12,10 +12,10 @@ public class ProductTest {
     @Test
     public void should_provide_price_and_description_from_product() {
         String productType = "Cola drink 0.25l";
-        double productPrice = 1.5;
+        int productPrice = 150;
         Product productStub = new Product(productPrice, productType);
         Assert.assertNotEquals(null, productStub);
         Assert.assertEquals(productType, productStub.getType());
-        Assert.assertEquals(productPrice, productStub.getPrice(), Constants.ACCURACY);
+        Assert.assertEquals(productPrice, productStub.getPrice());
     }
 }
