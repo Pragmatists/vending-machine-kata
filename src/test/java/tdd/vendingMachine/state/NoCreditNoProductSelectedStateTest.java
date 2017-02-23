@@ -8,8 +8,7 @@ import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.Coin;
 import tdd.vendingMachine.domain.Product;
 import tdd.vendingMachine.util.TestUtils.TestUtils;
-
-import java.util.Collections;
+import tdd.vendingMachine.view.VendingMachineMessages;
 
 import static tdd.vendingMachine.util.Constants.ACCURACY;
 
@@ -81,8 +80,10 @@ public class NoCreditNoProductSelectedStateTest {
     }
 
     @Test
-    public void should_change_state_after_selecting_valid_shelfNumber() {
+    public void should_change_state_after_selecting_valid_shelfNumber_and_display_pending_balance_for_item() {
         noCreditNoProductSelectedState.selectShelfNumber(0);
+        Assert.assertTrue(noCreditNoProductSelectedState.vendingMachine.getDisplayCurrentMessage()
+            .contains(VendingMachineMessages.PENDING.label));
         Assert.assertNotNull(noCreditNoProductSelectedState.vendingMachine.getSelectedProduct());
         Assert.assertTrue(noCreditNoProductSelectedState.vendingMachine.getCurrentState() instanceof NoCreditProductSelectedState);
     }

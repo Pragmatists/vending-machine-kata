@@ -25,7 +25,7 @@ public class VendingMachineDisplayTest {
 
     @Test
     public void should_display_and_update_current_message() {
-        String notification = "message sent";
+        String notification = "label sent";
 
         Assert.assertEquals("", vmd.getCurrentMessage());
 

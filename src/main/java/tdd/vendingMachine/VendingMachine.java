@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import tdd.vendingMachine.domain.*;
 import tdd.vendingMachine.state.*;
 import tdd.vendingMachine.util.Constants;
+import tdd.vendingMachine.view.VendingMachineMessages;
 
 import java.util.*;
 
@@ -14,7 +15,6 @@ public final class VendingMachine implements State {
     private static final Logger logger = Logger.getLogger(VendingMachine.class);
 
     public static final VendingMachineConfiguration VENDING_MACHINE_CONFIGURATION = new VendingMachineConfiguration();
-    public static final String MSG_NO_CREDIT_AVAILABLE = "WARN: No credit available to return.";
 
     //States
     private final SoldOutState soldOutState;
@@ -22,6 +22,8 @@ public final class VendingMachine implements State {
     private final HasCreditProductSelectedState hasCreditProductSelectedState;
     private final NoCreditProductSelectedState noCreditProductSelectedState;
     private final HasCreditNoProductSelectedState hasCreditNoProductSelectedState;
+
+    //states
 
     private final VendingMachineDisplay display;
     private Product selectedProduct;
@@ -62,7 +64,7 @@ public final class VendingMachine implements State {
 
     private void validShelfNumber(int shelfNumber) {
         if (null == productShelves.get(shelfNumber)) {
-            throw new NoSuchElementException("WARN Shelf number not available:" + shelfNumber);
+            throw new NoSuchElementException("WARN " + VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE + ":" + shelfNumber);
         }
     }
 
@@ -122,14 +124,16 @@ public final class VendingMachine implements State {
     }
 
     /**
-     * Displays the product price
+     * Displays the product price or pending balance based on product selection
      * @param shelfNumber the selected option on the keypad of the vending machine
      * @throws NoSuchElementException in shelf number is not available
      */
     public final void displayProductPrice(int shelfNumber) throws NoSuchElementException {
         validShelfNumber(shelfNumber);
         Product product = productShelves.get(shelfNumber).getType();
-        display.update(String.format("[%s] Price: %.2f", product.provideType(), product.getPrice()));
+        double toDisplay = this.selectedProduct == null ? product.getPrice() : product.getPrice() - getCredit();
+        String message = this.selectedProduct == null ? VendingMachineMessages.PRICE.label : VendingMachineMessages.PENDING.label;
+        display.update(String.format("[%s] %s: %.2f$", product.provideType(), message, toDisplay));
     }
 
     public final void showMessageOnDisplay(String message) {
@@ -146,10 +150,10 @@ public final class VendingMachine implements State {
         if (dispenserHasCoinSlotAvailable(coin)) {
             credit.addAndGet(coin.denomination);
             creditStack.push(coin);
-            this.display.update(String.format("Received %s, credit: %.2f", coin.label, credit.get()));
+            this.display.update(String.format("%s %s: %.2f", coin.label, VendingMachineMessages.CASH_ACCEPTED_NEW_CREDIT.label, credit.get()));
             return true;
         }
-        this.display.update(String.format("WARN: %s returned to bucket (dispenser full try other denominations), credit: %.2f", coin.label, credit.get()));
+        this.display.update(String.format("%s %s: %.2f", coin.label, VendingMachineMessages.CASH_NOT_ACCEPTED_DISPENSER_FULL.label, credit.get()));
         return false;
     }
 
@@ -158,11 +162,11 @@ public final class VendingMachine implements State {
      */
     public final void returnAllCreditToBucket() {
         if (creditStack.isEmpty()) {
-            display.update(MSG_NO_CREDIT_AVAILABLE);
+            display.update(VendingMachineMessages.NO_CREDIT_AVAILABLE.label);
         } else {
             while(!creditStack.isEmpty()) {
                 credit.addAndGet(-creditStack.peek().denomination);
-                display.update(String.format("Returned %s to bucket, credit: %.2f", creditStack.pop().label, getCredit()));
+                display.update(String.format("[%s] %s: %.2f", creditStack.pop().label, VendingMachineMessages.RETURN_TO_BUCKET_CREDIT.label, getCredit()));
             }
         }
     }
@@ -195,9 +199,9 @@ public final class VendingMachine implements State {
      */
     public final void dispenseSelectedProductToBucket() throws NoSuchElementException {
         if(null == this.selectedProduct) {
-            throw new NoSuchElementException("WARN: No product is selected");
+            throw new NoSuchElementException("WARN: " + VendingMachineMessages.NO_PRODUCT_SELECTED.label);
         }
-        display.update(String.format("Product %s dispensed to pickup bucket", this.selectedProduct));
+        display.update(String.format("[%s] %s", this.selectedProduct, VendingMachineMessages.DISPENSED_TO_BUCKET.label));
     }
 
     /**
@@ -255,8 +259,8 @@ public final class VendingMachine implements State {
     }
 
     /**
-     * Provide the message displayed on the display.
-     * @return the las message received by the display
+     * Provide the label displayed on the display.
+     * @return the las label received by the display
      */
     public String getDisplayCurrentMessage() {
         return display.getCurrentMessage();

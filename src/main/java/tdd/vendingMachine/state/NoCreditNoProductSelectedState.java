@@ -1,7 +1,9 @@
 package tdd.vendingMachine.state;
 
+import org.apache.log4j.Logger;
 import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.Coin;
+import tdd.vendingMachine.view.VendingMachineMessages;
 
 import java.util.NoSuchElementException;
 
@@ -11,6 +13,7 @@ import java.util.NoSuchElementException;
  */
 public class NoCreditNoProductSelectedState implements State {
 
+    private static final Logger logger = Logger.getLogger(NoCreditNoProductSelectedState.class);
     public static final String label = "NO CREDIT STATE NO PRODUCT SELECTED";
     final VendingMachine vendingMachine;
 
@@ -28,11 +31,12 @@ public class NoCreditNoProductSelectedState implements State {
     @Override
     public void selectShelfNumber(int shelfNumber) {
         try {
-            vendingMachine.displayProductPrice(shelfNumber);
             vendingMachine.selectProductGivenShelfNumber(shelfNumber);
+            vendingMachine.displayProductPrice(shelfNumber);
             vendingMachine.setCurrentState(vendingMachine.getNoCreditProductSelectedState());
         } catch (NoSuchElementException nse) {
-            vendingMachine.showMessageOnDisplay(nse.getMessage());
+            logger.error(nse);
+            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithCause(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber));
         }
     }
 

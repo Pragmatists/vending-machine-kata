@@ -13,6 +13,7 @@ import tdd.vendingMachine.domain.Coin;
 import tdd.vendingMachine.domain.Product;
 import tdd.vendingMachine.util.Constants;
 import tdd.vendingMachine.util.TestUtils.TestUtils;
+import tdd.vendingMachine.view.VendingMachineMessages;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -59,7 +60,8 @@ public class SoldOutStateTest {
     public void should_remain_sold_out_and_display_product_price_after_valid_selecting_valid_shelfNumber() {
         soldOutState.selectShelfNumber(0);
 
-        Assert.assertTrue(soldOutState.vendingMachine.getDisplayCurrentMessage().contains("Price: "));//TODO: view todo list on googlespreadsheets
+        Assert.assertTrue(soldOutState.vendingMachine.getDisplayCurrentMessage()
+            .contains(VendingMachineMessages.PRICE.label));//TODO: view todo list on googlespreadsheets
         Assert.assertEquals(0.0, soldOutState.vendingMachine.getCredit(), Constants.ACCURACY);
         Assert.assertTrue(soldOutState.vendingMachine.getCurrentState() instanceof SoldOutState);
     }
@@ -68,7 +70,8 @@ public class SoldOutStateTest {
     public void should_remain_sold_out_and_display_warning_after_selecting_invalid_shelfNumber() {
         soldOutState.selectShelfNumber(585);
 
-        Assert.assertTrue(soldOutState.vendingMachine.getDisplayCurrentMessage().contains("Shelf number not available"));//TODO: view todo list on googlespreadsheets
+        Assert.assertTrue(soldOutState.vendingMachine.getDisplayCurrentMessage()
+            .contains(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label));//TODO: view todo list on googlespreadsheets
         Assert.assertEquals(0.0, soldOutState.vendingMachine.getCredit(), Constants.ACCURACY);
         Assert.assertTrue(soldOutState.vendingMachine.getCurrentState() instanceof SoldOutState);
     }
