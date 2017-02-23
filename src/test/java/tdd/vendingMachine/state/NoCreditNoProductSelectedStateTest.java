@@ -16,7 +16,7 @@ import static tdd.vendingMachine.util.Constants.ACCURACY;
  * @author Agustin Cabra on 2/21/2017.
  * @since 1.0
  */
-public class NoCreditNoProductSelectedStateTest {
+public class NoCreditNoProductSelectedStateTest implements StateTest {
 
 
     private Product COLA_199_025;
@@ -26,10 +26,12 @@ public class NoCreditNoProductSelectedStateTest {
     private int coinShelfCapacity;
     private int initialCoinsOnShelf;
 
-    private void validInitialState(VendingMachine vendingMachine) {
+    @Override
+    public NoCreditNoProductSelectedState transformToInitialState(VendingMachine vendingMachine) {
         Assert.assertEquals(0, vendingMachine.getCredit(), ACCURACY); //no credit
         Assert.assertNull(vendingMachine.getSelectedProduct()); //no product
         Assert.assertTrue(vendingMachine.getCurrentState() instanceof NoCreditNoProductSelectedState);
+        return (NoCreditNoProductSelectedState) vendingMachine.getCurrentState();
     }
 
     @Before
@@ -39,9 +41,9 @@ public class NoCreditNoProductSelectedStateTest {
         CHOCOLATE_BAR = new Product(1.49, "CHOCOLATE_BAR");
         coinShelfCapacity = 10;
         initialCoinsOnShelf = 5;
-        VendingMachine vendingMachine = new VendingMachine(TestUtils.buildShelvesWithItems(COLA_199_025, 1), TestUtils.buildCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialCoinsOnShelf));
-        validInitialState(vendingMachine);
-        noCreditNoProductSelectedState = (NoCreditNoProductSelectedState) vendingMachine.getCurrentState();
+        VendingMachine vendingMachine = new VendingMachine(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
+            TestUtils.buildCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialCoinsOnShelf));
+        noCreditNoProductSelectedState = transformToInitialState(vendingMachine);
     }
 
     @After
@@ -69,8 +71,7 @@ public class NoCreditNoProductSelectedStateTest {
         Coin tenCents = Coin.TEN_CENTS;
         VendingMachine vendingMachine = new VendingMachine(TestUtils.buildShelvesWithItems(CHOCOLATE_BAR, 1),
             TestUtils.buildCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, coinShelfCapacity));
-        validInitialState(vendingMachine);
-        noCreditNoProductSelectedState = (NoCreditNoProductSelectedState) vendingMachine.getCurrentState();
+        noCreditNoProductSelectedState = transformToInitialState(vendingMachine);
 
         noCreditNoProductSelectedState.insertCoin(tenCents);
 
@@ -91,12 +92,12 @@ public class NoCreditNoProductSelectedStateTest {
     @Test
     public void should_not_change_state_after_selecting_invalid_shelfNumber() {
         noCreditNoProductSelectedState.selectShelfNumber(5515);
-        validInitialState(noCreditNoProductSelectedState.vendingMachine);
+        transformToInitialState(noCreditNoProductSelectedState.vendingMachine);
     }
 
     @Test
     public void should_not_change_state_after_cancel() {
         noCreditNoProductSelectedState.cancel();
-        validInitialState(noCreditNoProductSelectedState.vendingMachine);
+        transformToInitialState(noCreditNoProductSelectedState.vendingMachine);
     }
 }

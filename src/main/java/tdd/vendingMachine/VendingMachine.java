@@ -150,7 +150,7 @@ public final class VendingMachine implements State {
         if (dispenserHasCoinSlotAvailable(coin)) {
             credit.addAndGet(coin.denomination);
             creditStack.push(coin);
-            this.display.update(String.format("%s %s: %.2f", coin.label, VendingMachineMessages.CASH_ACCEPTED_NEW_CREDIT.label, credit.get()));
+            this.display.update(String.format("%s %s: %.2f$", coin.label, VendingMachineMessages.CASH_ACCEPTED_NEW_CREDIT.label, credit.get()));
             return true;
         }
         this.display.update(String.format("%s %s: %.2f", coin.label, VendingMachineMessages.CASH_NOT_ACCEPTED_DISPENSER_FULL.label, credit.get()));
