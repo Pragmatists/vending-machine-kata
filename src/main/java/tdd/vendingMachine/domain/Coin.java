@@ -13,12 +13,12 @@ import java.util.NoSuchElementException;
  * Enum representing the coins available/acceptable by the vending machine
  */
 public enum Coin implements ShelfItem {
-    ONE("1.0", 1.0),
-    TWO("2.0", 2.0),
-    FIVE("5.0", 5.0),
-    TEN_CENTS("0.1", 0.1),
-    TWENTY_CENTS("0.2", 0.2),
-    FIFTY_CENTS("0.5", 0.5);
+    ONE("1.0$", 1.0),
+    TWO("2.0$", 2.0),
+    FIVE("5.0$", 5.0),
+    TEN_CENTS("0.1$", 0.1),
+    TWENTY_CENTS("0.2$", 0.2),
+    FIFTY_CENTS("0.5$", 0.5);
 
     /**
      * Validation map containing labels of every available coin

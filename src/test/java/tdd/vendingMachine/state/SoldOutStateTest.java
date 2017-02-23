@@ -27,20 +27,22 @@ import static tdd.vendingMachine.util.Constants.ACCURACY;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({VendingMachine.class, SoldOutState.class})
 @PowerMockIgnore(value = {"javax.management.*"})
-public class SoldOutStateTest {
+public class SoldOutStateTest implements StateTest {
 
     private SoldOutState soldOutState;
+
+    @Override
+    public SoldOutState transformToInitialState(VendingMachine vendingMachine) {
+        Assert.assertEquals(0, vendingMachine.getCredit(), ACCURACY); //no credit
+        Assert.assertNull(vendingMachine.getSelectedProduct()); //no product
+        Assert.assertTrue(vendingMachine.getCurrentState() instanceof SoldOutState);
+        return (SoldOutState) vendingMachine.getCurrentState();
+    }
 
     @Before
     public void setup() {
         Product COLA = new Product(1.00, "COLA_025cl");
-        VendingMachine vendingMachine = new VendingMachine(TestUtils.buildShelvesWithItems(COLA, 0), TestUtils.buildCoinDispenserWithGivenItemsPerShelf(10, 5));
-
-        //validate initial state
-        Assert.assertEquals(0, vendingMachine.getCredit(), ACCURACY); //no credit
-        Assert.assertNull(vendingMachine.getSelectedProduct()); //no product
-        Assert.assertTrue(vendingMachine.getCurrentState() instanceof SoldOutState);
-        soldOutState = (SoldOutState) vendingMachine.getCurrentState();
+        soldOutState = transformToInitialState(new VendingMachine(TestUtils.buildShelvesWithItems(COLA, 0), TestUtils.buildCoinDispenserWithGivenItemsPerShelf(10, 5)));
     }
 
     @After

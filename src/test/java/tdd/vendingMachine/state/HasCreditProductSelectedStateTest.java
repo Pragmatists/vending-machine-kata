@@ -18,20 +18,16 @@ import static tdd.vendingMachine.util.Constants.ACCURACY;
  * @author Agustin Cabra on 2/21/2017.
  * @since 1.0
  */
-public class HasCreditProductSelectedStateTest {
+public class HasCreditProductSelectedStateTest implements StateTest {
 
     private Product COLA_199_025;
     private Product CHIPS_025;
     private Product CHOCOLATE_BAR;
     private HasCreditProductSelectedState hasCreditProductSelectedState;
 
-    @Before
-    public void setup() {
-        COLA_199_025 = new Product(1.99, "COLA_199_025");
-        CHIPS_025 = new Product(1.29, "CHIPS_025");
-        CHOCOLATE_BAR = new Product(1.49, "CHOCOLATE_BAR");
-        Collection<Product> products = Arrays.asList(COLA_199_025, CHIPS_025, CHOCOLATE_BAR);
-        VendingMachine vendingMachine = new VendingMachine(TestUtils.buildShelvesWithItems(products, 3), TestUtils.buildCoinDispenserWithGivenItemsPerShelf(20, 5));
+
+    @Override
+    public HasCreditProductSelectedState transformToInitialState(VendingMachine vendingMachine) {
         Assert.assertEquals(0, vendingMachine.getCredit(), ACCURACY); //no credit
         Assert.assertNull(vendingMachine.getSelectedProduct()); //no product
         Assert.assertTrue(vendingMachine.getCurrentState() instanceof NoCreditNoProductSelectedState);
@@ -40,13 +36,24 @@ public class HasCreditProductSelectedStateTest {
         //modify to get desired state
         Coin tenCents = Coin.TEN_CENTS;
         initialState.insertCoin(tenCents);
-        initialState.selectShelfNumber(1);
+        Assert.assertTrue(initialState.vendingMachine.getCurrentState() instanceof HasCreditNoProductSelectedState);
+        initialState.vendingMachine.getCurrentState().selectShelfNumber(1);
 
         //validate initial state
         Assert.assertEquals(tenCents.denomination, initialState.vendingMachine.getCredit(), ACCURACY);
         Assert.assertNotNull(initialState.vendingMachine.getSelectedProduct());
         Assert.assertTrue(initialState.vendingMachine.getCurrentState() instanceof HasCreditProductSelectedState);
-        hasCreditProductSelectedState = (HasCreditProductSelectedState) initialState.vendingMachine.getCurrentState();
+        return (HasCreditProductSelectedState) initialState.vendingMachine.getCurrentState();
+    }
+
+    @Before
+    public void setup() {
+        COLA_199_025 = new Product(1.99, "COLA_199_025");
+        CHIPS_025 = new Product(1.29, "CHIPS_025");
+        CHOCOLATE_BAR = new Product(1.49, "CHOCOLATE_BAR");
+        Collection<Product> products = Arrays.asList(COLA_199_025, CHIPS_025, CHOCOLATE_BAR);
+        VendingMachine vendingMachine = new VendingMachine(TestUtils.buildShelvesWithItems(products, 3), TestUtils.buildCoinDispenserWithGivenItemsPerShelf(20, 5));
+        hasCreditProductSelectedState = transformToInitialState(vendingMachine);
     }
 
     @After
