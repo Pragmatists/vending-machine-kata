@@ -1,7 +1,10 @@
 package tdd.vendingMachine;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
@@ -346,14 +349,6 @@ public class VendingMachineTest {
     public void should_fail_calculating_pending_balance_since_no_product_was_selected() {
         Assert.assertNull(vendingMachine.getSelectedProduct());
         vendingMachine.calculatePendingBalance();
-    }
-
-    @Test
-    public void should_convert_value_to_screen_decimal_to_present() {
-        Assert.assertEquals("0.99$", VendingMachine.provideCashToDisplay(99));
-        Assert.assertEquals("0.05$", VendingMachine.provideCashToDisplay(5));
-        Assert.assertEquals("0.78$", VendingMachine.provideCashToDisplay(78));
-        Assert.assertEquals("5.00$", VendingMachine.provideCashToDisplay(500));
     }
 
     @Test

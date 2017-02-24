@@ -6,6 +6,7 @@ package tdd.vendingMachine.view;
  * Message enum intended to be used as keys for translations on language files e.g. en_US, pl_PL ...etc.
  */
 public enum VendingMachineMessages { //TODO TODO02 evaluate the possibility to implement internationalization
+    CANCEL("Cancelling ..."),
     CASH_ACCEPTED_NEW_CREDIT("Received, credit"),
     CASH_NOT_ACCEPTED_DISPENSER_FULL("returned to bucket (dispenser full try other denominations), credit"),
     CASH_NOT_ACCEPTED_MACHINE_SOLD_OUT("returned back to cash bucket, machine is sold out"),
@@ -34,5 +35,14 @@ public enum VendingMachineMessages { //TODO TODO02 evaluate the possibility to i
 
     public static String buildWarningMessageWithoutSubject(String problem) {
         return String.format(WARN_NO_SUBJECT_STRUCTURE, problem);
+    }
+
+    /**
+     * Parses the given value to from cents to units only for display purposes
+     * @param cash the amount of cents to present to screen
+     * @return a string representing the amount required
+     */
+    public static String provideCashToDisplay(int cash) {
+        return String.format("%.2f$", cash/100.0);
     }
 }
