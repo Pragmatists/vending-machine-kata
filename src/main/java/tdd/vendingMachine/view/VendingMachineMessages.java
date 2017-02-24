@@ -15,6 +15,7 @@ public enum VendingMachineMessages { //TODO TODO02 evaluate the possibility to i
     NOT_ENOUGH_CASH_TO_GIVE_CHANGE("Not available cash to give change"),
     PENDING("Pending"),
     PRICE("Price"),
+    PENDING_BALANCE_RETURNED_TO_BUCKET("Returned to cash dispenser, balance"),
     RETURN_TO_BUCKET_CREDIT("Returned to bucket, credit"),
     SHELF_NUMBER_NOT_AVAILABLE("Shelf number not available");
 

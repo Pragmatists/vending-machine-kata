@@ -26,7 +26,7 @@ public final class VendingMachine implements State {
     //states
 
     private final VendingMachineDisplay display;
-    private Product selectedProduct;
+    private Shelf<Product> selectedShelf;
     private AtomicInteger credit;
     private Stack<Coin> creditStack;
     private final Map<Integer, Shelf<Product>> productShelves;
@@ -42,7 +42,7 @@ public final class VendingMachine implements State {
         this.productShelves = productShelves;
         this.coinShelves = coinShelves;
         this.credit = new AtomicInteger(0);
-        this.selectedProduct = null;
+        this.selectedShelf = null;
         this.display = new VendingMachineDisplay();
         this.creditStack = new Stack<>();
 
@@ -80,7 +80,7 @@ public final class VendingMachine implements State {
      * @throws NoSuchElementException when no product was selected
      */
     private void validateSelectedProduct() throws NoSuchElementException {
-        if (null == selectedProduct) {
+        if (null == selectedShelf) {
             throw new NoSuchElementException(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.NO_PRODUCT_SELECTED.label));
         }
     }
@@ -114,7 +114,7 @@ public final class VendingMachine implements State {
     }
 
     public Product getSelectedProduct() {
-        return selectedProduct;
+        return selectedShelf != null ? this.selectedShelf.getType() : null;
     }
 
     /**
@@ -148,8 +148,8 @@ public final class VendingMachine implements State {
     public final void displayProductPrice(int shelfNumber) throws NoSuchElementException {
         validShelfNumber(shelfNumber);
         Product product = productShelves.get(shelfNumber).getType();
-        int toDisplay = this.selectedProduct == null ? product.getPrice() : calculatePendingBalance();
-        String message = this.selectedProduct == null ? VendingMachineMessages.PRICE.label : VendingMachineMessages.PENDING.label;
+        int toDisplay = this.selectedShelf == null ? product.getPrice() : calculatePendingBalance();
+        String message = this.selectedShelf == null ? VendingMachineMessages.PRICE.label : VendingMachineMessages.PENDING.label;
         display.update(String.format("[%s] %s: %s", product.provideType(), message, provideCashToDisplay(toDisplay)));
     }
 
@@ -204,18 +204,17 @@ public final class VendingMachine implements State {
      */
     public final void selectProductGivenShelfNumber(int shelfNumber)throws NoSuchElementException {
         validShelfNumber(shelfNumber);
-        selectedProduct = productShelves.get(shelfNumber).getType();
+        this.selectedShelf = productShelves.get(shelfNumber);
     }
 
     /**
-     * Moves the money from the stack to the vending machine's cash dispenser and clears the credit
+     * Moves the money from the stack to the vending machine's cash dispenser, the credit
+     * remains the same since no cash has been given out.
      * @throws InputMismatchException if unable to provision because no free slots are available
      */
     public final void provisionCreditStackToDispenser() throws InputMismatchException {
         while (!creditStack.isEmpty()) {
-            Coin pop = creditStack.pop();
-            coinShelves.get(pop).provision();
-            credit.addAndGet(-pop.denomination);
+            coinShelves.get(creditStack.pop()).provision();
         }
     }
 
@@ -225,14 +224,16 @@ public final class VendingMachine implements State {
      */
     public final void dispenseSelectedProductToBucket() throws NoSuchElementException {
         validateSelectedProduct();
-        display.update(String.format("[%s] %s", this.selectedProduct.getType(), VendingMachineMessages.DISPENSED_TO_BUCKET.label));
+        Product product = this.selectedShelf.getType();
+        this.selectedShelf.dispense();
+        display.update(String.format("[%s] %s", product.getType(), VendingMachineMessages.DISPENSED_TO_BUCKET.label));
     }
 
     /**
      * Sets the selected product to null
      */
     public final void undoProductSelection() {
-        this.selectedProduct = null;
+        this.selectedShelf = null;
     }
 
     /**
@@ -254,15 +255,6 @@ public final class VendingMachine implements State {
             .filter(entry -> !entry.getValue().isEmpty())
             .mapToInt(nonEmptyEntry -> nonEmptyEntry.getKey().denomination * nonEmptyEntry.getValue().getItemCount())
             .reduce(Constants.SUM_INT_IDENTITY, Constants.SUM_INT_BINARY_OPERATOR);
-    }
-
-    /**
-     * Returns the credit stack, this method is intended to be used by the class vendingMachine
-     * the use of helper methods getCreditStackSize and isCreditStackEmpty should be enough.
-     * @return stack of credit inserted to the machine.
-     */
-    protected Stack<Coin> getCreditStack() {
-        return creditStack;
     }
 
     /**
@@ -297,7 +289,7 @@ public final class VendingMachine implements State {
      */
     public int calculatePendingBalance() throws NoSuchElementException{
         validateSelectedProduct();
-        return this.selectedProduct.getPrice() - this.credit.get();
+        return this.selectedShelf.getType().getPrice() - this.credit.get();
     }
 
     /**
@@ -326,5 +318,54 @@ public final class VendingMachine implements State {
             coinShelves.get(changeStack.pop()).provision();
         }
         return pending == 0;
+    }
+
+    /**
+     * Drops the pending balance to the coin dispense bucket if is possible to build the amount from the
+     * coins available on the cash dispenser otherwise throws an exception.
+     * @throws UnsupportedOperationException if is not possible to build such amount from the cash dispenser.
+     */
+    public void dispenseCurrentBalance() throws UnsupportedOperationException {
+        int balance = calculatePendingBalance();
+        if (!canGiveChangeFromCashDispenser(balance)) {
+            throw new UnsupportedOperationException("ERR: " + VendingMachineMessages.NOT_ENOUGH_CASH_TO_GIVE_CHANGE.label);
+        }
+        int pending = Math.abs(balance);
+        Iterator<Coin> order = Coin.retrieveOrderDescendingIterator();
+        while(pending > 0 && order.hasNext()) {
+            Coin coin = order.next();
+            Shelf<Coin> coinShelf = coinShelves.get(coin);
+            while(!coinShelf.isEmpty() && pending >= coin.denomination) {
+                coinShelf.dispense();
+                pending -= coin.denomination;
+                this.display.update(
+                    String.format("[%s] %s: %s", provideCashToDisplay(coin.denomination),
+                        VendingMachineMessages.PENDING_BALANCE_RETURNED_TO_BUCKET.label,
+                        provideCashToDisplay(-pending))
+                );
+            }
+        }
+    }
+
+    /**
+     * Returns the amount of products available in the given shelf
+     * @param shelfNumber the shelf to check
+     * @return the amount of products on the shelf
+     * @throws NoSuchElementException if the shelf number is invalid
+     */
+    public int countProductsOnShelf(int shelfNumber) throws NoSuchElementException{
+        validShelfNumber(shelfNumber);
+        return productShelves.get(shelfNumber).getItemCount();
+    }
+
+    /**
+     * Counts the total amount of products on the vending machine.
+     * As the sum of every shelf's itemCount.
+     * @return integer with the total amount of products.
+     */
+    public int countTotalAmountProducts() {
+        return productShelves.values().stream()
+            .mapToInt(Shelf::getItemCount)
+            .reduce(Constants.SUM_INT_IDENTITY, Constants.SUM_INT_BINARY_OPERATOR);
     }
 }

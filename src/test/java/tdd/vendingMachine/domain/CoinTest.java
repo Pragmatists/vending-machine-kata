@@ -28,11 +28,13 @@ public class CoinTest {
     @Test
     public void should_return_true_since_label_belongs_to_enum() {
         Assert.assertTrue(Coin.validCoin(Coin.FIFTY_CENTS.label));
+        Assert.assertTrue(Coin.validCoin(Coin.FIFTY_CENTS.provideType()));
     }
 
     @Test
     public void should_retrieve_coin_since_label_belongs_to_enum() {
         Assert.assertEquals(Coin.FIFTY_CENTS, Coin.retrieveCoinByLabel(Coin.FIFTY_CENTS.label));
+        Assert.assertEquals(Coin.FIFTY_CENTS, Coin.retrieveCoinByLabel(Coin.FIFTY_CENTS.provideType()));
     }
 
     @Test(expected = NullPointerException.class)
