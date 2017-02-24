@@ -18,7 +18,6 @@ public class NoCreditNoProductSelectedStateTest implements StateTest {
 
 
     private Product COLA_199_025;
-    private Product CHIPS_025;
     private Product CHOCOLATE_BAR;
     private NoCreditNoProductSelectedState noCreditNoProductSelectedState;
     private int coinShelfCapacity;
@@ -35,7 +34,6 @@ public class NoCreditNoProductSelectedStateTest implements StateTest {
     @Before @Override
     public void setup(){
         COLA_199_025 = new Product(199, "COLA_199_025");
-        CHIPS_025 = new Product(129, "CHIPS_025");
         CHOCOLATE_BAR = new Product(149, "CHOCOLATE_BAR");
         coinShelfCapacity = 10;
         initialCoinsOnShelf = 5;
@@ -47,7 +45,6 @@ public class NoCreditNoProductSelectedStateTest implements StateTest {
     @After @Override
     public void tearDown(){
         COLA_199_025 = null;
-        CHIPS_025 = null;
         CHOCOLATE_BAR = null;
         noCreditNoProductSelectedState = null;
         coinShelfCapacity = 0;
