@@ -48,9 +48,9 @@ public class InsufficientCreditStateTest implements StateTest {
 
     @Before @Override
     public void setup() {
-        COLA_199_025 = new Product(199, "COLA_199_025");
-        CHIPS_025 = new Product(129, "CHIPS_025");
-        CHOCOLATE_BAR = new Product(149, "CHOCOLATE_BAR");
+        COLA_199_025 = new Product(290, "COLA_199_025");
+        CHIPS_025 = new Product(130, "CHIPS_025");
+        CHOCOLATE_BAR = new Product(160, "CHOCOLATE_BAR");
         Collection<Product> products = Arrays.asList(COLA_199_025, CHIPS_025, CHOCOLATE_BAR);
         VendingMachine vendingMachine = new VendingMachine(TestUtils.buildShelvesWithItems(products, 3), TestUtils.buildCoinDispenserWithGivenItemsPerShelf(20, 5));
         insufficientCreditState = transformToInitialState(vendingMachine);
@@ -79,5 +79,30 @@ public class InsufficientCreditStateTest implements StateTest {
         Assert.assertTrue(insufficientCreditState.vendingMachine.getDisplayCurrentMessage().contains(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label));
         Assert.assertTrue(insufficientCreditState.vendingMachine.getDisplayCurrentMessage().contains(VendingMachineMessages.PENDING.label));
         Assert.assertTrue(insufficientCreditState.vendingMachine.getCurrentState() instanceof InsufficientCreditState);
+    }
+
+    @Test
+    public void given_valid_shelfNumber_that_price_is_equally_covered_with_current_credit_should_dispense_item() {
+        int shelfNumberEnoughCash = 1;
+        int shelfNumberInsufficientCash = 0;
+
+        int productsBeforeSell = insufficientCreditState.vendingMachine.countTotalAmountProducts();
+        int productsBeforeSellOnShelfEnoughCash = insufficientCreditState.vendingMachine.countProductsOnShelf(shelfNumberEnoughCash);
+        int productsBeforeSellOnShelfInsufficientCash = insufficientCreditState.vendingMachine.countProductsOnShelf(shelfNumberInsufficientCash);
+
+        insufficientCreditState.selectShelfNumber(shelfNumberInsufficientCash);
+        insufficientCreditState.insertCoin(Coin.TWENTY_CENTS);
+        insufficientCreditState.insertCoin(Coin.ONE);
+        insufficientCreditState.selectShelfNumber(shelfNumberEnoughCash);
+
+        //inventory validation
+        Assert.assertEquals(productsBeforeSellOnShelfEnoughCash - 1, insufficientCreditState.vendingMachine.countProductsOnShelf(shelfNumberEnoughCash));
+        Assert.assertEquals(productsBeforeSellOnShelfInsufficientCash, insufficientCreditState.vendingMachine.countProductsOnShelf(shelfNumberInsufficientCash));
+        Assert.assertEquals(productsBeforeSell - 1, insufficientCreditState.vendingMachine.countTotalAmountProducts());
+
+        //cash validation
+        Assert.assertTrue(insufficientCreditState.vendingMachine.isCreditStackEmpty());
+        Assert.assertEquals(0, insufficientCreditState.vendingMachine.getCredit());
+        Assert.assertTrue(insufficientCreditState.vendingMachine.getCurrentState() instanceof NoCreditNoProductSelectedState);
     }
 }

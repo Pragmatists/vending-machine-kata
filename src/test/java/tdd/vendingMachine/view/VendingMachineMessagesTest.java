@@ -23,4 +23,12 @@ public class VendingMachineMessagesTest {
         String expectedMessage = "WARN: " + problem;
         Assert.assertEquals(expectedMessage, VendingMachineMessages.buildWarningMessageWithoutSubject(problem));
     }
+
+    @Test
+    public void should_convert_value_to_screen_decimal_to_present() {
+        Assert.assertEquals("0.99$", VendingMachineMessages.provideCashToDisplay(99));
+        Assert.assertEquals("0.05$", VendingMachineMessages.provideCashToDisplay(5));
+        Assert.assertEquals("0.78$", VendingMachineMessages.provideCashToDisplay(78));
+        Assert.assertEquals("5.00$", VendingMachineMessages.provideCashToDisplay(500));
+    }
 }

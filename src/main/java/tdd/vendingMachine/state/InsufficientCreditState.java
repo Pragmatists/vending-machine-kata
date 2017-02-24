@@ -24,15 +24,30 @@ public class InsufficientCreditState implements State {
         this.vendingMachine = vendingMachine;
     }
 
+    private void sellProduct() {
+        vendingMachine.provisionCreditStackToDispenser();
+        vendingMachine.dispenseSelectedProductToBucket();
+        vendingMachine.undoProductSelection();
+        vendingMachine.setCurrentState(vendingMachine.getNoCreditNoProductSelectedState());
+    }
+
     @Override
     public void insertCoin(Coin coin) {
-        if (vendingMachine.getSelectedProduct().getPrice() == vendingMachine.getCredit() + coin.denomination) {
-            if (vendingMachine.addCoinToCredit(coin)){
-                vendingMachine.provisionCreditStackToDispenser();
-                vendingMachine.dispenseSelectedProductToBucket();
-                vendingMachine.undoProductSelection();
-                vendingMachine.setCurrentState(vendingMachine.getNoCreditNoProductSelectedState());
-            }
+        int compare = Integer.compare(vendingMachine.getSelectedProduct().getPrice(), vendingMachine.getCredit() + coin.denomination);
+        switch (compare) {
+            case -1:
+                vendingMachine.addCoinToCredit(coin);
+                System.out.println("le alcanza dele cambio");
+                break;
+            case 1:
+                vendingMachine.addCoinToCredit(coin);
+                System.out.println("no le alcanza");
+                break;
+            default:
+                if (vendingMachine.addCoinToCredit(coin)){
+                    this.sellProduct();
+                }
+                break;
         }
     }
 
@@ -42,19 +57,23 @@ public class InsufficientCreditState implements State {
         try {
             vendingMachine.selectProductGivenShelfNumber(shelfNumber);
             vendingMachine.displayProductPrice(shelfNumber);
+            if (vendingMachine.getSelectedProduct().getPrice() == vendingMachine.getCredit()) {
+
+            }
         } catch (NoSuchElementException nse) {
             logger.error(nse);
-            vendingMachine.showMessageOnDisplay(String.format("%s, [%s] %s: %.2f$",
+            vendingMachine.showMessageOnDisplay(String.format("%s, [%s] %s: %s",
                 VendingMachineMessages.buildWarningMessageWithSubject(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber),
                 prev.provideType(),
                 VendingMachineMessages.PENDING.label,
-                vendingMachine.calculatePendingBalance()/100.0)
+                VendingMachineMessages.provideCashToDisplay(vendingMachine.calculatePendingBalance()))
             );
         }
     }
 
     @Override
     public void cancel() {
+        vendingMachine.showMessageOnDisplay(VendingMachineMessages.CANCEL.label);
         vendingMachine.returnAllCreditToBucket();
         vendingMachine.setCurrentState(vendingMachine.getNoCreditNoProductSelectedState());
     }

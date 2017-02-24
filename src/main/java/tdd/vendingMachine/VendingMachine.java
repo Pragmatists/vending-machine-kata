@@ -150,7 +150,7 @@ public final class VendingMachine implements State {
         Product product = productShelves.get(shelfNumber).getType();
         int toDisplay = this.selectedShelf == null ? product.getPrice() : calculatePendingBalance();
         String message = this.selectedShelf == null ? VendingMachineMessages.PRICE.label : VendingMachineMessages.PENDING.label;
-        display.update(String.format("[%s] %s: %s", product.provideType(), message, provideCashToDisplay(toDisplay)));
+        display.update(String.format("[%s] %s: %s", product.provideType(), message, VendingMachineMessages.provideCashToDisplay(toDisplay)));
     }
 
     public final void showMessageOnDisplay(String message) {
@@ -167,20 +167,14 @@ public final class VendingMachine implements State {
         if (dispenserHasCoinSlotAvailable(coin)) {
             credit.addAndGet(coin.denomination);
             creditStack.push(coin);
-            this.display.update(String.format("%s %s: %s", coin.label, VendingMachineMessages.CASH_ACCEPTED_NEW_CREDIT.label, provideCashToDisplay(this.credit.get())));
+            this.display.update(String.format("%s %s: %s", coin.label, VendingMachineMessages.CASH_ACCEPTED_NEW_CREDIT.label,
+                VendingMachineMessages.provideCashToDisplay(this.credit.get())));
             return true;
         }
-        this.display.update(String.format("%s %s: %s", coin.label, VendingMachineMessages.CASH_NOT_ACCEPTED_DISPENSER_FULL.label, provideCashToDisplay(this.credit.get())));
+        this.display.update(String.format("%s %s: %s", coin.label,
+            VendingMachineMessages.CASH_NOT_ACCEPTED_DISPENSER_FULL.label,
+            VendingMachineMessages.provideCashToDisplay(this.credit.get())));
         return false;
-    }
-
-    /**
-     * Parses the given value to from cents to units only for display purposes
-     * @param cash the amount of cents to present to screen
-     * @return a string representing the amount required
-     */
-    protected static String provideCashToDisplay(int cash) {
-        return String.format("%.2f$", cash/100.0);
     }
 
     /**
@@ -192,7 +186,8 @@ public final class VendingMachine implements State {
         } else {
             while(!creditStack.isEmpty()) {
                 credit.addAndGet(-creditStack.peek().denomination);
-                display.update(String.format("[%s] %s: %s", creditStack.pop().label, VendingMachineMessages.RETURN_TO_BUCKET_CREDIT.label, provideCashToDisplay(this.credit.get())));
+                display.update(String.format("[%s] %s: %s", creditStack.pop().label, VendingMachineMessages.RETURN_TO_BUCKET_CREDIT.label,
+                    VendingMachineMessages.provideCashToDisplay(this.credit.get())));
             }
         }
     }
@@ -339,9 +334,9 @@ public final class VendingMachine implements State {
                 coinShelf.dispense();
                 pending -= coin.denomination;
                 this.display.update(
-                    String.format("[%s] %s: %s", provideCashToDisplay(coin.denomination),
+                    String.format("[%s] %s: %s", VendingMachineMessages.provideCashToDisplay(coin.denomination),
                         VendingMachineMessages.PENDING_BALANCE_RETURNED_TO_BUCKET.label,
-                        provideCashToDisplay(-pending))
+                        VendingMachineMessages.provideCashToDisplay(-pending))
                 );
             }
         }
