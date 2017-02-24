@@ -209,7 +209,6 @@ public class VendingMachineTest {
         Assert.assertEquals(1, spiedVendingMachine.getCreditStack().size());
 
         Mockito.verify(spiedVendingMachine, Mockito.times(1)).dispenserHasCoinSlotAvailable(tenCents);
-
         spiedVendingMachine.provisionCreditStackToDispenser();
     }
 
@@ -316,19 +315,6 @@ public class VendingMachineTest {
         vendingMachine.calculatePendingBalance();
     }
 
-    @Test @Ignore
-    public void should_return_false_cant_give_change_not_enough_cash_available() {
-        Product cheap_product = new Product((880), "cheap_product");
-        VendingMachine vendingMachine = new VendingMachine(TestUtils.buildShelvesWithItems(cheap_product, 2),
-            TestUtils.buildCoinDispenserWithGivenItemsPerShelf(10, 1));
-
-        vendingMachine.addCoinToCredit(Coin.FIVE);
-        vendingMachine.addCoinToCredit(Coin.FIVE);
-        vendingMachine.selectProductGivenShelfNumber(0);
-
-        Assert.assertFalse(vendingMachine.canGiveChange(vendingMachine.calculatePendingBalance()));
-    }
-
     @Test
     public void should_convert_value_to_screen_decimal_to_present() {
         Assert.assertEquals("0.99$", VendingMachine.provideCashToDisplay(99));
@@ -336,5 +322,77 @@ public class VendingMachineTest {
         Assert.assertEquals("0.78$", VendingMachine.provideCashToDisplay(78));
         Assert.assertEquals("5.00$", VendingMachine.provideCashToDisplay(500));
     }
+
+    @Test
+    public void should_return_true_can_give_change_from_dispenser() {
+        Product cheap_product = new Product((880), "cheap_product");
+        List<Coin> tenInCoins = Arrays.asList(Coin.FIVE, Coin.FIVE);
+        int totalCoins = tenInCoins.stream()
+            .mapToInt(coin -> coin.denomination)
+            .reduce(Constants.SUM_INT_IDENTITY, Constants.SUM_INT_BINARY_OPERATOR);
+        VendingMachine myVendingMachine = new VendingMachine(TestUtils.buildShelvesWithItems(cheap_product, 2),
+            TestUtils.buildCoinDispenserWithGivenItemsPerShelf(10, 1));
+        int totalCashBeforeOperation = myVendingMachine.countCashInDispenser();
+
+        tenInCoins.forEach(myVendingMachine::addCoinToCredit);
+        Assert.assertEquals(totalCoins, myVendingMachine.getCredit());
+        Assert.assertEquals(tenInCoins.size(), myVendingMachine.getCreditStackSize());
+
+        myVendingMachine.selectProductGivenShelfNumber(0);
+        myVendingMachine.displayProductPrice(0);
+
+        int changeRequested = cheap_product.getPrice() - totalCoins;
+        Assert.assertTrue(myVendingMachine.canGiveChangeFromCashDispenser(changeRequested));
+        Assert.assertEquals(totalCashBeforeOperation, myVendingMachine.countCashInDispenser());
+    }
+
+    @Test
+    public void should_return_false_can_not_give_change_from_dispenser() {
+        Product unPurchasableProduct = new Product((882), "cheap_product"); //this product cant be purchased since no coin of one cent exists.
+        List<Coin> tenInCoins = Arrays.asList(Coin.FIVE, Coin.FIVE);
+        int totalCoins = tenInCoins.stream()
+            .mapToInt(coin -> coin.denomination)
+            .reduce(Constants.SUM_INT_IDENTITY, Constants.SUM_INT_BINARY_OPERATOR);
+        VendingMachine myVendingMachine = new VendingMachine(TestUtils.buildShelvesWithItems(unPurchasableProduct, 2),
+            TestUtils.buildCoinDispenserWithGivenItemsPerShelf(10, 1));
+        int totalCashBeforeOperation = myVendingMachine.countCashInDispenser();
+
+        tenInCoins.forEach(myVendingMachine::addCoinToCredit);
+        Assert.assertEquals(totalCoins, myVendingMachine.getCredit());
+        Assert.assertEquals(tenInCoins.size(), myVendingMachine.getCreditStackSize());
+
+        myVendingMachine.selectProductGivenShelfNumber(0);
+        myVendingMachine.displayProductPrice(0);
+
+        int changeRequested = unPurchasableProduct.getPrice() - totalCoins;
+        Assert.assertFalse(myVendingMachine.canGiveChangeFromCashDispenser(changeRequested));
+        Assert.assertEquals(totalCashBeforeOperation, myVendingMachine.countCashInDispenser());
+    }
+
+    @Test
+    public void should_return_false_cash_dispenser_cant_build_the_amount_requested() {
+        Product cheap_product = new Product((810), "cheap_product");
+        List<Coin> nineFiftyInCoins = Arrays.asList(Coin.FIVE, Coin.ONE, Coin.ONE, Coin.ONE, Coin.ONE, Coin.FIFTY_CENTS);
+        int totalCoins = nineFiftyInCoins.stream()
+            .mapToInt(coin -> coin.denomination)
+            .reduce(Constants.SUM_INT_IDENTITY, Constants.SUM_INT_BINARY_OPERATOR);
+
+        VendingMachine myVendingMachine = new VendingMachine(TestUtils.buildShelvesWithItems(cheap_product, 2),
+            TestUtils.buildCoinDispenserWithGivenItemsPerShelf(10, 1));
+        int totalCashBeforeOperation = myVendingMachine.countCashInDispenser();
+
+        nineFiftyInCoins.forEach(myVendingMachine::addCoinToCredit);
+        Assert.assertEquals(totalCoins, myVendingMachine.getCredit());
+        Assert.assertEquals(nineFiftyInCoins.size(), myVendingMachine.getCreditStackSize());
+
+        myVendingMachine.selectProductGivenShelfNumber(0);
+        myVendingMachine.displayProductPrice(0);
+
+        int changeRequested = cheap_product.getPrice() - totalCoins;
+        Assert.assertFalse(myVendingMachine.canGiveChangeFromCashDispenser(changeRequested));
+        Assert.assertEquals(totalCashBeforeOperation, myVendingMachine.countCashInDispenser());
+    }
+
+    //give change stack
 
 }

@@ -303,32 +303,28 @@ public final class VendingMachine implements State {
     /**
      * Validates if is possible to give change when pending balance < 0 [the sames as if credit is
      * less than selectedProduct.price] based on the existing cash on the coin dispenser.
-     * @param changeRequested the amount to check against the coin dispenser
+     * @param changeRequested the requested amount to return from the cash dispenser
      * @return true if possible or false otherwise
      */
-    public boolean canGiveChange(int changeRequested) {
+    public boolean canGiveChangeFromCashDispenser(int changeRequested) {
         if (changeRequested > 0) return true;
-        int amountToReturn = Math.abs(changeRequested);
-        if (countCashInDispenser() <= amountToReturn) return false;
+        if (countCashInDispenser() <= Math.abs(changeRequested)) return false;
 
         Stack<Coin> changeStack = new Stack<>();
-        int inChangeStack = 0;
-        boolean pending = Math.abs(amountToReturn - inChangeStack) > 0.0001;
-        int order = coinShelves.size() - 1;
-        while(pending && order >= 0) {
-            Coin coin = Coin.retrieveCoinByOrder(order);
+        int pending = Math.abs(changeRequested);
+        Iterator<Coin> order = Coin.retrieveOrderDescendingIterator();
+        while(pending > 0 && order.hasNext()) {
+            Coin coin = order.next();
             Shelf<Coin> coinShelf = coinShelves.get(coin);
-            while(coinShelf.getItemCount() > 0 && amountToReturn > coin.denomination) {
+            while(!coinShelf.isEmpty() && pending >= coin.denomination) {
                 coinShelf.dispense();
                 changeStack.push(coin);
-                inChangeStack += coin.denomination;
-                amountToReturn -= coin.denomination;
+                pending -= changeStack.peek().denomination;
             }
-            pending = Math.abs(amountToReturn - inChangeStack) > 0.0001;
         }
-        while(!changeStack.isEmpty()) {
-            coinShelves.get(changeStack.peek()).provision();
+        while(!changeStack.isEmpty()) { //provision back the cash dispenser with exact amount taken
+            coinShelves.get(changeStack.pop()).provision();
         }
-        return !pending;
+        return pending == 0;
     }
 }
