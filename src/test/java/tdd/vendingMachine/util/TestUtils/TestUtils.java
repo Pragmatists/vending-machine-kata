@@ -30,8 +30,9 @@ public class TestUtils {
         return list;
     }
 
-    public static Map<Coin, Shelf<Coin>> buildCoinDispenserWithGivenItemsPerShelf(int capacity, int initialCoinsOnShelf) {
-        return new CoinDispenserBuilder(capacity).withCashImport(getStubCashImportsFull(initialCoinsOnShelf)).buildShelf();
+    public static Map<Coin, Shelf<Coin>> buildCoinDispenserWithGivenItemsPerShelf(VendingMachineConfiguration vendingMachineConfiguration,
+                                                                                  int initialCoinsOnShelf) {
+        return new CoinDispenserBuilder(vendingMachineConfiguration).withCashImport(getStubCashImportsFull(initialCoinsOnShelf)).buildShelf();
     }
 
     /**
@@ -41,7 +42,7 @@ public class TestUtils {
      * @return the  shelves for products on the vending machine
      */
     public static Map<Integer, Shelf<Product>> buildShelvesWithItems(Product product, int amount) {
-        Shelf<Product> shelf = ShelfProductFactory.buildShelf(0, product, 10, amount);
+        Shelf<Product> shelf = ShelfFactory.buildShelf(0, product, 10, amount);
         return new HashMap<Integer, Shelf<Product>>(){{put(shelf.id, shelf);}};
     }
 
@@ -56,9 +57,22 @@ public class TestUtils {
         Shelf<Product> shelf;
         int counter = 0;
         for(Product product: products) {
-            shelf = ShelfProductFactory.buildShelf(counter++, product, 10, amount);
+            shelf = ShelfFactory.buildShelf(counter++, product, 10, amount);
             shelves.put(shelf.id, shelf);
         }
         return shelves;
+    }
+
+    /**
+     * Provides a list of products of given size
+     * @param amountProducts the size of the returned list
+     * @return a list of products
+     */
+    public static Collection<Product> buildStubListOfProducts(int amountProducts) {
+        Collection<Product> list = new ArrayList<>();
+        for (int i = 0; i < amountProducts; i++) {
+            list.add(new Product((i + 1)*10, "p"+i));
+        }
+        return list;
     }
 }

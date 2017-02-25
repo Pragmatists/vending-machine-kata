@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import tdd.vendingMachine.domain.exception.NotEnoughSlotsAvailableDispenserException;
 
 import java.util.InputMismatchException;
 
@@ -25,9 +26,9 @@ public class ShelfTest {
         Mockito.doReturn("type").when(productMock).provideType();
         Mockito.doReturn("type").when(productMock).getType();
 
-        emptyShelf = ShelfProductFactory.buildShelf(0, productMock, 20, 0);
-        nonEmptyShelf = ShelfProductFactory.buildShelf(0, productMock, 20, 5);
-        fullShelf = ShelfProductFactory.buildShelf(0, productMock, 20, 20);
+        emptyShelf = ShelfFactory.buildShelf(0, productMock, 20, 0);
+        nonEmptyShelf = ShelfFactory.buildShelf(0, productMock, 20, 5);
+        fullShelf = ShelfFactory.buildShelf(0, productMock, 20, 20);
 
         Mockito.verify(productMock, Mockito.times(3)).getType();
     }
@@ -57,14 +58,14 @@ public class ShelfTest {
         Assert.assertEquals(itemsToProvision + itemsBeforeProvision, nonEmptyShelf.getItemCount());
     }
 
-    @Test(expected = InputMismatchException.class)
+    @Test(expected = NotEnoughSlotsAvailableDispenserException.class)
     public void should_fail_to_provision_many_items_to_full_shelf() {
         Shelf<Product> shelf = this.fullShelf;
         Assert.assertTrue(shelf.capacity == shelf.getItemCount());
         shelf.provision(2);
     }
 
-    @Test(expected = InputMismatchException.class)
+    @Test(expected = NotEnoughSlotsAvailableDispenserException.class)
     public void should_fail_to_provision_one_item_to_full_shelf() {
         Shelf<Product> shelf = this.fullShelf;
         Assert.assertTrue(shelf.capacity == shelf.getItemCount());

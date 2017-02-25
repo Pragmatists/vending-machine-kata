@@ -2,7 +2,6 @@ package tdd.vendingMachine.domain;
 
 import org.apache.log4j.Logger;
 import tdd.vendingMachine.dto.CashImport;
-import tdd.vendingMachine.util.FileReaderHelper;
 
 import java.util.*;
 
@@ -17,13 +16,15 @@ public class CoinDispenserBuilder {
     private static final Logger logger = Logger.getLogger(CoinDispenserBuilder.class);
 
     private final int maxShelfAmount;
-    private final int shelfCapacity;
+    private final int coinShelfCapacity;
+    private final VendingMachineConfiguration vendingMachineConfiguration;
     private Map<Coin, CashImport> cashImports;
 
-    public CoinDispenserBuilder(int shelfCapacity) {
+    public CoinDispenserBuilder(VendingMachineConfiguration vendingMachineConfiguration) {
         this.maxShelfAmount = Coin.values().length;
-        this.shelfCapacity = shelfCapacity;
+        this.coinShelfCapacity = vendingMachineConfiguration.getCoinShelfCapacity();
         this.cashImports = new HashMap<>();
+        this.vendingMachineConfiguration = vendingMachineConfiguration;
     }
 
     private void validCashImport(CashImport cashImport) {
@@ -68,8 +69,8 @@ public class CoinDispenserBuilder {
     public Map<Coin, Shelf<Coin>> buildShelf() {
         Map<Coin, Shelf<Coin>> cashDispenser = new HashMap<>();
         int counter = 0;
-        for(Coin c: Coin.values()) {
-            cashDispenser.put(c, new Shelf<>(counter++, c, shelfCapacity, 0));
+        for(Coin c: Coin.ascendingDenominationIterable()) {
+            cashDispenser.put(c, new Shelf<>(counter++, c, coinShelfCapacity, 0));
         }
         cashImports.forEach((coin, cashImport) -> {
             Shelf<Coin> coinShelf = cashDispenser.get(coin);
@@ -83,6 +84,24 @@ public class CoinDispenserBuilder {
         });
         cashImports = new HashMap<>();
         return cashDispenser;
+    }
+
+    private Map<Coin, Shelf<Coin>> buildShelfWithGivenCoinItemCount(int shelfCapacity, int coinItemCount) {
+        Map<Coin, Shelf<Coin>> cashDispenser = new HashMap<>();
+        int counter = 0;
+        for(Coin coin: Coin.ascendingDenominationIterable()) {
+            cashDispenser.put(coin, ShelfFactory.buildShelf(counter++, coin, shelfCapacity, coinItemCount));
+        }
+        return cashDispenser;
+    }
+
+    /**
+     * Builds a coin shelf with the given item count per coin shelf
+     * @param coinItemCount the desired count must be >= 0 and <= maxCapacity
+     * @return a coin dispenser for the vending machine with coinItemCount items per coin shelf
+     */
+    public Map<Coin, Shelf<Coin>> buildShelfWithGivenCoinItemCount(int coinItemCount) {
+        return buildShelfWithGivenCoinItemCount(vendingMachineConfiguration.getCoinShelfCapacity(), coinItemCount);
     }
 
 }

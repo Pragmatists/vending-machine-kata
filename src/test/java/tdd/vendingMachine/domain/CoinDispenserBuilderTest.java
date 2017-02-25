@@ -1,6 +1,8 @@
 package tdd.vendingMachine.domain;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import tdd.vendingMachine.dto.CashImport;
 import tdd.vendingMachine.util.TestUtils.TestUtils;
@@ -15,11 +17,23 @@ import java.util.Map;
  */
 public class CoinDispenserBuilderTest {
 
+    private VendingMachineConfiguration vendingMachineConfiguration;
+
+    @Before
+    public void setup() {
+        vendingMachineConfiguration = new VendingMachineConfiguration();
+    }
+
+    @After
+    public void tearDown() {
+        vendingMachineConfiguration = null;
+    }
+
     @Test
     public void should_build_empty_cashDispenser_with_shelf_capacity_1() {
         final int expectedCapacity = 1;
         int expectedSize = Coin.values().length;
-        Map<Coin, Shelf<Coin>> cashDispenser = new CoinDispenserBuilder(expectedCapacity).buildShelf();
+        Map<Coin, Shelf<Coin>> cashDispenser = new CoinDispenserBuilder(vendingMachineConfiguration).buildShelf();
         Assert.assertEquals(expectedSize, cashDispenser.size());
         cashDispenser.values().forEach(coinShelf -> {
             Assert.assertEquals(expectedCapacity, coinShelf.capacity);
@@ -34,7 +48,7 @@ public class CoinDispenserBuilderTest {
         final int expectedSize = Coin.values().length;
         final int expectedAmount = 5;
         Collection<CashImport> stubCashImportsFull = TestUtils.getStubCashImportsFull(expectedAmount);
-        Map<Coin, Shelf<Coin>> cashDispenser = new CoinDispenserBuilder(expectedCapacity)
+        Map<Coin, Shelf<Coin>> cashDispenser = new CoinDispenserBuilder(vendingMachineConfiguration)
             .withCashImport(stubCashImportsFull)
             .buildShelf();
         Assert.assertEquals(expectedSize, cashDispenser.size());
@@ -53,7 +67,7 @@ public class CoinDispenserBuilderTest {
         final int expectedDiscardedItems = givenAmount - expectedCapacity;
         Coin fiftyCents = Coin.FIFTY_CENTS;
         CashImport stubCashImport = new CashImport(fiftyCents.label, givenAmount);
-        Map<Coin, Shelf<Coin>> cashDispenser = new CoinDispenserBuilder(expectedCapacity)
+        Map<Coin, Shelf<Coin>> cashDispenser = new CoinDispenserBuilder(vendingMachineConfiguration)
             .withCashImport(stubCashImport)
             .buildShelf();
         Assert.assertEquals(expectedSize, cashDispenser.size());
@@ -69,7 +83,7 @@ public class CoinDispenserBuilderTest {
         final int expectedDiscardedItems = 0;
         Coin fiftyCents = Coin.FIFTY_CENTS;
         CashImport stubCashImport = new CashImport(fiftyCents.label, givenAmount);
-        Map<Coin, Shelf<Coin>> cashDispenser = new CoinDispenserBuilder(expectedCapacity)
+        Map<Coin, Shelf<Coin>> cashDispenser = new CoinDispenserBuilder(vendingMachineConfiguration)
             .withCashImport(stubCashImport)
             .buildShelf();
         Assert.assertEquals(expectedSize, cashDispenser.size());

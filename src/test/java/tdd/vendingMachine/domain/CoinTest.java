@@ -57,19 +57,27 @@ public class CoinTest {
         List<Coin> coinsInAscendingDenominationOrder = Arrays.asList( Coin.TEN_CENTS,
             Coin.TWENTY_CENTS, Coin.FIFTY_CENTS, Coin.ONE, Coin.TWO, Coin.FIVE);
         Iterator<Coin> coinIterator = Coin.retrieveOrderAscendingIterator();
-        for(int i = 0; i < coinsInAscendingDenominationOrder.size() && coinIterator.hasNext(); i++) {
-            Assert.assertEquals(coinsInAscendingDenominationOrder.get(i), coinIterator.next());
+        for(Coin coin: coinsInAscendingDenominationOrder) {
+            if(coinIterator.hasNext()) {
+                Assert.assertEquals(coin, coinIterator.next());
+            } else {
+                Assert.assertFalse(true);
+            }
         }
         Assert.assertFalse(coinIterator.hasNext());
     }
 
     @Test
     public void should_iterate_over_coins_in_descending_order() {
-        List<Coin> coinsInAscendingDenominationOrder = Arrays.asList( Coin.TEN_CENTS,
+        List<Coin> coinsInDescendingDenominationOrder = Arrays.asList( Coin.TEN_CENTS,
             Coin.TWENTY_CENTS, Coin.FIFTY_CENTS, Coin.ONE, Coin.TWO, Coin.FIVE);
         Iterator<Coin> coinIterator = Coin.retrieveOrderDescendingIterator();
-        for(int i = coinsInAscendingDenominationOrder.size() - 1; i >= 0 && coinIterator.hasNext(); i--) {
-            Assert.assertEquals(coinsInAscendingDenominationOrder.get(i), coinIterator.next());
+        for(Coin coin: coinsInDescendingDenominationOrder) {
+            if(coinIterator.hasNext()) {
+                Assert.assertEquals(coin, coinIterator.next());
+            } else {
+                Assert.assertFalse(true);
+            }
         }
         Assert.assertFalse(coinIterator.hasNext());
     }
