@@ -107,7 +107,7 @@ public enum Coin implements ShelfItem {
      * @return an Iterator from highest to lowest coin denomination
      */
     public static Iterator<Coin> retrieveOrderDescendingIterator() {
-        return new CoinOrderIterator(true);
+        return new CoinOrderIterator(true).iterator();
     }
 
     /**
@@ -116,7 +116,23 @@ public enum Coin implements ShelfItem {
      * @return an Iterator from highest to lowest coin denomination if given highToLow is true
      */
     public static Iterator<Coin> retrieveOrderAscendingIterator() {
+        return new CoinOrderIterator(false).iterator();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public static Iterable<Coin> ascendingDenominationIterable() {
         return new CoinOrderIterator(false);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public static Iterable<Coin> descendingDenominationIterable() {
+        return new CoinOrderIterator(true);
     }
 
     /**
@@ -124,7 +140,7 @@ public enum Coin implements ShelfItem {
      * from low to high denomination of coins, based on the constructor boolean parameter provided.
      * This class is highly linked to the map coinOrderMap and changes to that map will reflect the iteration.
      */
-    static class CoinOrderIterator implements Iterator<Coin> {
+    static class CoinOrderIterator implements Iterator<Coin>, Iterable<Coin> {
 
         private final boolean highToLow;
         private int currentOrder;
@@ -143,9 +159,10 @@ public enum Coin implements ShelfItem {
         public Coin next() {
             return Coin.retrieveCoinByOrder(highToLow ? currentOrder--: currentOrder++);
         }
+
+        @Override
+        public Iterator<Coin> iterator() {
+            return new CoinOrderIterator(highToLow);
+        }
     }
-
-
-
-
 }

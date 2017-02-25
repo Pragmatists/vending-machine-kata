@@ -1,5 +1,8 @@
 package tdd.vendingMachine.domain;
 
+import tdd.vendingMachine.domain.exception.NotEnoughSlotsAvailableDispenserException;
+import tdd.vendingMachine.view.VendingMachineMessages;
+
 import java.util.InputMismatchException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -64,23 +67,24 @@ public class Shelf<T extends ShelfItem> {
      * Provisions the given amount items to the shelf
      * @param amount the amount of items to provision
      * @return int representing the current amount of items after provision.
-     * @throws InputMismatchException if unable to provision because no free slots are available
+     * @throws NotEnoughSlotsAvailableDispenserException if unable to provision because no free slots are available
      */
-    public int provision(int amount) {
+    public int provision(int amount) throws NotEnoughSlotsAvailableDispenserException {
         validatePositiveAmount(amount);
         int freeSlots = countFreeSlots();
         if (freeSlots >= amount) {
             return itemCount.addAndGet(amount);
         }
-        throw new InputMismatchException(String.format("unable to provision %d coins only %d available", amount, freeSlots));
+        throw new NotEnoughSlotsAvailableDispenserException(
+            VendingMachineMessages.NOT_ENOUGH_SLOTS_AVAILABLE_DISPENSER.label, amount, freeSlots);
     }
 
     /**
      * Helper method to provision only one item
      * @return int the amount of items after provision
-     * @throws InputMismatchException if unable to provision because no free slots are available
+     * @throws NotEnoughSlotsAvailableDispenserException if unable to provision because no free slots are available
      */
-    public int provision() throws InputMismatchException {
+    public int provision() throws NotEnoughSlotsAvailableDispenserException {
         return provision(1);
     }
 

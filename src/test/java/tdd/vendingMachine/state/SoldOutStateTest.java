@@ -9,10 +9,13 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import tdd.vendingMachine.VendingMachine;
+import tdd.vendingMachine.VendingMachineFactory;
 import tdd.vendingMachine.domain.Coin;
 import tdd.vendingMachine.domain.Product;
 import tdd.vendingMachine.util.TestUtils.TestUtils;
 import tdd.vendingMachine.view.VendingMachineMessages;
+
+import java.util.Collections;
 
 /**
  * @author Agustin Cabra on 2/20/2017.
@@ -24,6 +27,7 @@ import tdd.vendingMachine.view.VendingMachineMessages;
 public class SoldOutStateTest implements StateTest {
 
     private SoldOutState soldOutState;
+    private VendingMachineFactory vendingMachineFactory;
 
     @Override
     public SoldOutState transformToInitialState(VendingMachine vendingMachine) {
@@ -35,13 +39,14 @@ public class SoldOutStateTest implements StateTest {
 
     @Before @Override
     public void setup() {
-        Product COLA = new Product(100, "COLA_025cl");
-        soldOutState = transformToInitialState(new VendingMachine(TestUtils.buildShelvesWithItems(COLA, 0), TestUtils.buildCoinDispenserWithGivenItemsPerShelf(10, 5)));
+        vendingMachineFactory = new VendingMachineFactory();
+        soldOutState = transformToInitialState(vendingMachineFactory.buildSoldOutVendingMachineNoCash(new Product(100, "COLA_025cl")));
     }
 
     @After @Override
     public void tearDown() {
         soldOutState = null;
+        vendingMachineFactory = null;
     }
 
     @Test

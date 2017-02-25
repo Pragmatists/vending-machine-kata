@@ -3,6 +3,7 @@ package tdd.vendingMachine;
 import lombok.NonNull;
 import org.apache.log4j.Logger;
 import tdd.vendingMachine.domain.*;
+import tdd.vendingMachine.domain.exception.*;
 import tdd.vendingMachine.state.*;
 import tdd.vendingMachine.util.Constants;
 import tdd.vendingMachine.view.VendingMachineMessages;
@@ -14,14 +15,14 @@ public final class VendingMachine implements State {
 
     private static final Logger logger = Logger.getLogger(VendingMachine.class);
 
-    public static final VendingMachineConfiguration VENDING_MACHINE_CONFIGURATION = new VendingMachineConfiguration();
+    public final VendingMachineConfiguration vendingMachineConfiguration;
 
     //States
     private final SoldOutState soldOutState;
-    private final NoCreditNoProductSelectedState noCreditNoProductSelectedState;
+    private final ReadyState readyState;
     private final InsufficientCreditState insufficientCreditState;
-    private final NoCreditProductSelectedState noCreditProductSelectedState;
-    private final HasCreditNoProductSelectedState hasCreditNoProductSelectedState;
+    private final NoCreditSelectedProductState noCreditSelectedProductState;
+    private final CreditNotSelectedProductState creditNotSelectedProductState;
 
     //states
 
@@ -34,33 +35,47 @@ public final class VendingMachine implements State {
 
     private State currentState;
 
-    public VendingMachine(@NonNull Map<Integer, Shelf<Product>> productShelves, @NonNull Map<Coin, Shelf<Coin>> coinShelves) {
-        if(productShelves.size() > VENDING_MACHINE_CONFIGURATION.getShelfCount()) {
-            throw new InputMismatchException(String.format("Unable to create Vending Machine configuration mismatch for shelves expected %d given %d ",
-                VENDING_MACHINE_CONFIGURATION.getShelfCount(), productShelves.size()));
+    VendingMachine(@NonNull Map<Integer, Shelf<Product>> productShelves, @NonNull Map<Coin, Shelf<Coin>> coinShelves) {
+        vendingMachineConfiguration = new VendingMachineConfiguration();
+        if (coinShelves.size() == 0) {
+            throw new InvalidShelfSizeException("Cash dispenser should contain shelves for coin storage",
+                vendingMachineConfiguration.getProductShelfCount(), coinShelves.size());
+        }
+        if(productShelves.size() > vendingMachineConfiguration.getProductShelfCount()) {
+            throw new InvalidShelfSizeException("Unable to create Vending Machine configuration mismatch for shelves expected given ",
+                vendingMachineConfiguration.getProductShelfCount(), productShelves.size());
+        }
+        int max = productShelves.values().stream()
+            .mapToInt(shelf -> shelf.capacity)
+            .max().orElse(0);
+        if(max > vendingMachineConfiguration.getProductShelfCapacity()) {
+            throw new InvalidShelfSizeException("Unable to create Vending Machine given product shelves contains shelf with exceeded capacity [%d] available: %d",
+                vendingMachineConfiguration.getProductShelfCapacity(), max);
         }
         this.productShelves = productShelves;
-        this.coinShelves = coinShelves;
+        this.coinShelves = Collections.unmodifiableMap(coinShelves);
         this.credit = new AtomicInteger(0);
         this.selectedShelf = null;
         this.display = new VendingMachineDisplay();
         this.creditStack = new Stack<>();
 
         this.soldOutState = new SoldOutState(this);
-        this.noCreditNoProductSelectedState = new NoCreditNoProductSelectedState(this);
-        this.noCreditProductSelectedState = new NoCreditProductSelectedState(this);
+        this.readyState = new ReadyState(this);
+        this.noCreditSelectedProductState = new NoCreditSelectedProductState(this);
         this.insufficientCreditState = new InsufficientCreditState(this);
-        this.hasCreditNoProductSelectedState = new HasCreditNoProductSelectedState(this);
+        this.creditNotSelectedProductState = new CreditNotSelectedProductState(this);
 
-        if (productShelves.size() == 0) {
-            this.currentState = soldOutState;
-        } else {
-            int availableProducts = productShelves.values().stream()
-                .mapToInt(Shelf::getItemCount)
-                .reduce(Constants.SUM_INT_IDENTITY, Constants.SUM_INT_BINARY_OPERATOR);
-            this.currentState = availableProducts > 0 ? noCreditNoProductSelectedState : soldOutState;
-        }
+        int availableProducts = productShelves.values().stream()
+            .mapToInt(Shelf::getItemCount)
+            .reduce(Constants.SUM_INT_IDENTITY, Constants.SUM_INT_BINARY_OPERATOR);
+        this.currentState = availableProducts > 0 ? readyState : soldOutState;
     }
+
+    @Override public void insertCoin(Coin money) { currentState.insertCoin(money); }
+
+    @Override public void selectShelfNumber(int shelfNumber) { currentState.selectShelfNumber(shelfNumber); }
+
+    @Override public void cancel() { currentState.cancel(); }
 
     /**
      * Throws exception if given shelfNumber is invalid
@@ -97,16 +112,16 @@ public final class VendingMachine implements State {
         return soldOutState;
     }
 
-    public HasCreditNoProductSelectedState getHasCreditNoProductSelectedState() {
-        return hasCreditNoProductSelectedState;
+    public CreditNotSelectedProductState getCreditNotSelectedProductState() {
+        return creditNotSelectedProductState;
     }
 
-    public NoCreditNoProductSelectedState getNoCreditNoProductSelectedState() {
-        return noCreditNoProductSelectedState;
+    public ReadyState getReadyState() {
+        return readyState;
     }
 
-    public NoCreditProductSelectedState getNoCreditProductSelectedState() {
-        return noCreditProductSelectedState;
+    public NoCreditSelectedProductState getNoCreditSelectedProductState() {
+        return noCreditSelectedProductState;
     }
 
     public InsufficientCreditState getInsufficientCreditState() {
@@ -123,21 +138,6 @@ public final class VendingMachine implements State {
      */
     public int getCredit() {
         return credit.get();
-    }
-
-    @Override
-    public void insertCoin(Coin money) {
-        currentState.insertCoin(money);
-    }
-
-    @Override
-    public void selectShelfNumber(int shelfNumber) {
-        currentState.selectShelfNumber(shelfNumber);
-    }
-
-    @Override
-    public void cancel() {
-        currentState.cancel();
     }
 
     /**
@@ -159,22 +159,23 @@ public final class VendingMachine implements State {
 
 
     /**
-     * If there is room in the coin dispenser for the given coin is credited otherwise is sent back to cash bucket
+     * If there is room in the coin dispenser for the given coin is credited otherwise throws exception
      * @param coin coin to insert
-     * @return boolean indicating whether the coin was inserted or not
+     * @throws CashDispenserFullException if shelf coin shelf for the given coin on dispenser is full
      */
-    public final boolean addCoinToCredit(Coin coin) {
-        if (dispenserHasCoinSlotAvailable(coin)) {
-            credit.addAndGet(coin.denomination);
-            creditStack.push(coin);
-            this.display.update(String.format("%s %s: %s", coin.label, VendingMachineMessages.CASH_ACCEPTED_NEW_CREDIT.label,
-                VendingMachineMessages.provideCashToDisplay(this.credit.get())));
-            return true;
+    public final void addCoinToCredit(Coin coin) throws CashDispenserFullException {
+        if (!dispenserHasCoinSlotAvailable(coin)) {
+            throw new CashDispenserFullException(VendingMachineMessages.CASH_NOT_ACCEPTED_DISPENSER_FULL.label, coin.denomination);
         }
-        this.display.update(String.format("%s %s: %s", coin.label,
-            VendingMachineMessages.CASH_NOT_ACCEPTED_DISPENSER_FULL.label,
-            VendingMachineMessages.provideCashToDisplay(this.credit.get())));
-        return false;
+        credit.addAndGet(coin.denomination);
+        creditStack.push(coin);
+        if (null == selectedShelf) {
+            this.display.update(String.format("%s %s: %s", coin.label, VendingMachineMessages.CASH_ACCEPTED_NEW_CREDIT.label,
+                VendingMachineMessages.provideCashToDisplay(credit.get())));
+        } else {
+            this.display.update(String.format("[%s], %s: %s", selectedShelf.getType().getType(), VendingMachineMessages.PENDING.label,
+                VendingMachineMessages.provideCashToDisplay(calculatePendingBalance())));
+        }
     }
 
     /**
@@ -195,21 +196,27 @@ public final class VendingMachine implements State {
     /**
      * Given a shelfNumber selects the product
      * @param shelfNumber the number of the shelve to retrieve the product from.
-     * @throws NoSuchElementException if shelfNumber is not valid
+     * @throws NoSuchElementException if the shelf number is invalid
+     * @throws ShelfEmptyNotAvailableForSelectionException if the requested shelf is empty
      */
-    public final void selectProductGivenShelfNumber(int shelfNumber)throws NoSuchElementException {
+    public final void selectProductGivenShelfNumber(int shelfNumber) throws NoSuchElementException, ShelfEmptyNotAvailableForSelectionException {
         validShelfNumber(shelfNumber);
-        this.selectedShelf = productShelves.get(shelfNumber);
+        Shelf<Product> shelf = productShelves.get(shelfNumber);
+        if (shelf.getItemCount() <= 0) {
+            throw new ShelfEmptyNotAvailableForSelectionException(
+                VendingMachineMessages.UNABLE_TO_SELECT_EMPTY_SHELF.label, shelfNumber);
+        }
+        this.selectedShelf = shelf;
     }
 
     /**
      * Moves the money from the stack to the vending machine's cash dispenser, the credit
-     * remains the same since no cash has been given out.
-     * @throws InputMismatchException if unable to provision because no free slots are available
+     * remains the same since no product has been given.
+     * @throws NotEnoughSlotsAvailableDispenserException if unable to provision because no free slots are available
      */
-    public final void provisionCreditStackToDispenser() throws InputMismatchException {
-        while (!creditStack.isEmpty()) {
-            coinShelves.get(creditStack.pop()).provision();
+    public final void provisionCreditStackCashToDispenser() throws NotEnoughSlotsAvailableDispenserException {
+        for (Coin coin: creditStack) {
+            coinShelves.get(coin).provision();
         }
     }
 
@@ -217,10 +224,11 @@ public final class VendingMachine implements State {
      * Dispenses product to the pickup bucket
      * @throws NoSuchElementException if no product was previously selected
      */
-    public final void dispenseSelectedProductToBucket() throws NoSuchElementException {
+    public final void dispenseSelectedProductToBucketAndClearCreditStack() throws NoSuchElementException {
         validateSelectedProduct();
         Product product = this.selectedShelf.getType();
         this.selectedShelf.dispense();
+        while (!creditStack.isEmpty()) creditStack.pop();
         display.update(String.format("[%s] %s", product.getType(), VendingMachineMessages.DISPENSED_TO_BUCKET.label));
     }
 
@@ -318,12 +326,12 @@ public final class VendingMachine implements State {
     /**
      * Drops the pending balance to the coin dispense bucket if is possible to build the amount from the
      * coins available on the cash dispenser otherwise throws an exception.
-     * @throws UnsupportedOperationException if is not possible to build such amount from the cash dispenser.
+     * @throws UnableToProvideBalanceException if is not possible to provide such amount from the cash dispenser.
      */
-    public void dispenseCurrentBalance() throws UnsupportedOperationException {
+    public void dispenseCurrentBalance() throws UnableToProvideBalanceException {
         int balance = calculatePendingBalance();
         if (!canGiveChangeFromCashDispenser(balance)) {
-            throw new UnsupportedOperationException("ERR: " + VendingMachineMessages.NOT_ENOUGH_CASH_TO_GIVE_CHANGE.label);
+            throw new UnableToProvideBalanceException(VendingMachineMessages.NOT_ENOUGH_CASH_TO_GIVE_CHANGE.label, balance);
         }
         int pending = Math.abs(balance);
         Iterator<Coin> order = Coin.retrieveOrderDescendingIterator();
@@ -340,6 +348,7 @@ public final class VendingMachine implements State {
                 );
             }
         }
+        this.credit.set(0);//credit goes to zero since all the cash has been credited
     }
 
     /**
@@ -362,5 +371,18 @@ public final class VendingMachine implements State {
         return productShelves.values().stream()
             .mapToInt(Shelf::getItemCount)
             .reduce(Constants.SUM_INT_IDENTITY, Constants.SUM_INT_BINARY_OPERATOR);
+    }
+
+    /**
+     * After having credited users stack to dispenser, and unable to dispense product, should return
+     * the total cash to pickup cash bucket and compensate the cash dispenser
+     */
+    public final void returnCreditStackToBucketUpdatingCashDispenser() {
+        while (!creditStack.isEmpty()) {
+            this.coinShelves.get(creditStack.peek()).dispense();
+            this.credit.addAndGet(-creditStack.peek().denomination);
+            display.update(String.format("[%s] %s: %s", creditStack.pop().label, VendingMachineMessages.RETURN_TO_BUCKET_CREDIT.label,
+                VendingMachineMessages.provideCashToDisplay(this.credit.get())));
+        }
     }
 }

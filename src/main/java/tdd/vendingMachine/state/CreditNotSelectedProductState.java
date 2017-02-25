@@ -3,6 +3,8 @@ package tdd.vendingMachine.state;
 import org.apache.log4j.Logger;
 import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.Coin;
+import tdd.vendingMachine.domain.exception.CashDispenserFullException;
+import tdd.vendingMachine.domain.exception.ShelfEmptyNotAvailableForSelectionException;
 import tdd.vendingMachine.view.VendingMachineMessages;
 
 import java.util.NoSuchElementException;
@@ -11,19 +13,29 @@ import java.util.NoSuchElementException;
  * @author Agustin Cabra on 2/21/2017.
  * @since 1.0
  */
-public class HasCreditNoProductSelectedState implements State {
+public class CreditNotSelectedProductState implements State {
 
-    private static final Logger logger = Logger.getLogger(HasCreditNoProductSelectedState.class);
+    private static final Logger logger = Logger.getLogger(CreditNotSelectedProductState.class);
     public static final String label = "HAS CREDIT NO PRODUCT SELECTED";
     final VendingMachine vendingMachine;
 
-    public HasCreditNoProductSelectedState(VendingMachine vendingMachine) {
+    public CreditNotSelectedProductState(VendingMachine vendingMachine) {
         this.vendingMachine = vendingMachine;
     }
 
     @Override
     public void insertCoin(Coin coin) {
-        vendingMachine.addCoinToCredit(coin);
+        try {
+            vendingMachine.addCoinToCredit(coin);
+        } catch (UnsupportedOperationException uoe) {
+            logger.error(uoe);
+            this.vendingMachine.showMessageOnDisplay(String.format("%s %s: %s", coin.label,
+                VendingMachineMessages.CASH_NOT_ACCEPTED_DISPENSER_FULL.label,
+                VendingMachineMessages.provideCashToDisplay(this.vendingMachine.getCredit())));
+        } catch (CashDispenserFullException e) {
+            logger.error(e);
+
+        }
     }
 
     @Override
@@ -35,12 +47,14 @@ public class HasCreditNoProductSelectedState implements State {
         } catch (NoSuchElementException nse) {
             logger.error(nse);
             vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithSubject(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber));
+        } catch (ShelfEmptyNotAvailableForSelectionException e) {
+            logger.error(e);
         }
     }
 
     @Override
     public void cancel() {
         vendingMachine.returnAllCreditToBucket();
-        vendingMachine.setCurrentState(vendingMachine.getNoCreditNoProductSelectedState());
+        vendingMachine.setCurrentState(vendingMachine.getReadyState());
     }
 }

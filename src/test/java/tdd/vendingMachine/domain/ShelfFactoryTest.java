@@ -10,7 +10,7 @@ import java.util.InputMismatchException;
 /**
  * Created by Agustin on 2/19/2017.
  */
-public class ShelfProductFactoryTest {
+public class ShelfFactoryTest {
 
     private String type;
     private int shelfId;
@@ -37,7 +37,7 @@ public class ShelfProductFactoryTest {
 
     @Test
     public void should_build_empty_shelf_with_capacity() {
-        Shelf<Product> shelfStub = ShelfProductFactory.buildShelf(shelfId, product, capacity);
+        Shelf<Product> shelfStub = ShelfFactory.<Product>buildShelf(shelfId, product, capacity);
 
         Assert.assertEquals(type, shelfStub.getType().getType());
         Assert.assertEquals(capacity, shelfStub.capacity);
@@ -47,7 +47,7 @@ public class ShelfProductFactoryTest {
 
     @Test
     public void should_build_shelf_with_capacity_and_initial_itemCount() {
-        Shelf<Product> shelfStub = ShelfProductFactory.buildShelf(shelfId, product, capacity, itemCount);
+        Shelf<Product> shelfStub = ShelfFactory.buildShelf(shelfId, product, capacity, itemCount);
 
         Assert.assertEquals(type, shelfStub.getType().getType());
         Assert.assertEquals(capacity, shelfStub.capacity);
@@ -57,31 +57,31 @@ public class ShelfProductFactoryTest {
 
     @Test(expected = InputMismatchException.class)
     public void should_fail_building_shelf_id_empty(){
-        ShelfProductFactory.buildShelf(0, emptyProduct, 10);
+        ShelfFactory.buildShelf(0, emptyProduct, 10);
     }
 
     @Test(expected = InputMismatchException.class)
     public void should_fail_building_shelf_id_null(){
-        ShelfProductFactory.buildShelf(0, emptyProduct, 10);
+        ShelfFactory.buildShelf(0, emptyProduct, 10);
     }
 
     @Test(expected = InputMismatchException.class)
     public void should_fail_building_shelf_type_empty(){
-        ShelfProductFactory.buildShelf(shelfId, emptyProduct, 10);
+        ShelfFactory.buildShelf(shelfId, emptyProduct, 10);
     }
 
     @Test(expected = InputMismatchException.class)
     public void should_fail_building_shelf_product_null(){
-        ShelfProductFactory.buildShelf(shelfId, null, 10);
+        ShelfFactory.buildShelf(shelfId, null, 10);
     }
 
     @Test(expected = InputMismatchException.class)
     public void should_fail_itemCount_less_zero() {
-        ShelfProductFactory.buildShelf(shelfId, product, capacity, -1);
+        ShelfFactory.buildShelf(shelfId, product, capacity, -1);
     }
 
     @Test(expected = InputMismatchException.class)
     public void should_fail_capacity_less_zero() {
-        ShelfProductFactory.buildShelf(shelfId, product, -1, itemCount);
+        ShelfFactory.buildShelf(shelfId, product, -1, itemCount);
     }
 }
