@@ -116,7 +116,7 @@ public class CoinDispenserFactory {
             if (cashImport.getAmount() <= freeSlots) {
                 coinShelf.provision(cashImport.getAmount());
             } else {
-                logger.info(String.format("discarded %d items for cashImport: %s shelf is full", (cashImport.getAmount() - freeSlots), cashImport.getLabel()) );
+                logger.warn(String.format("discarded %d items for cashImport: %s shelf is full", (cashImport.getAmount() - freeSlots), cashImport.getLabel()) );
                 coinShelf.provision(freeSlots);
             }
         });
