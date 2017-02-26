@@ -29,9 +29,8 @@ public class FileReaderHelper {
     public static Optional<List<ProductImport>> retrieveProductsImportFromFileStream(InputStream inputStream) {
         try (BufferedReader bf = new BufferedReader(new InputStreamReader(inputStream))){
             String line;
-            String prodImport[] = StringUtils.split(bf.readLine(), ',');
-            int totalProducts = asInt(prodImport[0]);
-            List<ProductImport> list = new ArrayList<>(totalProducts);
+            String prodImport[];
+            List<ProductImport> list = new ArrayList<>();
             while((line = bf.readLine())!=null) {
                 prodImport = StringUtils.split(line, ',');
                 list.add(new ProductImport(prodImport[0], asInt(prodImport[1]), asInt(prodImport[2])));

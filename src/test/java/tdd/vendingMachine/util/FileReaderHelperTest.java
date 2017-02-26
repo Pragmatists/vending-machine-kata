@@ -69,7 +69,7 @@ public class FileReaderHelperTest {
 
         Assert.assertEquals(2, cashImportOpt.size());
         CashImport cashImport = cashImportOpt.get(0);
-        Assert.assertEquals("0.1", cashImport.getLabel());
+        Assert.assertEquals("0.1$", cashImport.getLabel());
         Assert.assertEquals(10, cashImport.getAmount());
     }
 

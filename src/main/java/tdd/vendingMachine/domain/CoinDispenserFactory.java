@@ -109,12 +109,14 @@ public class CoinDispenserFactory {
         int counter = 0;
         for(Coin c: Coin.ascendingDenominationIterable()) {
             cashDispenser.put(c, ShelfFactory.buildShelf(counter++, c, coinShelfCapacity, 0));
+            logger.info(String.format("building coin shelf [%s]", c.label));
         }
         cashImports.forEach((coin, cashImport) -> {
             Shelf<Coin> coinShelf = cashDispenser.get(coin);
             int freeSlots = coinShelf.countFreeSlots();
             if (cashImport.getAmount() <= freeSlots) {
                 coinShelf.provision(cashImport.getAmount());
+                logger.info(String.format("loaded [%d] coins of [%s] to the shelf", cashImport.getAmount(), coinShelf.getType().label));
             } else {
                 logger.warn(String.format("discarded %d items for cashImport: %s shelf is full", (cashImport.getAmount() - freeSlots), cashImport.getLabel()) );
                 coinShelf.provision(freeSlots);
