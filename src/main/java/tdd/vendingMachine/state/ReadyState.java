@@ -45,7 +45,8 @@ public class ReadyState implements State {
             vendingMachine.setCurrentState(vendingMachine.getNoCreditSelectedProductState());
         } catch (NoSuchElementException nse) {
             logger.error(nse);
-            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithSubject(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber));
+            vendingMachine.showMessageOnDisplay(
+                VendingMachineMessages.buildWarningMessageWithSubject(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber, false));
         } catch (ShelfEmptyNotAvailableForSelectionException shelfEmptyException) {
             logger.error(shelfEmptyException);
             vendingMachine.showMessageOnDisplay(String.format("%s: %d",

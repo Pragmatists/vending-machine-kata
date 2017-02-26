@@ -33,7 +33,8 @@ public class SoldOutState implements State {
             vendingMachine.displayProductPrice(shelfNumber);
         } catch (NoSuchElementException nse) {
             logger.error(nse);
-            vendingMachine.showMessageOnDisplay(String.format("WARN: %s: [%d]", VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber));
+            vendingMachine.showMessageOnDisplay(
+                VendingMachineMessages.buildWarningMessageWithSubject(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber,false));
         }
     }
 

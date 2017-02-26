@@ -78,7 +78,7 @@ public class InsufficientCreditState implements State {
         } catch (NoSuchElementException nse) {
             logger.error(nse);
             vendingMachine.showMessageOnDisplay(String.format("%s, [%s] %s: %s",
-                VendingMachineMessages.buildWarningMessageWithSubject(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber),
+                VendingMachineMessages.buildWarningMessageWithSubject(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber, false),
                 prev.provideType(),
                 VendingMachineMessages.PENDING.label,
                 VendingMachineMessages.provideCashToDisplay(vendingMachine.calculatePendingBalance()))
@@ -89,6 +89,10 @@ public class InsufficientCreditState implements State {
                 unableToProvideBalanceException.getPendingBalance());
         } catch (ShelfEmptyNotAvailableForSelectionException shelfEmptyException) {
             logger.error(shelfEmptyException);
+            vendingMachine.showMessageOnDisplay(
+                VendingMachineMessages.buildWarningMessageWithSubject(shelfEmptyException.getMessage(),
+                    shelfEmptyException.getShelfNumber(), false)
+            );
         }
     }
 

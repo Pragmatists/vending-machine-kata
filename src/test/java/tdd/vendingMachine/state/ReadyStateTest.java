@@ -105,7 +105,7 @@ public class ReadyStateTest implements StateTest {
         Assert.assertTrue(readyState.vendingMachine.getCurrentState() instanceof CreditNotSelectedProductState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
-        verifyConfigMock(mockConfig, 2, 2, 1);
+        verifyConfigMock(mockConfig, 3, 2, 2);
     }
 
     @Test
@@ -127,7 +127,7 @@ public class ReadyStateTest implements StateTest {
         Assert.assertTrue(readyState.vendingMachine.getCurrentState() instanceof ReadyState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
-        verifyConfigMock(mockConfig, 2, 2, 1);
+        verifyConfigMock(mockConfig, 3, 2, 2);
     }
 
     @Test
@@ -146,7 +146,7 @@ public class ReadyStateTest implements StateTest {
         Assert.assertTrue(readyState.vendingMachine.getCurrentState() instanceof NoCreditSelectedProductState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
-        verifyConfigMock(mockConfig, 2, 2, 1);
+        verifyConfigMock(mockConfig, 3, 2, 2);
     }
 
     @Test
@@ -162,7 +162,7 @@ public class ReadyStateTest implements StateTest {
         transformToAndValidateInitialState(readyState.vendingMachine);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
-        verifyConfigMock(mockConfig, 2, 2, 1);
+        verifyConfigMock(mockConfig, 3, 2, 2);
     }
 
     @Test
@@ -184,7 +184,7 @@ public class ReadyStateTest implements StateTest {
         transformToAndValidateInitialState(readyState.vendingMachine);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
-        verifyConfigMock(mockConfig, 2, 2, 1);
+        verifyConfigMock(mockConfig, 3, 2, 2);
     }
 
     @Test
@@ -200,6 +200,6 @@ public class ReadyStateTest implements StateTest {
         transformToAndValidateInitialState(readyState.vendingMachine);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
-        verifyConfigMock(mockConfig, 2, 2, 1);
+        verifyConfigMock(mockConfig, 3, 2, 2);
     }
 }
