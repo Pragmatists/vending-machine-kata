@@ -17,6 +17,8 @@ public class TechnicalErrorState extends State {
 
     @Override
     public void insertCoin(Coin coin) {
+        vendingMachine.showMessageOnDisplay(
+            VendingMachineMessages.buildWarningMessageWithSubject(VendingMachineMessages.CASH_NOT_ACCEPTED_MACHINE_TECHNICAL_ERROR.label, coin.denomination));
         vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
     }
 

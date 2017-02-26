@@ -31,7 +31,8 @@ import java.util.Map;
  * @since 1.0
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({InsufficientCreditState.class, VendingMachineConfiguration.class, VendingMachineFactory.class, VendingMachine.class})
+@PrepareForTest({InsufficientCreditState.class, VendingMachineConfiguration.class,
+    VendingMachineFactory.class, VendingMachine.class, State.class})
 @PowerMockIgnore(value = {"javax.management.*"})
 public class InsufficientCreditStateTest implements StateTest {
 
@@ -129,6 +130,9 @@ public class InsufficientCreditStateTest implements StateTest {
         //cash validation
         Assert.assertTrue(insufficientCreditState.vendingMachine.isCreditStackEmpty());
         Assert.assertEquals(0, insufficientCreditState.vendingMachine.getCredit());
+
+        //state validation
+        Assert.assertNull(insufficientCreditState.vendingMachine.getSelectedProduct());
         Assert.assertTrue(insufficientCreditState.vendingMachine.getCurrentState() instanceof ReadyState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
@@ -340,5 +344,54 @@ public class InsufficientCreditStateTest implements StateTest {
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
         verifyConfigMock(configMock, 3, 2, 2);
+    }
+
+    @Test
+    public void should_send_to_technical_error_state_on_select_shelf() throws Exception {
+        int coinShelfCapacity = 5;
+        int productShelfCount = 5;
+        int productShelfCapacity = 10;
+        VendingMachineConfiguration configMock = getConfigMock(coinShelfCapacity, productShelfCount, productShelfCapacity);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(configMock);
+
+        int actualProductShelfCapacity = 5;
+        Map<Integer, Shelf<Product>> productShelf = TestUtils.buildShelfStubFromProductImports(
+            Arrays.asList(new ProductImport("p1", 100, 0), new ProductImport("p2", 100, 1)), actualProductShelfCapacity);
+        Map<Coin, Shelf<Coin>> fullShelfDispenser = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, coinShelfCapacity - 1);
+        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelf, fullShelfDispenser);
+        insufficientCreditState = transformToAndValidateInitialState(vendingMachine);
+
+        InsufficientCreditState spied = PowerMockito.spy(insufficientCreditState);
+        PowerMockito.doThrow(new UnsupportedOperationException("not valid state for sell")).when(spied).attemptSell();
+
+        int nonEmptyShelfId = 1;
+        spied.selectShelfNumber(nonEmptyShelfId);
+
+        Assert.assertTrue(spied.vendingMachine.getCurrentState() instanceof TechnicalErrorState);
+        Mockito.verify(spied, Mockito.times(1)).attemptSell();
+    }
+
+    @Test
+    public void should_send_to_technical_error_state_on_insertCoin() throws Exception {
+        int coinShelfCapacity = 5;
+        int productShelfCount = 5;
+        int productShelfCapacity = 10;
+        VendingMachineConfiguration configMock = getConfigMock(coinShelfCapacity, productShelfCount, productShelfCapacity);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(configMock);
+
+        int actualProductShelfCapacity = 5;
+        Map<Integer, Shelf<Product>> productShelf = TestUtils.buildShelfStubFromProductImports(
+            Arrays.asList(new ProductImport("p1", 100, 0), new ProductImport("p2", 100, 1)), actualProductShelfCapacity);
+        Map<Coin, Shelf<Coin>> fullShelfDispenser = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, coinShelfCapacity - 1);
+        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelf, fullShelfDispenser);
+        insufficientCreditState = transformToAndValidateInitialState(vendingMachine);
+
+        InsufficientCreditState spied = PowerMockito.spy(insufficientCreditState);
+        PowerMockito.doThrow(new UnsupportedOperationException("not valid state for sell")).when(spied).attemptSell();
+
+        spied.insertCoin(Coin.TWENTY_CENTS);
+
+        Assert.assertTrue(spied.vendingMachine.getCurrentState() instanceof TechnicalErrorState);
+        Mockito.verify(spied, Mockito.times(1)).attemptSell();
     }
 }

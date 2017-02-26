@@ -75,19 +75,6 @@ public class VendingMachineFactory {
         return new VendingMachine(productShelves, coinShelves);
     }
 
-
-    /**
-     * Builds a vending machine with productsShelf containing the given product and the productItemCount for the product
-     * And a coinDispenser with coinItemCount per coin denominations
-     * @param product the product available for the vending machine
-     * @param productItemCount the amount of each product
-     * @param coinItemCount the amount of coins per denomination in the cashDispenser
-     * @return a vending machine
-     */
-    public VendingMachine buildVendingMachineGivenProductsAndInitialShelfItemCounts(Product product, int productItemCount, int coinItemCount) {
-        return buildVendingMachineGivenProductsAndInitialShelfItemCounts(Collections.singletonList(product), productItemCount, coinItemCount);
-    }
-
     /**
      * Method mean to be used by unit testing to allow flexible creation of productShelves
      * @param productShelves the productShelves
@@ -97,9 +84,5 @@ public class VendingMachineFactory {
     public VendingMachine customVendingMachineForTesting(Map<Integer, Shelf<Product>> productShelves, Map<Coin, Shelf<Coin>> coinShelves) {
         VendingMachineValidator.validate(vendingMachineConfiguration, productShelves, coinShelves);
         return new VendingMachine(productShelves, coinShelves);
-    }
-
-    public VendingMachineConfiguration getVendingMachineConfiguration() {
-        return vendingMachineConfiguration;
     }
 }

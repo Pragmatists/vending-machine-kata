@@ -202,4 +202,26 @@ public class ReadyStateTest implements StateTest {
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
         verifyConfigMock(mockConfig, 3, 2, 2);
     }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void should_move_to_technical_error_if_attempts_sell() throws Exception {
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(CHOCOLATE_BAR, 1),
+            TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, coinShelfCapacity));
+        readyState = transformToAndValidateInitialState(vendingMachine);
+        readyState.attemptSell();
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void should_move_to_technical_error_if_rollback() throws Exception {
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(CHOCOLATE_BAR, 1),
+            TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, coinShelfCapacity));
+        readyState = transformToAndValidateInitialState(vendingMachine);
+        readyState.returnCreditStackToCashPickupBucketAndSetToReadyState("", 0);
+    }
 }
