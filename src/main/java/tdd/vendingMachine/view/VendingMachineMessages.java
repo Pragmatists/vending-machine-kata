@@ -38,10 +38,32 @@ public enum VendingMachineMessages { //TODO TODO02 evaluate the possibility to i
         this.label = label;
     }
 
-    public static String buildWarningMessageWithSubject(String problem, int subject) {
-        return String.format(WARN_SUBJECT_STRUCTURE, problem, provideCashToDisplay(subject));
+    /**
+     * Builds a warning message and displays the subject as currency if required
+     * @param problem the problem description of the warning
+     * @param subject the subject of the warning
+     * @param isSubjectCurrency describes if the subject means currency
+     * @return
+     */
+    public static String buildWarningMessageWithSubject(String problem, int subject, boolean isSubjectCurrency) {
+        return String.format(WARN_SUBJECT_STRUCTURE, problem, isSubjectCurrency ? provideCashToDisplay(subject) : subject);
     }
 
+    /**
+     * Builds a warning message and displays the subject as currency if required
+     * @param problem the problem description of the warning
+     * @param subject the subject of the warning treated as currency
+     * @return a warning message
+     */
+    public static String buildWarningMessageWithSubject(String problem, int subject) {
+        return buildWarningMessageWithSubject(problem, subject, true);
+    }
+
+    /**
+     * Builds a warning message and displays the subject as currency if required
+     * @param problem the problem description of the warning
+     * @return a warning message
+     */
     public static String buildWarningMessageWithoutSubject(String problem) {
         return String.format(WARN_NO_SUBJECT_STRUCTURE, problem);
     }

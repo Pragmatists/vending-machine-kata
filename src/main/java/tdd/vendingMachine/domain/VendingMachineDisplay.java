@@ -30,7 +30,7 @@ public class VendingMachineDisplay {
      * @param message the label to display
      */
     public void update(String message) { //TODO: TODO01 perhaps improve the storage to a more concise approach using an event stack.
-        this.currentMessage = message.toString();
-        logger.info(currentMessage);
+        this.currentMessage = message;
+        System.out.println("VENDING MACHINE: " + currentMessage);
     }
 }

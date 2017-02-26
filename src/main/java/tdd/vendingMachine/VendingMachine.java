@@ -72,7 +72,7 @@ public final class VendingMachine implements State {
     private void validShelfNumber(int shelfNumber) throws NoSuchElementException {
         if (null == productShelves.get(shelfNumber)) {
             throw new NoSuchElementException(
-                VendingMachineMessages.buildWarningMessageWithSubject(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber)
+                VendingMachineMessages.buildWarningMessageWithSubject(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber, false)
             );
         }
     }

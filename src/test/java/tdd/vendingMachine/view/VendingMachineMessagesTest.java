@@ -10,11 +10,19 @@ import org.junit.Test;
 public class VendingMachineMessagesTest {
 
     @Test
-    public void should_build_warning_message_with_subject() {
+    public void should_build_warning_message_with_currency_subject() {
         String problem = "tests";
         int subject = 1;
         String expectedMessage = "WARN: " + problem + " [0.01$]";
         Assert.assertEquals(expectedMessage, VendingMachineMessages.buildWarningMessageWithSubject(problem, subject));
+    }
+
+    @Test
+    public void should_build_warning_message_no_currency_subject() {
+        String problem = "tests";
+        int subject = 1;
+        String expectedMessage = "WARN: " + problem + " [" + subject + "]";
+        Assert.assertEquals(expectedMessage, VendingMachineMessages.buildWarningMessageWithSubject(problem, subject, false));
     }
 
     @Test

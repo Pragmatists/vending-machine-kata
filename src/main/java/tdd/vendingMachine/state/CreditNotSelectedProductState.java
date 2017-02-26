@@ -27,19 +27,12 @@ public class CreditNotSelectedProductState implements State {
     public void insertCoin(Coin coin) {
         try {
             vendingMachine.addCoinToCredit(coin);
-        } catch (UnsupportedOperationException uoe) {
-            logger.error(uoe);
-            this.vendingMachine.showMessageOnDisplay(String.format("%s %s: %s", coin.label,
-                VendingMachineMessages.CASH_NOT_ACCEPTED_DISPENSER_FULL.label,
-                VendingMachineMessages.provideCashToDisplay(this.vendingMachine.getCredit())));
-        } catch (CashDispenserFullException e) {
-            logger.error(e);
-//            String.format("%s [%d] %s: %d",
-//                e.getMessage(),
-//                e.ge,
-//                VendingMachineMessages.AVAILABLE.label,
-//                maxShelfCountFound);
-
+        } catch (CashDispenserFullException cashDispenserFullException) {
+            logger.error(cashDispenserFullException);
+            this.vendingMachine.showMessageOnDisplay(String.format("[%s] %s",
+                cashDispenserFullException.getMessage(),
+                VendingMachineMessages.provideCashToDisplay(cashDispenserFullException.getAmountDeclined()))
+            );
         }
     }
 
@@ -51,13 +44,15 @@ public class CreditNotSelectedProductState implements State {
             vendingMachine.setCurrentState(vendingMachine.getInsufficientCreditState());
         } catch (NoSuchElementException nse) {
             logger.error(nse);
-            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithSubject(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber));
+            vendingMachine.showMessageOnDisplay(
+                VendingMachineMessages.buildWarningMessageWithSubject(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label,
+                    shelfNumber, false));
         } catch (ShelfEmptyNotAvailableForSelectionException e) {
             logger.error(e);
-            String.format("%s [%d] %s",
-                e.getMessage(),
-                e.getShelfNumber(),
-                VendingMachineMessages.AVAILABLE.label);
+            this.vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithSubject(
+                VendingMachineMessages.UNABLE_TO_SELECT_EMPTY_SHELF.label,
+                e.getShelfNumber(), false)
+            );
         }
     }
 
