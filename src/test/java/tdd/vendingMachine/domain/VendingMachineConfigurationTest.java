@@ -20,8 +20,8 @@ public class VendingMachineConfigurationTest {
 
         VendingMachineConfiguration vendingMachineConfiguration = new VendingMachineConfiguration(configFile);
 
-        Assert.assertEquals(expectedCapacity, vendingMachineConfiguration.getShelfCapacity());
-        Assert.assertEquals(expectedCount, vendingMachineConfiguration.getShelfCount());
+        Assert.assertEquals(expectedCapacity, vendingMachineConfiguration.getProductShelfCapacity());
+        Assert.assertEquals(expectedCount, vendingMachineConfiguration.getProductShelfCount());
     }
 
     @Test
@@ -33,8 +33,8 @@ public class VendingMachineConfigurationTest {
 
         VendingMachineConfiguration vendingMachineConfiguration = new VendingMachineConfiguration();
 
-        Assert.assertEquals(capacityInConfigFile, vendingMachineConfiguration.getShelfCapacity());
-        Assert.assertEquals(countInConfigFile, vendingMachineConfiguration.getShelfCount());
+        Assert.assertEquals(capacityInConfigFile, vendingMachineConfiguration.getProductShelfCapacity());
+        Assert.assertEquals(countInConfigFile, vendingMachineConfiguration.getProductShelfCount());
     }
 
     @Test
@@ -47,7 +47,7 @@ public class VendingMachineConfigurationTest {
 
         VendingMachineConfiguration vendingMachineConfiguration = new VendingMachineConfiguration(configFile);
 
-        Assert.assertEquals(capacityInConfigFile, vendingMachineConfiguration.getShelfCapacity());
-        Assert.assertEquals(countInConfigFile, vendingMachineConfiguration.getShelfCount());
+        Assert.assertEquals(capacityInConfigFile, vendingMachineConfiguration.getProductShelfCapacity());
+        Assert.assertEquals(countInConfigFile, vendingMachineConfiguration.getProductShelfCount());
     }
 }

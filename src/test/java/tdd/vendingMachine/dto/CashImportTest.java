@@ -4,7 +4,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import tdd.vendingMachine.util.Constants;
 
+import java.util.HashMap;
 import java.util.InputMismatchException;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
@@ -18,7 +20,7 @@ public class CashImportTest {
         String label = "0.5";
         int amount = 4;
         CashImport cashImport = new CashImport(label, amount);
-        Assert.assertEquals(amount, cashImport.getAmount(), Constants.ACCURACY);
+        Assert.assertEquals(amount, cashImport.getAmount());
         Assert.assertEquals(label, cashImport.getLabel());
     }
 
@@ -58,5 +60,4 @@ public class CashImportTest {
     public void should_fail_null_import_given() {
         new CashImport("label", 1).accumulate(null);
     }
-
 }

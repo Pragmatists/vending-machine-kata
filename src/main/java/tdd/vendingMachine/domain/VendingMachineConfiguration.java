@@ -31,27 +31,31 @@ public class VendingMachineConfiguration {
     /**
      * The amount of shelves available for the machine
      */
-    private final int shelfCount;
+    private final int productShelfCount;
 
     /**
      * The shelf capacity for the machine
      */
-    private final int shelfCapacity;
+    private final int productShelfCapacity;
 
 
     protected static final String DEFAULT_CONFIG_FILE = "config.properties";
-    protected static final String SHELF_COUNT_KEY = "vendingmachine.shelfCount";
+    protected static final String SHELF_COUNT_KEY = "vendingmachine.productShelfCount";
     protected static final String SHELF_COUNT_DEFAULT = "10";
-    protected static final String SHELF_CAPACITY_KEY = "vendingmachine.shelfCapacity";
+    protected static final String SHELF_CAPACITY_KEY = "vendingmachine.productShelfCapacity";
     protected static final String SHELF_CAPACITY_DEFAULT = "10";
+    protected static final String COIN_SHELF_CAPACITY_KEY = "vendingmachine.coinShelfCapacity";
+    protected static final String COIN_SHELF_CAPACITY_DEFAULT = "100";
+    private int coinShelfCapacity;
 
     /**
      * Default constructor initializes properties from default file
      */
     public VendingMachineConfiguration() {
         this.prop = init(null);
-        this.shelfCount = Integer.parseInt(retrieveProperty(SHELF_COUNT_KEY, SHELF_COUNT_DEFAULT));
-        this.shelfCapacity = Integer.parseInt(retrieveProperty(SHELF_CAPACITY_KEY, SHELF_CAPACITY_DEFAULT));
+        this.productShelfCount = Integer.parseInt(retrieveProperty(SHELF_COUNT_KEY, SHELF_COUNT_DEFAULT));
+        this.productShelfCapacity = Integer.parseInt(retrieveProperty(SHELF_CAPACITY_KEY, SHELF_CAPACITY_DEFAULT));
+        this.coinShelfCapacity = Integer.parseInt(retrieveProperty(COIN_SHELF_CAPACITY_KEY, COIN_SHELF_CAPACITY_DEFAULT));
     }
 
     /**
@@ -60,8 +64,9 @@ public class VendingMachineConfiguration {
      */
     public VendingMachineConfiguration(String configFile) {
         this.prop = init(configFile);
-        this.shelfCount = Integer.parseInt(retrieveProperty(SHELF_COUNT_KEY, SHELF_COUNT_DEFAULT));
-        this.shelfCapacity = Integer.parseInt(retrieveProperty(SHELF_CAPACITY_KEY, SHELF_CAPACITY_DEFAULT));
+        this.productShelfCount = Integer.parseInt(retrieveProperty(SHELF_COUNT_KEY, SHELF_COUNT_DEFAULT));
+        this.productShelfCapacity = Integer.parseInt(retrieveProperty(SHELF_CAPACITY_KEY, SHELF_CAPACITY_DEFAULT));
+        this.coinShelfCapacity = Integer.parseInt(retrieveProperty(COIN_SHELF_CAPACITY_KEY, COIN_SHELF_CAPACITY_DEFAULT));
     }
 
     private String retrieveProperty(String key, String valueDefault) {
@@ -88,11 +93,15 @@ public class VendingMachineConfiguration {
         return prop;
     }
 
-    public int getShelfCount() {
-        return shelfCount;
+    public int getProductShelfCount() {
+        return productShelfCount;
     }
 
-    public int getShelfCapacity() {
-        return shelfCapacity;
+    public int getProductShelfCapacity() {
+        return productShelfCapacity;
+    }
+
+    public int getCoinShelfCapacity() {
+        return coinShelfCapacity;
     }
 }

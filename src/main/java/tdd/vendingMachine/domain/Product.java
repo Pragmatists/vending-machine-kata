@@ -7,15 +7,15 @@ package tdd.vendingMachine.domain;
  */
 public class Product implements ShelfItem{
 
-    public final String type;
-    public final double price;
+    private final String type;
+    private final int price;
 
-    public Product(double price, String type) {
+    public Product(int price, String type) {
         this.price = price;
         this.type = type;
     }
 
-    public double getPrice() {
+    public int getPrice() {
         return price;
     }
 
@@ -29,12 +29,19 @@ public class Product implements ShelfItem{
     }
 
     @Override
-    public double provideValue() {
+    public int provideValue() {
         return getPrice();
     }
 
     @Override
-    public String toString() {
-        return type + ": " + price;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Product)) return false;
+
+        Product product = (Product) o;
+
+        if (getPrice() != product.getPrice()) return false;
+        return getType().equals(product.getType());
+
     }
 }

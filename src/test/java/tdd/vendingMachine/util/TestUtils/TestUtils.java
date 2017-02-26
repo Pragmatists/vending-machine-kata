@@ -2,11 +2,9 @@ package tdd.vendingMachine.util.TestUtils;
 
 import tdd.vendingMachine.domain.*;
 import tdd.vendingMachine.dto.CashImport;
+import tdd.vendingMachine.dto.ProductImport;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Agustin Cabra on 2/21/2017.
@@ -30,8 +28,14 @@ public class TestUtils {
         return list;
     }
 
-    public static Map<Coin, Shelf<Coin>> buildCoinDispenserWithGivenItemsPerShelf(int capacity, int itemsPerShelf) {
-        return new CoinDispenserBuilder(capacity).withCashImport(getStubCashImportsFull(itemsPerShelf)).buildShelf();
+    public static Map<Coin, Shelf<Coin>> buildStubCoinDispenserWithGivenItemsPerShelf(int shelfCapacity, int initialCoinsOnShelf) {
+        Map<Coin, Shelf<Coin>> coinDispenser = new HashMap<>();
+        int idCounter = 0;
+        for(Coin coin: Coin.ascendingDenominationIterable()) {
+            Shelf<Coin> shelf = ShelfFactory.buildShelf(idCounter++, coin, shelfCapacity, initialCoinsOnShelf);
+            coinDispenser.put(coin, shelf);
+        }
+        return coinDispenser;
     }
 
     /**
@@ -41,7 +45,7 @@ public class TestUtils {
      * @return the  shelves for products on the vending machine
      */
     public static Map<Integer, Shelf<Product>> buildShelvesWithItems(Product product, int amount) {
-        Shelf<Product> shelf = ShelfProductFactory.buildShelf(0, product, 10, amount);
+        Shelf<Product> shelf = ShelfFactory.buildShelf(0, product, 10, amount);
         return new HashMap<Integer, Shelf<Product>>(){{put(shelf.id, shelf);}};
     }
 
@@ -49,16 +53,44 @@ public class TestUtils {
      * Builds a product shelves with list of products given the amount of each product
      * @param products collection of products to include
      * @param amount the amount of items of that product
+     * @param shelfCapacity
      * @return the  shelves for products on the vending machine
      */
-    public static Map<Integer, Shelf<Product>> buildShelvesWithItems(Collection<Product> products, int amount) {
+    public static Map<Integer, Shelf<Product>> buildShelvesWithItems(Collection<Product> products, int amount, int shelfCapacity) {
         HashMap<Integer, Shelf<Product>> shelves = new HashMap<>();
         Shelf<Product> shelf;
         int counter = 0;
         for(Product product: products) {
-            shelf = ShelfProductFactory.buildShelf(counter++, product, 10, amount);
+            shelf = ShelfFactory.buildShelf(counter++, product, shelfCapacity, amount);
             shelves.put(shelf.id, shelf);
         }
         return shelves;
+    }
+
+    /**
+     * Provides a list of products of given size
+     * @param amountProducts the size of the returned list
+     * @return a list of products
+     */
+    public static Collection<Product> buildStubListOfProducts(int amountProducts) {
+        Collection<Product> list = new ArrayList<>();
+        for (int i = 0; i < amountProducts; i++) {
+            list.add(new Product((i + 1)*10, "p"+i));
+        }
+        return list;
+    }
+
+    public static Map<Integer, Shelf<Product>> buildShelfStubFromProductImports(Collection<ProductImport> productImports, int capacity) {
+        Map<Integer, Shelf<Product>> productShelves = new HashMap<>();
+        int idCounter = 0;
+        for (ProductImport productImport: productImports) {
+            Shelf<Product> productShelf = ShelfFactory.buildShelf(idCounter++, new Product(productImport.getPrice(), productImport.getType()), capacity, productImport.getItemCount());
+            productShelves.put(productShelf.id, productShelf);
+        }
+        return productShelves;
+    }
+
+    public static Map<Integer, Shelf<Product>> buildShelvesWithItem(Product product, int itemCount, int coinShelfCapacity) {
+        return buildShelvesWithItems(Collections.singletonList(product), itemCount, coinShelfCapacity);
     }
 }

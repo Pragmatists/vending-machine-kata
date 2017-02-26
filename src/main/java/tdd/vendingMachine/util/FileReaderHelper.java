@@ -34,7 +34,7 @@ public class FileReaderHelper {
             List<ProductImport> list = new ArrayList<>(totalProducts);
             while((line = bf.readLine())!=null) {
                 prodImport = StringUtils.split(line, ',');
-                list.add(new ProductImport(prodImport[0], asDouble(prodImport[1]), asInt(prodImport[2])));
+                list.add(new ProductImport(prodImport[0], asInt(prodImport[1]), asInt(prodImport[2])));
             }
             return Optional.of(list);
         }catch (Exception e) {
@@ -62,10 +62,6 @@ public class FileReaderHelper {
             logger.error(e);
             return Optional.empty();
         }
-    }
-
-    private static double asDouble(String input) {
-        return Double.parseDouble(input);
     }
 
     private static int asInt(String input) {
