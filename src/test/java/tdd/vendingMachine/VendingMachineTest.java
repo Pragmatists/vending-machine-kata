@@ -35,7 +35,7 @@ public class VendingMachineTest {
 
     @Before
     public void setup() throws Exception {
-        COLA_199_025 = new Product(199, "COLA_199_025");
+        COLA_199_025 = new Product(190, "COLA_199_025");
     }
 
     @After

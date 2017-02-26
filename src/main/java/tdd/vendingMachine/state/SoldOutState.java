@@ -12,14 +12,13 @@ import java.util.NoSuchElementException;
  * @since 1.0
  * State representing a Vending Machine with Empty shelves (sold out).
  */
-public class SoldOutState implements State {
+public class SoldOutState extends State {
 
     private static final Logger logger = Logger.getLogger(SoldOutState.class);
     public final String label = "SOLD OUT";
-    final VendingMachine vendingMachine;
 
     public SoldOutState(VendingMachine vendingMachine) {
-        this.vendingMachine = vendingMachine;
+        super(vendingMachine, false);
     }
 
     @Override
