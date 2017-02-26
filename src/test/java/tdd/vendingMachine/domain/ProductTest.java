@@ -17,5 +17,9 @@ public class ProductTest {
         Assert.assertNotEquals(null, productStub);
         Assert.assertEquals(productType, productStub.getType());
         Assert.assertEquals(productPrice, productStub.getPrice());
+        Assert.assertEquals(productStub.getPrice(), productStub.provideValue());
+        Assert.assertEquals(productStub.getType(), productStub.provideType());
+        Assert.assertEquals(productPrice, productStub.provideValue());
+        Assert.assertEquals(productType, productStub.provideType());
     }
 }

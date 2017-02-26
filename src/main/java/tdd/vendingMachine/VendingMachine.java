@@ -6,6 +6,7 @@ import tdd.vendingMachine.domain.*;
 import tdd.vendingMachine.domain.exception.*;
 import tdd.vendingMachine.state.*;
 import tdd.vendingMachine.util.Constants;
+import tdd.vendingMachine.validation.VendingMachineValidator;
 import tdd.vendingMachine.view.VendingMachineMessages;
 
 import java.util.*;
@@ -37,21 +38,7 @@ public final class VendingMachine implements State {
 
     VendingMachine(@NonNull Map<Integer, Shelf<Product>> productShelves, @NonNull Map<Coin, Shelf<Coin>> coinShelves) {
         vendingMachineConfiguration = new VendingMachineConfiguration();
-        if (coinShelves.size() == 0) {
-            throw new InvalidShelfSizeException("Cash dispenser should contain shelves for coin storage",
-                vendingMachineConfiguration.getProductShelfCount(), coinShelves.size());
-        }
-        if(productShelves.size() > vendingMachineConfiguration.getProductShelfCount()) {
-            throw new InvalidShelfSizeException("Unable to create Vending Machine configuration mismatch for shelves expected given ",
-                vendingMachineConfiguration.getProductShelfCount(), productShelves.size());
-        }
-        int max = productShelves.values().stream()
-            .mapToInt(shelf -> shelf.capacity)
-            .max().orElse(0);
-        if(max > vendingMachineConfiguration.getProductShelfCapacity()) {
-            throw new InvalidShelfSizeException("Unable to create Vending Machine given product shelves contains shelf with exceeded capacity [%d] available: %d",
-                vendingMachineConfiguration.getProductShelfCapacity(), max);
-        }
+        VendingMachineValidator.validate(vendingMachineConfiguration, productShelves, coinShelves);
         this.productShelves = productShelves;
         this.coinShelves = Collections.unmodifiableMap(coinShelves);
         this.credit = new AtomicInteger(0);
@@ -307,7 +294,7 @@ public final class VendingMachine implements State {
 
         Stack<Coin> changeStack = new Stack<>();
         int pending = Math.abs(changeRequested);
-        Iterator<Coin> order = Coin.retrieveOrderDescendingIterator();
+        Iterator<Coin> order = Coin.descendingDenominationIterable().iterator();
         while(pending > 0 && order.hasNext()) {
             Coin coin = order.next();
             Shelf<Coin> coinShelf = coinShelves.get(coin);
@@ -334,7 +321,7 @@ public final class VendingMachine implements State {
             throw new UnableToProvideBalanceException(VendingMachineMessages.NOT_ENOUGH_CASH_TO_GIVE_CHANGE.label, balance);
         }
         int pending = Math.abs(balance);
-        Iterator<Coin> order = Coin.retrieveOrderDescendingIterator();
+        Iterator<Coin> order = Coin.descendingDenominationIterable().iterator();
         while(pending > 0 && order.hasNext()) {
             Coin coin = order.next();
             Shelf<Coin> coinShelf = coinShelves.get(coin);

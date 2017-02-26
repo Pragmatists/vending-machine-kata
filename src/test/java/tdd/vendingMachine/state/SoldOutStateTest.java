@@ -12,10 +12,7 @@ import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.VendingMachineFactory;
 import tdd.vendingMachine.domain.Coin;
 import tdd.vendingMachine.domain.Product;
-import tdd.vendingMachine.util.TestUtils.TestUtils;
 import tdd.vendingMachine.view.VendingMachineMessages;
-
-import java.util.Collections;
 
 /**
  * @author Agustin Cabra on 2/20/2017.
@@ -30,7 +27,7 @@ public class SoldOutStateTest implements StateTest {
     private VendingMachineFactory vendingMachineFactory;
 
     @Override
-    public SoldOutState transformToInitialState(VendingMachine vendingMachine) {
+    public SoldOutState transformToAndValidateInitialState(VendingMachine vendingMachine) {
         Assert.assertEquals(0, vendingMachine.getCredit()); //no credit
         Assert.assertNull(vendingMachine.getSelectedProduct()); //no product
         Assert.assertTrue(vendingMachine.getCurrentState() instanceof SoldOutState);
@@ -40,7 +37,7 @@ public class SoldOutStateTest implements StateTest {
     @Before @Override
     public void setup() {
         vendingMachineFactory = new VendingMachineFactory();
-        soldOutState = transformToInitialState(vendingMachineFactory.buildSoldOutVendingMachineNoCash(new Product(100, "COLA_025cl")));
+        soldOutState = transformToAndValidateInitialState(vendingMachineFactory.buildSoldOutVendingMachineNoCash(new Product(100, "COLA_025cl")));
     }
 
     @After @Override

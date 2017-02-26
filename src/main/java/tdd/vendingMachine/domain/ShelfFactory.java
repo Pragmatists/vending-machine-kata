@@ -1,6 +1,8 @@
 package tdd.vendingMachine.domain;
 
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import tdd.vendingMachine.view.VendingMachineMessages;
 
 import java.util.InputMismatchException;
 
@@ -11,9 +13,9 @@ import java.util.InputMismatchException;
  */
 public class ShelfFactory {
 
-    private static <T extends ShelfItem> void validateShelfInput(T shelfItem, int capacity, int itemCount) {
-        if (shelfItem == null || StringUtils.isEmpty(shelfItem.provideType())) {
-            throw new InputMismatchException("Invalid shelfItem must not be empty");
+    private static <T extends ShelfItem> void validateShelfInput(@NonNull T shelfItem, int capacity, int itemCount) {
+        if (StringUtils.isEmpty(shelfItem.provideType())) {
+            throw new InputMismatchException(VendingMachineMessages.SHELF_TYPE_MUST_NOT_BE_EMPTY.label);
         }
         if (capacity <= 0) {
             throw new InputMismatchException("Invalid capacity must be greater than zero");

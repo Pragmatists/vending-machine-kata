@@ -38,7 +38,7 @@ public class InsufficientCreditStateTest implements StateTest {
     private List<Product> products;
 
     @Override
-    public InsufficientCreditState transformToInitialState(VendingMachine vendingMachine) {
+    public InsufficientCreditState transformToAndValidateInitialState(VendingMachine vendingMachine) {
         Assert.assertEquals(0, vendingMachine.getCredit()); //no credit
         Assert.assertNull(vendingMachine.getSelectedProduct()); //no product
         Assert.assertTrue(vendingMachine.getCurrentState() instanceof ReadyState);
@@ -98,14 +98,15 @@ public class InsufficientCreditStateTest implements StateTest {
 
     @Test
     public void should_return_all_credit_after_cancel_operation_and_change_state_to_NoCreditNoProductSelected() throws Exception {
-        VendingMachineConfiguration mockConfig = getConfigMock(10, 10, 10);
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
         VendingMachineFactory vendingMachineFactory = new VendingMachineFactory();
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(products, 3);
-        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildCoinDispenserWithGivenItemsPerShelf(mockConfig, 5);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(products, 3, 10);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, 5);
         VendingMachine vendingMachine = vendingMachineFactory.customVendingMachineForTesting(productShelves, coinShelves);
-        insufficientCreditState = transformToInitialState(vendingMachine);
+        insufficientCreditState = transformToAndValidateInitialState(vendingMachine);
 
         insufficientCreditState.cancel();
 
@@ -119,14 +120,15 @@ public class InsufficientCreditStateTest implements StateTest {
 
    @Test
     public void given_invalid_shelfNumber_should_provide_error_message_and_remain_same_state() throws Exception {
-       VendingMachineConfiguration mockConfig = getConfigMock(10, 10, 10);
+       int coinShelfCapacity = 10;
+       VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
        VendingMachineFactory vendingMachineFactory = new VendingMachineFactory();
-       Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(products, 3);
-       Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildCoinDispenserWithGivenItemsPerShelf(mockConfig, 5);
+       Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(products, 3, 10);
+       Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, 5);
        VendingMachine vendingMachine = vendingMachineFactory.customVendingMachineForTesting(productShelves, coinShelves);
-       insufficientCreditState = transformToInitialState(vendingMachine);
+       insufficientCreditState = transformToAndValidateInitialState(vendingMachine);
 
         insufficientCreditState.selectShelfNumber(123);
         Assert.assertTrue(insufficientCreditState.vendingMachine.getDisplayCurrentMessage().contains(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label));
@@ -141,14 +143,15 @@ public class InsufficientCreditStateTest implements StateTest {
     public void given_valid_shelfNumber_that_price_is_equally_covered_with_current_credit_should_dispense_item() throws Exception {
         int shelfNumberEnoughCash = 1;
         int shelfNumberInsufficientCash = 0;
-        VendingMachineConfiguration mockConfig = getConfigMock(10, 10, 10);
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
         VendingMachineFactory vendingMachineFactory = new VendingMachineFactory();
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(products, 3);
-        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildCoinDispenserWithGivenItemsPerShelf(mockConfig, 5);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(products, 3, 10);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, 5);
         VendingMachine vendingMachine = vendingMachineFactory.customVendingMachineForTesting(productShelves, coinShelves);
-        insufficientCreditState = transformToInitialState(vendingMachine);
+        insufficientCreditState = transformToAndValidateInitialState(vendingMachine);
 
         int productsBeforeSell = insufficientCreditState.vendingMachine.countTotalAmountProducts();
         int productsBeforeSellOnShelfEnoughCash = insufficientCreditState.vendingMachine.countProductsOnShelf(shelfNumberEnoughCash);
@@ -177,14 +180,15 @@ public class InsufficientCreditStateTest implements StateTest {
     public void given_valid_shelfNumber_that_price_is_over_covered_with_current_credit_should_dispense_item_and_provide_change() throws Exception {
         int shelfNumberEnoughCash = 1;
         int shelfNumberInsufficientCash = 0;
-        VendingMachineConfiguration mockConfig = getConfigMock(10, 10, 10);
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
         VendingMachineFactory vendingMachineFactory = new VendingMachineFactory();
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(products, 3);
-        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildCoinDispenserWithGivenItemsPerShelf(mockConfig, 5);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(products, 3, 10);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, 5);
         VendingMachine vendingMachine = vendingMachineFactory.customVendingMachineForTesting(productShelves, coinShelves);
-        insufficientCreditState = transformToInitialState(vendingMachine);
+        insufficientCreditState = transformToAndValidateInitialState(vendingMachine);
 
         int productsBeforeSell = insufficientCreditState.vendingMachine.countTotalAmountProducts();
         int productsBeforeSellOnShelfEnoughCash = insufficientCreditState.vendingMachine.countProductsOnShelf(shelfNumberEnoughCash);
@@ -214,15 +218,16 @@ public class InsufficientCreditStateTest implements StateTest {
     public void should_give_all_credit_back_since_is_not_possible_to_give_change_when_amount_reached() throws Exception {
         int shelfNumberEnoughCash = 1;
         int shelfNumberInsufficientCash = 0;
-        VendingMachineConfiguration mockConfig = getConfigMock(10, 10, 10);
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
         VendingMachineFactory vendingMachineFactory = new VendingMachineFactory();
         Collection<Product> myProducts = Arrays.asList(new Product(180, "p1"), new Product(190, "p2"));
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(myProducts, 3);
-        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildCoinDispenserWithGivenItemsPerShelf(mockConfig, 0);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(myProducts, 3, 10);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, 0);
         VendingMachine vendingMachine = vendingMachineFactory.customVendingMachineForTesting(productShelves, coinShelves);
-        insufficientCreditState = transformToInitialState(vendingMachine);
+        insufficientCreditState = transformToAndValidateInitialState(vendingMachine);
 
         int productsBeforeSell = insufficientCreditState.vendingMachine.countTotalAmountProducts();
         int productsBeforeSellOnShelfEnoughCash = insufficientCreditState.vendingMachine.countProductsOnShelf(shelfNumberEnoughCash);
@@ -251,15 +256,16 @@ public class InsufficientCreditStateTest implements StateTest {
     public void should_give_all_credit_back_since_is_not_possible_to_give_change_when_product_selection_changes_to_cover_priced_product() throws Exception {
         int shelfNumberEnoughCash = 1;
         int shelfNumberInsufficientCash = 0;
-        VendingMachineConfiguration mockConfig = getConfigMock(10, 10, 10);
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
         VendingMachineFactory vendingMachineFactory = new VendingMachineFactory();
         Collection<Product> myProducts = Arrays.asList(new Product(180, "p1"), new Product(600, "p2"));
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(myProducts, 3);
-        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildCoinDispenserWithGivenItemsPerShelf(mockConfig, 0);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(myProducts, 3, 10);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, 0);
         VendingMachine vendingMachine = vendingMachineFactory.customVendingMachineForTesting(productShelves, coinShelves);
-        insufficientCreditState = transformToInitialState(vendingMachine);
+        insufficientCreditState = transformToAndValidateInitialState(vendingMachine);
 
         int productsBeforeSell = insufficientCreditState.vendingMachine.countTotalAmountProducts();
         int productsBeforeSellOnShelfEnoughCash = insufficientCreditState.vendingMachine.countProductsOnShelf(shelfNumberEnoughCash);

@@ -18,7 +18,7 @@ public interface StateTest<T extends State> {
      * @param vendingMachine the vendingMachine to set to initial state upon actions
      * @return the state of the given vendingMachine after actions
      */
-    T transformToInitialState(VendingMachine vendingMachine);
+    T transformToAndValidateInitialState(VendingMachine vendingMachine);
 
     /**
      * Method meant to be annotated with @Before, to declare initial variables required for tests

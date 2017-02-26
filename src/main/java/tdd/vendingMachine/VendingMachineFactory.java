@@ -2,8 +2,7 @@ package tdd.vendingMachine;
 
 import lombok.NonNull;
 import tdd.vendingMachine.domain.*;
-import tdd.vendingMachine.domain.exception.InvalidShelfSizeException;
-import tdd.vendingMachine.view.VendingMachineMessages;
+import tdd.vendingMachine.validation.VendingMachineValidator;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,15 +15,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class VendingMachineFactory {
 
     private final VendingMachineConfiguration vendingMachineConfiguration;
-    private final CoinDispenserBuilder coinDispenserBuilder;
+    private final CoinDispenserFactory coinDispenserFactory;
 
     public VendingMachineFactory() {
         this.vendingMachineConfiguration = new VendingMachineConfiguration();
-        this.coinDispenserBuilder = new CoinDispenserBuilder(vendingMachineConfiguration);
+        this.coinDispenserFactory = new CoinDispenserFactory(vendingMachineConfiguration);
     }
 
     private Map<Coin, Shelf<Coin>> buildEmptyCoinShelf() {
-        return coinDispenserBuilder.buildShelf();
+        return coinDispenserFactory.buildShelf();
     }
 
     private Map<Integer, Shelf<Product>> buildProductShelf(@NonNull Collection<Product> products, final int amount) {
@@ -53,7 +52,10 @@ public class VendingMachineFactory {
      * @return a vending machine
      */
     public VendingMachine buildSoldOutVendingMachineNoCash(@NonNull List<Product> products) {
-        return new VendingMachine(buildProductShelf(products, 0), buildEmptyCoinShelf());
+        Map<Integer, Shelf<Product>> productShelves = buildProductShelf(products, 0);
+        Map<Coin, Shelf<Coin>> coinShelves = buildEmptyCoinShelf();
+        VendingMachineValidator.validate(vendingMachineConfiguration, productShelves, coinShelves);
+        return new VendingMachine(productShelves, coinShelves);
     }
 
     /**
@@ -68,7 +70,8 @@ public class VendingMachineFactory {
         if(productItemCount < 0) throw new InputMismatchException("Product amount must be non-negative");
         if(coinItemCount < 0) throw new InputMismatchException("Coin amount must be non-negative");
         Map<Integer, Shelf<Product>> productShelves = buildProductShelf(products, productItemCount);
-        Map<Coin, Shelf<Coin>> coinShelves = coinDispenserBuilder.buildShelfWithGivenCoinItemCount(coinItemCount);
+        Map<Coin, Shelf<Coin>> coinShelves = coinDispenserFactory.buildShelfWithGivenCoinItemCount(coinItemCount);
+        VendingMachineValidator.validate(vendingMachineConfiguration, productShelves, coinShelves);
         return new VendingMachine(productShelves, coinShelves);
     }
 
@@ -91,16 +94,8 @@ public class VendingMachineFactory {
      * @param coinShelves the coinShelves
      * @return a vending machine with given shelves
      */
-    public VendingMachine customVendingMachineForTesting(@NonNull Map<Integer, Shelf<Product>> productShelves, @NonNull Map<Coin, Shelf<Coin>> coinShelves) {
-        if(productShelves.size() > vendingMachineConfiguration.getProductShelfCount()) {
-            throw new InvalidShelfSizeException(VendingMachineMessages.PRODUCT_SHELF_SIZE_EXCEEDS_MAX.label,
-                vendingMachineConfiguration.getProductShelfCapacity(), productShelves.size());
-        }
-        int maxCoinShelvesSize = Coin.values().length;
-        if(coinShelves.size() != maxCoinShelvesSize) {
-            throw new InvalidShelfSizeException(VendingMachineMessages.COIN_SHELF_SIZE_EXCEEDS_MAX.label,
-                maxCoinShelvesSize, coinShelves.size());
-        }
+    public VendingMachine customVendingMachineForTesting(Map<Integer, Shelf<Product>> productShelves, Map<Coin, Shelf<Coin>> coinShelves) {
+        VendingMachineValidator.validate(vendingMachineConfiguration, productShelves, coinShelves);
         return new VendingMachine(productShelves, coinShelves);
     }
 

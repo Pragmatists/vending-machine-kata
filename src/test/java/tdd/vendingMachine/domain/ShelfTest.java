@@ -30,7 +30,7 @@ public class ShelfTest {
         nonEmptyShelf = ShelfFactory.buildShelf(0, productMock, 20, 5);
         fullShelf = ShelfFactory.buildShelf(0, productMock, 20, 20);
 
-        Mockito.verify(productMock, Mockito.times(3)).getType();
+        Mockito.verify(productMock, Mockito.times(3)).provideType();
     }
 
     @After
@@ -156,6 +156,40 @@ public class ShelfTest {
         Assert.assertEquals(type, fullShelf.getType().provideType());
         Assert.assertEquals(type, nonEmptyShelf.getType().provideType());
 
-        Mockito.verify(productMock, Mockito.times(3)).getType();
+        Mockito.verify(productMock, Mockito.times(6)).provideType();
+    }
+
+    /**
+     * Two shelves are equal if their ids are equal
+     */
+    @Test
+    public void should_validate_two_equal_shelves() {
+        Product product = new Product(100, "p1");
+        Product product2 = new Product(200, "p1");
+        Shelf<Product> productShelf = ShelfFactory.buildShelf(1, product, 1);
+        Shelf<Product> productShelf2 = ShelfFactory.buildShelf(1, product2, 1);
+        Assert.assertTrue(productShelf.equals(productShelf2));
+    }
+
+    /**
+     * it is possible to have two shelves referencing the same product
+     */
+    @Test
+    public void should_fail_validate_two_equal_shelves() {
+        Product product = new Product(100, "p1");
+        Shelf<Product> productShelf = ShelfFactory.buildShelf(1, product, 1);
+        Shelf<Product> productShelf2 = ShelfFactory.buildShelf(2, product, 1);
+        Assert.assertFalse(productShelf.equals(productShelf2));
+    }
+
+    /**
+     * Two shelves are equal if their ids are equal
+     */
+    @Test
+    public void should_return_true_equal_shelves_have_equal_hashCodes() {
+        Product product = new Product(100, "p1");
+        Shelf<Product> productShelf = ShelfFactory.buildShelf(1, product, 1);
+        Shelf<Product> productShelf2 = ShelfFactory.buildShelf(1, product, 1);
+        Assert.assertEquals(productShelf.hashCode(), productShelf2.hashCode());
     }
 }

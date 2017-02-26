@@ -42,8 +42,7 @@ public class VendingMachineFactoryTest {
     @Test(expected = NullPointerException.class)
     public void should_fail_product_shelves_null() {
         VendingMachineFactory vendingMachineFactory = new VendingMachineFactory();
-        VendingMachineConfiguration vendingMachineConfiguration = vendingMachineFactory.getVendingMachineConfiguration();
-        vendingMachineFactory.customVendingMachineForTesting(null, TestUtils.buildCoinDispenserWithGivenItemsPerShelf(vendingMachineConfiguration, 10));
+        vendingMachineFactory.customVendingMachineForTesting(null, TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(10, 10));
     }
 
     @Test

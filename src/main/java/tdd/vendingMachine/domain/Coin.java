@@ -12,6 +12,9 @@ import java.util.*;
  * enum behaviour:
  *   1. coinLabelMap a map from labels to coins
  *   2. coinOrderMap a map from denomination order (from low to high) to coins
+ *
+ * This class provides two iterators one in ascending denomination order and other in descending
+ * denomination order.
  */
 public enum Coin implements ShelfItem {
     FIVE("5.0$", 500, 5),
@@ -103,33 +106,18 @@ public enum Coin implements ShelfItem {
 
     /**
      * Static method that allows to obtain a new instance of the CoinOrderIterator
-     * that provides Coins from highest to lowest denomination.
-     * @return an Iterator from highest to lowest coin denomination
-     */
-    public static Iterator<Coin> retrieveOrderDescendingIterator() {
-        return new CoinOrderIterator(true).iterator();
-    }
-
-    /**
-     * Static method that allows to obtain a new instance of the CoinOrderIterator
      * that provides Coins from lowest to highest denomination.
      * @return an Iterator from highest to lowest coin denomination if given highToLow is true
-     */
-    public static Iterator<Coin> retrieveOrderAscendingIterator() {
-        return new CoinOrderIterator(false).iterator();
-    }
-
-    /**
-     *
-     * @return
      */
     public static Iterable<Coin> ascendingDenominationIterable() {
         return new CoinOrderIterator(false);
     }
 
+
     /**
-     *
-     * @return
+     * Static method that allows to obtain a new instance of the CoinOrderIterator
+     * that provides Coins from highest to lowest denomination.
+     * @return an Iterable from highest to lowest coin denomination
      */
     public static Iterable<Coin> descendingDenominationIterable() {
         return new CoinOrderIterator(true);

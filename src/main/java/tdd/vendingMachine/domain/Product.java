@@ -34,28 +34,14 @@ public class Product implements ShelfItem{
     }
 
     @Override
-    public String toString() {
-        return type + ": " + price;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Product)) return false;
 
         Product product = (Product) o;
 
-        if (Double.compare(product.price, price) != 0) return false;
-        return type.equals(product.type);
-    }
+        if (getPrice() != product.getPrice()) return false;
+        return getType().equals(product.getType());
 
-    @Override
-    public int hashCode() {
-        int result;
-        long temp;
-        result = type.hashCode();
-        temp = Double.doubleToLongBits(price);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        return result;
     }
 }

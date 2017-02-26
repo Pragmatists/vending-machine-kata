@@ -25,7 +25,7 @@ public class NoCreditProductSelectedStateTest implements StateTest {
     private VendingMachineFactory vendinMachineFactory;
 
     @Override
-    public NoCreditSelectedProductState transformToInitialState(VendingMachine vendingMachine) {
+    public NoCreditSelectedProductState transformToAndValidateInitialState(VendingMachine vendingMachine) {
         Assert.assertEquals(0, vendingMachine.getCredit()); //no credit
         Assert.assertNull(vendingMachine.getSelectedProduct()); //no product
         Assert.assertTrue(vendingMachine.getCurrentState() instanceof ReadyState);
@@ -47,9 +47,10 @@ public class NoCreditProductSelectedStateTest implements StateTest {
         CHOCOLATE_BAR = new Product(149, "CHOCOLATE_BAR");
         vendinMachineFactory = new VendingMachineFactory();
         Collection<Product> productList = Arrays.asList(COLA_199_025, CHIPS_025, CHOCOLATE_BAR);
-        VendingMachine vendingMachine = vendinMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(productList, 3),
-            TestUtils.buildCoinDispenserWithGivenItemsPerShelf(vendinMachineFactory.getVendingMachineConfiguration(), 5));
-        noCreditSelectedProductState = transformToInitialState(vendingMachine);
+        int initialCoinsOnShelf = 10;
+        VendingMachine vendingMachine = vendinMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(productList, 3, 10),
+            TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(initialCoinsOnShelf, 5));
+        noCreditSelectedProductState = transformToAndValidateInitialState(vendingMachine);
     }
 
     @After @Override

@@ -32,6 +32,14 @@ public class CoinTest {
     }
 
     @Test
+    public void should_return_true_for_coin_interface_methods() {
+        for (Coin coin: Coin.ascendingDenominationIterable()) {
+            Assert.assertEquals(coin.denomination, coin.provideValue());
+            Assert.assertEquals(coin.label, coin.provideType());
+        }
+    }
+
+    @Test
     public void should_retrieve_coin_since_label_belongs_to_enum() {
         Assert.assertEquals(Coin.FIFTY_CENTS, Coin.retrieveCoinByLabel(Coin.FIFTY_CENTS.label));
         Assert.assertEquals(Coin.FIFTY_CENTS, Coin.retrieveCoinByLabel(Coin.FIFTY_CENTS.provideType()));
@@ -54,9 +62,11 @@ public class CoinTest {
 
     @Test
     public void should_iterate_over_coins_ascending_order() {
-        List<Coin> coinsInAscendingDenominationOrder = Arrays.asList( Coin.TEN_CENTS,
-            Coin.TWENTY_CENTS, Coin.FIFTY_CENTS, Coin.ONE, Coin.TWO, Coin.FIVE);
-        Iterator<Coin> coinIterator = Coin.retrieveOrderAscendingIterator();
+        List<Coin> coinsInAscendingDenominationOrder = Arrays.asList(
+            Coin.TEN_CENTS, Coin.TWENTY_CENTS, Coin.FIFTY_CENTS,
+            Coin.ONE, Coin.TWO, Coin.FIVE
+        );
+        Iterator<Coin> coinIterator = Coin.ascendingDenominationIterable().iterator();
         for(Coin coin: coinsInAscendingDenominationOrder) {
             if(coinIterator.hasNext()) {
                 Assert.assertEquals(coin, coinIterator.next());
@@ -71,8 +81,9 @@ public class CoinTest {
     public void should_iterate_over_coins_in_descending_order() {
         List<Coin> coinsInDescendingDenominationOrder = Arrays.asList( Coin.TEN_CENTS,
             Coin.TWENTY_CENTS, Coin.FIFTY_CENTS, Coin.ONE, Coin.TWO, Coin.FIVE);
-        Iterator<Coin> coinIterator = Coin.retrieveOrderDescendingIterator();
-        for(Coin coin: coinsInDescendingDenominationOrder) {
+        Iterator<Coin> coinIterator = Coin.descendingDenominationIterable().iterator();
+        for(int i=coinsInDescendingDenominationOrder.size() - 1 ; i >= 0 ; i--) {
+            Coin coin = coinsInDescendingDenominationOrder.get(i);
             if(coinIterator.hasNext()) {
                 Assert.assertEquals(coin, coinIterator.next());
             } else {
