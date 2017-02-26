@@ -28,14 +28,19 @@ public class NoCreditSelectedProductState extends State {
         try {
             vendingMachine.addCoinToCredit(coin);
             this.attemptSell();
+            if (vendingMachine.getCurrentState() instanceof NoCreditSelectedProductState) {
+                vendingMachine.setCurrentState(vendingMachine.getInsufficientCreditState());
+            }
         } catch (CashDispenserFullException cashDispenserFullException) {
             logger.error(cashDispenserFullException);
             String message = String.format("%s %s: %s", coin.label,
                 cashDispenserFullException.getMessage(),
                 VendingMachineMessages.provideCashToDisplay(this.vendingMachine.getCredit()));
             this.vendingMachine.showMessageOnDisplay(message);
-        } catch (UnableToProvideBalanceException e) {
-            e.printStackTrace();
+        } catch (UnableToProvideBalanceException unableToProvideBalanceException) {
+            logger.error(unableToProvideBalanceException);
+            this.returnCreditStackToCashPickupBucketAndSetToReadyState(unableToProvideBalanceException.getMessage(),
+                unableToProvideBalanceException.getPendingBalance());
         } catch (UnsupportedOperationException uoe) {
             logger.error(uoe);
             vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
@@ -65,6 +70,6 @@ public class NoCreditSelectedProductState extends State {
 
     @Override
     public void cancel() {
-
+        vendingMachine.setCurrentState(vendingMachine.getReadyState());
     }
 }

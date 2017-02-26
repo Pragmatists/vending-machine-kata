@@ -61,7 +61,9 @@ public abstract class State {
             vendingMachine.dispenseCurrentBalance();
             vendingMachine.dispenseSelectedProductToBucketAndClearCreditStack();
             vendingMachine.undoProductSelection();
-            vendingMachine.setCurrentState(vendingMachine.getReadyState());
+            vendingMachine.setCurrentState(
+                vendingMachine.countTotalAmountProducts() == 0 ?
+                    vendingMachine.getSoldOutState() : vendingMachine.getReadyState());
         }
     }
 
@@ -83,6 +85,7 @@ public abstract class State {
                 vendingMachine.getCredit()
             )
         );
+        this.vendingMachine.undoProductSelection();
         this.vendingMachine.returnCreditStackToBucketUpdatingCashDispenser();
         this.vendingMachine.setCurrentState(this.vendingMachine.getReadyState());
     }

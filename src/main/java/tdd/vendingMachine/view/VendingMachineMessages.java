@@ -11,6 +11,7 @@ public enum VendingMachineMessages { //TODO TODO02 evaluate the possibility to i
     CASH_ACCEPTED_NEW_CREDIT("Received, credit"),
     CASH_NOT_ACCEPTED_DISPENSER_FULL("returned to bucket (dispenser full try other denominations), credit"),
     CASH_NOT_ACCEPTED_MACHINE_SOLD_OUT("returned back to cash bucket, machine is sold out"),
+    CASH_NOT_ACCEPTED_MACHINE_TECHNICAL_ERROR("returned back to cash bucket, machine has technical errors"),
     COIN_SHELF_SIZE_INCOMPATIBLE("Coin shelves size different from the actual coin denominations on the system"),
     DISPENSED_TO_BUCKET("dispensed to pickup bucket"),
     NO_CREDIT_AVAILABLE("WARN: No credit available to return."),

@@ -12,6 +12,7 @@ import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.VendingMachineFactory;
 import tdd.vendingMachine.domain.Coin;
 import tdd.vendingMachine.domain.Product;
+import tdd.vendingMachine.domain.exception.UnableToProvideBalanceException;
 import tdd.vendingMachine.view.VendingMachineMessages;
 
 /**
@@ -79,5 +80,15 @@ public class SoldOutStateTest implements StateTest {
         soldOutState.cancel();
         Assert.assertEquals(0, soldOutState.vendingMachine.getCredit());
         Assert.assertTrue(soldOutState.vendingMachine.getCurrentState() instanceof SoldOutState);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void should_fail_on_attempt_to_sell() throws UnableToProvideBalanceException {
+        soldOutState.attemptSell();
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void should_fail_on_attempt_to_rollback() throws UnableToProvideBalanceException {
+        soldOutState.returnCreditStackToCashPickupBucketAndSetToReadyState("", 0);
     }
 }

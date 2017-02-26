@@ -44,7 +44,7 @@ public class FileReaderHelperTest {
         Assert.assertEquals(2, productImports.size());
         ProductImport productImport = productImports.get(0);
         Assert.assertEquals(10, productImport.getItemCount());
-        Assert.assertEquals(99, productImport.getPrice());
+        Assert.assertEquals(90, productImport.getPrice());
         Assert.assertEquals("product1", productImport.getType());
     }
 

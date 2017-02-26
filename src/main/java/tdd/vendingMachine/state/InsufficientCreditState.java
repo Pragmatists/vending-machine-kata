@@ -39,7 +39,7 @@ public class InsufficientCreditState extends State {
             this.vendingMachine.showMessageOnDisplay(message);
         } catch (UnableToProvideBalanceException unableToProvideBalanceException) {
             logger.error(unableToProvideBalanceException);
-            returnCreditStackToCashPickupBucketAndSetToReadyState(unableToProvideBalanceException.getMessage(),
+            this.returnCreditStackToCashPickupBucketAndSetToReadyState(unableToProvideBalanceException.getMessage(),
                 unableToProvideBalanceException.getPendingBalance());
         } catch (UnsupportedOperationException uoe) {
             logger.error(uoe);
@@ -66,7 +66,7 @@ public class InsufficientCreditState extends State {
             );
         } catch (UnableToProvideBalanceException unableToProvideBalanceException) {
             logger.error(unableToProvideBalanceException);
-            returnCreditStackToCashPickupBucketAndSetToReadyState(unableToProvideBalanceException.getMessage(),
+            this.returnCreditStackToCashPickupBucketAndSetToReadyState(unableToProvideBalanceException.getMessage(),
                 unableToProvideBalanceException.getPendingBalance());
         } catch (ShelfEmptyNotAvailableForSelectionException shelfEmptyException) {
             logger.error(shelfEmptyException);

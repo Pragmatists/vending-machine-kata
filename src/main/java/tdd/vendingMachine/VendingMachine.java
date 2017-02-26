@@ -116,6 +116,10 @@ public final class VendingMachine {
         return this.insufficientCreditState;
     }
 
+    public State getTechnicalErrorState() {
+        return technicalErrorState;
+    }
+
     public Product getSelectedProduct() {
         return selectedShelf != null ? this.selectedShelf.getType() : null;
     }
@@ -374,7 +378,4 @@ public final class VendingMachine {
         }
     }
 
-    public State getTechnicalErrorState() {
-        return technicalErrorState;
-    }
 }

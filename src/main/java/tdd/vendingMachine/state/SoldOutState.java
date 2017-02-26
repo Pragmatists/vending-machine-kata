@@ -23,7 +23,8 @@ public class SoldOutState extends State {
 
     @Override
     public void insertCoin(Coin coin) {
-        vendingMachine.showMessageOnDisplay(String.format("WARN: [%s] %s", VendingMachineMessages.CASH_NOT_ACCEPTED_MACHINE_SOLD_OUT.label, coin.label));
+        vendingMachine.showMessageOnDisplay(
+            VendingMachineMessages.buildWarningMessageWithSubject(VendingMachineMessages.CASH_NOT_ACCEPTED_MACHINE_SOLD_OUT.label, coin.denomination));
     }
 
     @Override

@@ -557,6 +557,7 @@ public class VendingMachineTest {
         vendingMachine.selectProductGivenShelfNumber(shelfNumber);
         vendingMachine.dispenseSelectedProductToBucketAndClearCreditStack();
 
+        Assert.assertNotNull(vendingMachine.getSelectedProduct());
         Assert.assertEquals(totalProductsBefore - 1, vendingMachine.countTotalAmountProducts());
         Assert.assertEquals(productsOnShelfBefore - 1, vendingMachine.countProductsOnShelf(shelfNumber));
         Assert.assertTrue(vendingMachine.getDisplayCurrentMessage().endsWith(VendingMachineMessages.DISPENSED_TO_BUCKET.label));
@@ -578,6 +579,7 @@ public class VendingMachineTest {
 
         vendingMachine.dispenseSelectedProductToBucketAndClearCreditStack();
 
+        Assert.assertNull(vendingMachine.getSelectedProduct());
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
         verifyConfigMock(mockConfig, 1, 1, 1);
     }
@@ -833,6 +835,7 @@ public class VendingMachineTest {
         myVendingMachine.dispenseCurrentBalance();
         myVendingMachine.dispenseSelectedProductToBucketAndClearCreditStack();
 
+        Assert.assertNotNull(myVendingMachine.getSelectedProduct());
         Assert.assertEquals(totalAmountProductsInShelfBeforeDispense - 1, myVendingMachine.countProductsOnShelf(shelfNumberToSelect)); //Decrement of products by one in shelf
         Assert.assertEquals(totalAmountOfProductsOnVendingMachinePriorDispense - 1, myVendingMachine.countTotalAmountProducts()); //Decrement of products by one in total
         Assert.assertEquals(totalCashBeforeOperation + cheap_product.getPrice(), myVendingMachine.countCashInDispenser()); //Increase of cash the product received
