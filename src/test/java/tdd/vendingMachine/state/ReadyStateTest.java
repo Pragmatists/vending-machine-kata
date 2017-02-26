@@ -75,8 +75,8 @@ public class ReadyStateTest implements StateTest {
 
     @Before @Override
     public void setup(){
-        COLA_199_025 = new Product(199, "COLA_199_025");
-        CHOCOLATE_BAR = new Product(149, "CHOCOLATE_BAR");
+        COLA_199_025 = new Product(190, "COLA_199_025");
+        CHOCOLATE_BAR = new Product(160, "CHOCOLATE_BAR");
     }
 
     @After @Override

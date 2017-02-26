@@ -5,6 +5,7 @@ import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.Coin;
 import tdd.vendingMachine.domain.exception.CashDispenserFullException;
 import tdd.vendingMachine.domain.exception.ShelfEmptyNotAvailableForSelectionException;
+import tdd.vendingMachine.domain.exception.UnableToProvideBalanceException;
 import tdd.vendingMachine.view.VendingMachineMessages;
 
 import java.util.NoSuchElementException;
@@ -13,14 +14,13 @@ import java.util.NoSuchElementException;
  * @author Agustin Cabra on 2/21/2017.
  * @since 1.0
  */
-public class CreditNotSelectedProductState implements State {
+public class CreditNotSelectedProductState extends State {
 
     private static final Logger logger = Logger.getLogger(CreditNotSelectedProductState.class);
     public static final String label = "HAS CREDIT NO PRODUCT SELECTED";
-    final VendingMachine vendingMachine;
 
     public CreditNotSelectedProductState(VendingMachine vendingMachine) {
-        this.vendingMachine = vendingMachine;
+        super(vendingMachine, CreditNotSelectedProductState.class);
     }
 
     @Override
@@ -41,7 +41,10 @@ public class CreditNotSelectedProductState implements State {
         try {
             vendingMachine.selectProductGivenShelfNumber(shelfNumber);
             vendingMachine.displayProductPrice(shelfNumber);
-            vendingMachine.setCurrentState(vendingMachine.getInsufficientCreditState());
+            this.attemptSell();
+            if (vendingMachine.getCurrentState() instanceof CreditNotSelectedProductState) {
+                vendingMachine.setCurrentState(vendingMachine.getInsufficientCreditState());
+            }
         } catch (NoSuchElementException nse) {
             logger.error(nse);
             vendingMachine.showMessageOnDisplay(
@@ -53,7 +56,16 @@ public class CreditNotSelectedProductState implements State {
                 VendingMachineMessages.UNABLE_TO_SELECT_EMPTY_SHELF.label,
                 e.getShelfNumber(), false)
             );
+        } catch (UnableToProvideBalanceException unableToProvideBalanceException) {
+            logger.error(unableToProvideBalanceException);
+            this.returnCreditStackToCashPickupBucketAndSetToReadyState(unableToProvideBalanceException.getMessage(),
+                unableToProvideBalanceException.getPendingBalance());
+        } catch (UnsupportedOperationException uoe) {
+            logger.error(uoe);
+            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
+            vendingMachine.setCurrentState(vendingMachine.getTechnicalErrorState());
         }
+
     }
 
     @Override

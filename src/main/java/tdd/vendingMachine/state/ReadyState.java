@@ -14,14 +14,13 @@ import java.util.NoSuchElementException;
  * @since 1.0
  * State representing a vending machine with no credit and no selected product
  */
-public class ReadyState implements State {
+public class ReadyState extends State {
 
     private static final Logger logger = Logger.getLogger(ReadyState.class);
     public static final String label = "READY";
-    final VendingMachine vendingMachine;
 
     public ReadyState(VendingMachine vendingMachine) {
-        this.vendingMachine = vendingMachine;
+        super(vendingMachine, false);
     }
 
     @Override
