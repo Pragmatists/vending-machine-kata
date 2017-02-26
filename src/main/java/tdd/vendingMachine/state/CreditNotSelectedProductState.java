@@ -34,6 +34,11 @@ public class CreditNotSelectedProductState implements State {
                 VendingMachineMessages.provideCashToDisplay(this.vendingMachine.getCredit())));
         } catch (CashDispenserFullException e) {
             logger.error(e);
+//            String.format("%s [%d] %s: %d",
+//                e.getMessage(),
+//                e.ge,
+//                VendingMachineMessages.AVAILABLE.label,
+//                maxShelfCountFound);
 
         }
     }
@@ -49,6 +54,10 @@ public class CreditNotSelectedProductState implements State {
             vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithSubject(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber));
         } catch (ShelfEmptyNotAvailableForSelectionException e) {
             logger.error(e);
+            String.format("%s [%d] %s",
+                e.getMessage(),
+                e.getShelfNumber(),
+                VendingMachineMessages.AVAILABLE.label);
         }
     }
 

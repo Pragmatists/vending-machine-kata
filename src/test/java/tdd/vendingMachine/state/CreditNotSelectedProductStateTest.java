@@ -21,14 +21,12 @@ import java.util.List;
 public class CreditNotSelectedProductStateTest implements StateTest {
 
     private Product COLA_199_025;
-    private Product CHIPS_025;
-    private Product CHOCOLATE_BAR;
     CreditNotSelectedProductState creditNotSelectedProductState;
     VendingMachineFactory vendingMachineFactory;
 
 
     @Override
-    public CreditNotSelectedProductState transformToInitialState(VendingMachine vendingMachine) {
+    public CreditNotSelectedProductState transformToAndValidateInitialState(VendingMachine vendingMachine) {
         Assert.assertEquals(0, vendingMachine.getCredit()); //no credit
         Assert.assertNull(vendingMachine.getSelectedProduct()); //no product
         Assert.assertTrue(vendingMachine.getCurrentState() instanceof ReadyState);
@@ -46,20 +44,17 @@ public class CreditNotSelectedProductStateTest implements StateTest {
     @Before @Override
     public void setup(){
         COLA_199_025 = new Product(199, "COLA_199_025");
-        CHIPS_025 = new Product(129, "CHIPS_025");
-        CHOCOLATE_BAR = new Product(149, "CHOCOLATE_BAR");
         vendingMachineFactory = new VendingMachineFactory();
+        int initialCoinsOnShelf = 10;
         VendingMachine vendingMachine = vendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
-            TestUtils.buildCoinDispenserWithGivenItemsPerShelf(vendingMachineFactory.getVendingMachineConfiguration(), 5));
+            TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(initialCoinsOnShelf, 5));
 
-        creditNotSelectedProductState = transformToInitialState(vendingMachine);
+        creditNotSelectedProductState = transformToAndValidateInitialState(vendingMachine);
     }
 
     @After @Override
     public void tearDown(){
         COLA_199_025 = null;
-        CHIPS_025 = null;
-        CHOCOLATE_BAR = null;
         creditNotSelectedProductState = null;
         vendingMachineFactory = null;
     }

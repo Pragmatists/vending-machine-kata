@@ -13,7 +13,7 @@ public class VendingMachineMessagesTest {
     public void should_build_warning_message_with_subject() {
         String problem = "tests";
         int subject = 1;
-        String expectedMessage = "WARN: " + problem + " [" + subject + "]";
+        String expectedMessage = "WARN: " + problem + " [0.01$]";
         Assert.assertEquals(expectedMessage, VendingMachineMessages.buildWarningMessageWithSubject(problem, subject));
     }
 

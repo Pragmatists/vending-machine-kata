@@ -6,11 +6,12 @@ package tdd.vendingMachine.view;
  * Message enum intended to be used as keys for translations on language files e.g. en_US, pl_PL ...etc.
  */
 public enum VendingMachineMessages { //TODO TODO02 evaluate the possibility to implement internationalization
+    AVAILABLE("available"),
     CANCEL("Cancelling ..."),
     CASH_ACCEPTED_NEW_CREDIT("Received, credit"),
     CASH_NOT_ACCEPTED_DISPENSER_FULL("returned to bucket (dispenser full try other denominations), credit"),
     CASH_NOT_ACCEPTED_MACHINE_SOLD_OUT("returned back to cash bucket, machine is sold out"),
-    COIN_SHELF_SIZE_EXCEEDS_MAX("Coin shelves size exceeds available coin values"),
+    COIN_SHELF_SIZE_INCOMPATIBLE("Coin shelves size different from the actual coin denominations on the system"),
     DISPENSED_TO_BUCKET("dispensed to pickup bucket"),
     NO_CREDIT_AVAILABLE("WARN: No credit available to return."),
     NO_PRODUCT_SELECTED("No product is selected"),
@@ -23,7 +24,10 @@ public enum VendingMachineMessages { //TODO TODO02 evaluate the possibility to i
     RETURN_TO_BUCKET_CREDIT("Returned to bucket, credit"),
     RETURNING_TOTAL_CASH_TO_BUCKET("All credit will be returned back to bucket"),
     SHELF_NUMBER_NOT_AVAILABLE("Shelf number not available"),
-    UNABLE_TO_SELECT_EMPTY_SHELF("No products to select on shelf");
+    SHELF_TYPE_MUST_NOT_BE_EMPTY("Invalid shelfItem must not be empty"),
+    UNABLE_TO_CREATE_VENDING_MACHINE_EXCEEDED_PRODUCT_SHELF_CAPACITY("Unable to create Vending Machine given product shelves contains shelf with exceeded capacity"),
+    UNABLE_TO_CREATE_VENDING_MACHINE_EXCEEDED_COIN_SHELF_CAPACITY("Unable to create Vending Machine given coin shelves contains shelf with exceeded capacity"),
+    UNABLE_TO_SELECT_EMPTY_SHELF("The selected shelf is empty");
 
     private static final String WARN_SUBJECT_STRUCTURE = "WARN: %s [%s]";
     private static final String WARN_NO_SUBJECT_STRUCTURE = "WARN: %s";

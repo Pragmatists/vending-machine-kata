@@ -48,6 +48,9 @@ public class ReadyState implements State {
             vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithSubject(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber));
         } catch (ShelfEmptyNotAvailableForSelectionException shelfEmptyException) {
             logger.error(shelfEmptyException);
+            vendingMachine.showMessageOnDisplay(String.format("%s: %d",
+                shelfEmptyException.getMessage(),
+                shelfEmptyException.getShelfNumber()));
         }
     }
 

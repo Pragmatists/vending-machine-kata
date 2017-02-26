@@ -70,7 +70,7 @@ public class ShelfFactoryTest {
         ShelfFactory.buildShelf(shelfId, emptyProduct, 10);
     }
 
-    @Test(expected = InputMismatchException.class)
+    @Test(expected = NullPointerException.class)
     public void should_fail_building_shelf_product_null(){
         ShelfFactory.buildShelf(shelfId, null, 10);
     }

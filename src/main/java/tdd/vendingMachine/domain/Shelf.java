@@ -116,17 +116,14 @@ public class Shelf<T extends ShelfItem> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Shelf<?> shelf = (Shelf<?>) o;
-        return capacity == shelf.capacity
-            && id == shelf.id
-            && type.equals(shelf.type)
-            && itemCount.equals(shelf.itemCount);
+        return id == shelf.id;
     }
 
     @Override
     public int hashCode() {
         int result = id * 31 + type.hashCode();
         result = 31 * result + capacity;
-        result = 31 * result + itemCount.hashCode();
+        result = 31 * result + itemCount.get();
         return result;
     }
 }

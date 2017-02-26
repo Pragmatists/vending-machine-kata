@@ -54,22 +54,4 @@ public class CashImport {
         return new CashImport(label, this.amount + cashImport.getAmount());
 
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        CashImport that = (CashImport) o;
-
-        if (amount != that.amount) return false;
-        return label.equals(that.label);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = label.hashCode();
-        result = 31 * result + amount;
-        return result;
-    }
 }
