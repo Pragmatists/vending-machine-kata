@@ -12,7 +12,7 @@ import tdd.vendingMachine.view.VendingMachineMessages;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public final class VendingMachine implements State {
+public final class VendingMachine {
 
     private static final Logger logger = Logger.getLogger(VendingMachine.class);
 
@@ -24,16 +24,16 @@ public final class VendingMachine implements State {
     private final InsufficientCreditState insufficientCreditState;
     private final NoCreditSelectedProductState noCreditSelectedProductState;
     private final CreditNotSelectedProductState creditNotSelectedProductState;
+    private final TechnicalErrorState technicalErrorState;
 
     //states
-
     private final VendingMachineDisplay display;
     private Shelf<Product> selectedShelf;
     private AtomicInteger credit;
     private Stack<Coin> creditStack;
     private final Map<Integer, Shelf<Product>> productShelves;
-    private final Map<Coin, Shelf<Coin>> coinShelves;
 
+    private final Map<Coin, Shelf<Coin>> coinShelves;
     private State currentState;
 
     VendingMachine(@NonNull Map<Integer, Shelf<Product>> productShelves, @NonNull Map<Coin, Shelf<Coin>> coinShelves) {
@@ -51,6 +51,7 @@ public final class VendingMachine implements State {
         this.noCreditSelectedProductState = new NoCreditSelectedProductState(this);
         this.insufficientCreditState = new InsufficientCreditState(this);
         this.creditNotSelectedProductState = new CreditNotSelectedProductState(this);
+        this.technicalErrorState = new TechnicalErrorState(this);
 
         int availableProducts = productShelves.values().stream()
             .mapToInt(Shelf::getItemCount)
@@ -58,11 +59,11 @@ public final class VendingMachine implements State {
         this.currentState = availableProducts > 0 ? readyState : soldOutState;
     }
 
-    @Override public void insertCoin(Coin money) { currentState.insertCoin(money); }
+    public void insertCoin(Coin money) { currentState.insertCoin(money); }
 
-    @Override public void selectShelfNumber(int shelfNumber) { currentState.selectShelfNumber(shelfNumber); }
+    public void selectShelfNumber(int shelfNumber) { currentState.selectShelfNumber(shelfNumber); }
 
-    @Override public void cancel() { currentState.cancel(); }
+    public void cancel() { currentState.cancel(); }
 
     /**
      * Throws exception if given shelfNumber is invalid
@@ -371,5 +372,9 @@ public final class VendingMachine implements State {
             display.update(String.format("[%s] %s: %s", creditStack.pop().label, VendingMachineMessages.RETURN_TO_BUCKET_CREDIT.label,
                 VendingMachineMessages.provideCashToDisplay(this.credit.get())));
         }
+    }
+
+    public State getTechnicalErrorState() {
+        return technicalErrorState;
     }
 }

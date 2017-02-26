@@ -23,8 +23,10 @@ public enum VendingMachineMessages { //TODO TODO02 evaluate the possibility to i
     PENDING_BALANCE_RETURNED_TO_BUCKET("Returned to cash to pickup bucket, balance"),
     RETURN_TO_BUCKET_CREDIT("Returned to bucket, credit"),
     RETURNING_TOTAL_CASH_TO_BUCKET("All credit will be returned back to bucket"),
+    SELL_NOT_AVAILABLE_STATE("No Sell available for this state"),
     SHELF_NUMBER_NOT_AVAILABLE("Shelf number not available"),
     SHELF_TYPE_MUST_NOT_BE_EMPTY("Invalid shelfItem must not be empty"),
+    TECHNICAL_ERROR("Vending Machine requires technical assistance (Invalid State)"),
     UNABLE_TO_CREATE_VENDING_MACHINE_EXCEEDED_PRODUCT_SHELF_CAPACITY("Unable to create Vending Machine given product shelves contains shelf with exceeded capacity"),
     UNABLE_TO_CREATE_VENDING_MACHINE_EXCEEDED_COIN_SHELF_CAPACITY("Unable to create Vending Machine given coin shelves contains shelf with exceeded capacity"),
     UNABLE_TO_SELECT_EMPTY_SHELF("The selected shelf is empty");
