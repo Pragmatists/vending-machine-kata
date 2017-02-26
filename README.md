@@ -57,7 +57,7 @@ My Personal Comments
 2. The basic configuration file is config.properties and defines the capacity of the vending machine
 3. There are helper factories to build CoinDispenser and to Build ProductShelves
 4. The project was developed using SCRUM, find a reading access to the SCRUM-ARTIFACTS FILE on [Vending Machine Sprint1 Artifacts]( https://docs.google.com/spreadsheets/d/14JU7wEum9CQHT0LDA3SqwylU7LbLxOYh-Cf0j6Bg948/edit?usp=sharing )
-5. A mini-console is available running the main method on VendingMachine showing the load of the products and cash from file.
-    * Builds a product shelf based on the ProductImport file defined on src/main/resources/products.csv every line is a PorductImport to load.
+5. A mini-console that describes the loading process of products and cash is available running the main method on Main.class showing the load of the products and cash from file.
+    * Builds a product shelf based on the ProductImport file defined on src/main/resources/products.csv every line is a ProductImport to load.
     * Builds a coin dispenser with the amount of coins defined on src/main/resources/products.csv
 6. I enjoyed very much this developing this vending machine, I hope you find it fun to play with too.
