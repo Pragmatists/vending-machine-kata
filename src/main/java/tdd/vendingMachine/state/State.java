@@ -9,7 +9,7 @@ import tdd.vendingMachine.view.VendingMachineMessages;
  * @author Agustin Cabra on 2/20/2017.
  * @since 1.0
  *
- * The States of the vending machine will be handled as implementations of this interface,
+ * The States of the vending machine will be handled as extensions of this abstract class,
  * the overall process when inserting coins is described as follows:
  * 1. If product was previously selected.
  *      a. If current credit equals selectedProduct price:
@@ -69,8 +69,8 @@ public abstract class State {
 
     /**
      * Compensation task meant to be run in case of failure to perform sell
-     * if state unable to perform task machine will enter on technica error state
-     * @param exceptionMessage the exception message received for sell transaction
+     * if state unable to perform task machine will enter on technical error state
+     * @param exceptionMessage the exception message received from sell transaction
      * @param pendingBalance the current pending balance
      */
     protected void returnCreditStackToCashPickupBucketAndSetToReadyState(String exceptionMessage, int pendingBalance) {

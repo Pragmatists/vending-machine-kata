@@ -13,6 +13,7 @@ import java.util.NoSuchElementException;
 /**
  * @author Agustin Cabra on 2/21/2017.
  * @since 1.0
+ * State representing that machine has credit received and no product has been selected.
  */
 public class CreditNotSelectedProductState extends State {
 
