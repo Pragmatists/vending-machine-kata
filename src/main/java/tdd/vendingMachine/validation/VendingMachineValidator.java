@@ -49,7 +49,8 @@ public class VendingMachineValidator {
     }
 
     /**
-     * Validates input parameters to instantiate a vending machine
+     * Validates input parameters to instantiate a vending machine, parameters should comply with vending machine
+     * configuration.
      * @param vendingMachineConfiguration current configuration to validate parameters from
      * @param productShelves the given product shelves
      * @param coinShelves the given coin dispenser

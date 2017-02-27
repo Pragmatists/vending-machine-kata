@@ -5,6 +5,7 @@ package tdd.vendingMachine.domain;
  * @since 1.0
  *
  * Interface that enables the method provideType and provideValue
+ * this allows them to be stored in shelves
  */
 public interface ShelfItem {
 
