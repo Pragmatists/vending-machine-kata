@@ -3,7 +3,7 @@ package tdd.vendingMachine.domain.exception;
 /**
  * @author Agustin on 2/25/2017.
  * @since 1.0
- * Exception representing that given size has exceeded the configuration permited
+ * Exception representing that given size has exceeded the configuration permitted
  */
 public class InvalidShelfSizeException extends RuntimeException {
 

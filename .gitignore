@@ -1,6 +1,8 @@
 # IntelliJ IDEA project configuration
 .idea/
 *.iml
-
+.classpath
+.settings/
+.project
 # Java build files
 target/
