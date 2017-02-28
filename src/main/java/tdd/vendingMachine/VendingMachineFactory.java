@@ -60,7 +60,7 @@ public class VendingMachineFactory {
     public VendingMachine buildSoldOutVendingMachineNoCash(@NonNull List<Product> products) {
         Map<Integer, Shelf<Product>> productShelves = buildProductShelf(products, 0);
         Map<Coin, Shelf<Coin>> coinShelves = buildEmptyCoinShelf();
-        VendingMachineValidator.validate(vendingMachineConfiguration, productShelves, coinShelves);
+        VendingMachineValidator.validateNewVendingMachineParameters(vendingMachineConfiguration, productShelves, coinShelves);
         return new VendingMachine(productShelves, coinShelves);
     }
 
@@ -77,7 +77,7 @@ public class VendingMachineFactory {
         if(coinItemCount < 0) throw new InputMismatchException("Coin amount must be non-negative");
         Map<Integer, Shelf<Product>> productShelves = buildProductShelf(products, productItemCount);
         Map<Coin, Shelf<Coin>> coinShelves = coinDispenserFactory.buildShelfWithGivenCoinItemCount(coinItemCount);
-        VendingMachineValidator.validate(vendingMachineConfiguration, productShelves, coinShelves);
+        VendingMachineValidator.validateNewVendingMachineParameters(vendingMachineConfiguration, productShelves, coinShelves);
         return new VendingMachine(productShelves, coinShelves);
     }
 
@@ -88,7 +88,7 @@ public class VendingMachineFactory {
      * @return a vending machine with given shelves
      */
     public VendingMachine customVendingMachineForTesting(Map<Integer, Shelf<Product>> productShelves, Map<Coin, Shelf<Coin>> coinShelves) {
-        VendingMachineValidator.validate(vendingMachineConfiguration, productShelves, coinShelves);
+        VendingMachineValidator.validateNewVendingMachineParameters(vendingMachineConfiguration, productShelves, coinShelves);
         return new VendingMachine(productShelves, coinShelves);
     }
 
@@ -123,7 +123,7 @@ public class VendingMachineFactory {
         List<ProductImport> productImports = FileReaderHelper.retrieveProductsImportFromFileStream(streamProducts).orElse(Collections.emptyList());
         Map<Coin, Shelf<Coin>> cashDispenser = new CoinDispenserFactory(vendingMachineConfiguration).buildShelf(cashImports);
         Map<Integer, Shelf<Product>> productShelves = buildProductShelfFromCashImports(productImports);
-        VendingMachineValidator.validate(vendingMachineConfiguration, productShelves, cashDispenser);
+        VendingMachineValidator.validateNewVendingMachineParameters(vendingMachineConfiguration, productShelves, cashDispenser);
         return new VendingMachine(productShelves, cashDispenser);
     }
 }

@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -25,7 +26,7 @@ import java.util.Map;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({VendingMachineValidator.class, VendingMachineConfiguration.class, VendingMachine.class, TestUtils.class,
-    ShelfFactory.class})
+    ShelfFactory.class, Product.class})
 @PowerMockIgnore(value = {"javax.management.*"})
 public class VendingMachineValidatorTest {
 
@@ -69,7 +70,7 @@ public class VendingMachineValidatorTest {
     public void should_fail_null_configuration() {
         boolean exceptionThrown = false;
         try {
-            VendingMachineValidator.validate(null, null, null);
+            VendingMachineValidator.validateNewVendingMachineParameters(null, null, null);
         } catch (NullPointerException e) {
             exceptionThrown = true;
         }
@@ -81,7 +82,7 @@ public class VendingMachineValidatorTest {
         boolean exceptionThrown = false;
         VendingMachineConfiguration mockConfig = getConfigMock(1, 1, 1);
         try {
-            VendingMachineValidator.validate(mockConfig, null, null);
+            VendingMachineValidator.validateNewVendingMachineParameters(mockConfig, null, null);
         } catch (NullPointerException e) {
             exceptionThrown = true;
         }
@@ -95,7 +96,7 @@ public class VendingMachineValidatorTest {
         VendingMachineConfiguration mockConfig = getConfigMock(1, 1, 1);
 
         try {
-            VendingMachineValidator.validate(mockConfig, TestUtils.buildShelvesWithItems(new Product(100, "p1"), 1), null);
+            VendingMachineValidator.validateNewVendingMachineParameters(mockConfig, TestUtils.buildShelvesWithItems(new Product(100, "p1"), 1), null);
         } catch (NullPointerException e) {
             exceptionThrown = true;
         }
@@ -113,7 +114,7 @@ public class VendingMachineValidatorTest {
             Collections.singleton(new ProductImport("p1", 100, 1)), 5);
         Map<Coin, Shelf<Coin>> coinShelves = Collections.emptyMap();
         try {
-            VendingMachineValidator.validate(mockConfig, productShelves, coinShelves);
+            VendingMachineValidator.validateNewVendingMachineParameters(mockConfig, productShelves, coinShelves);
         } catch (InvalidShelfSizeException invalidShelfException) {
             exceptionThrown = true;
             Assert.assertEquals(VendingMachineMessages.COIN_SHELF_SIZE_INCOMPATIBLE.label, invalidShelfException.getMessage());
@@ -136,7 +137,7 @@ public class VendingMachineValidatorTest {
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(actualShelfCapacity, 2);
 
         try {
-            VendingMachineValidator.validate(mockConfigValidation, productShelves, coinShelves);
+            VendingMachineValidator.validateNewVendingMachineParameters(mockConfigValidation, productShelves, coinShelves);
         } catch (InvalidShelfSizeException invalidShelfException) {
             exceptionThrown = true;
             Assert.assertEquals(VendingMachineMessages.UNABLE_TO_CREATE_VENDING_MACHINE_EXCEEDED_COIN_SHELF_CAPACITY.label, invalidShelfException.getMessage());
@@ -161,7 +162,7 @@ public class VendingMachineValidatorTest {
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(actualCoinShelfCapacity, 2);
 
         try {
-            VendingMachineValidator.validate(mockConfigValidation, productShelves, coinShelves);
+            VendingMachineValidator.validateNewVendingMachineParameters(mockConfigValidation, productShelves, coinShelves);
         } catch (InvalidShelfSizeException invalidShelfException) {
             exceptionThrown = true;
             Assert.assertEquals(VendingMachineMessages.PRODUCT_SHELF_SIZE_EXCEEDS_MAX.label, invalidShelfException.getMessage());
@@ -189,7 +190,7 @@ public class VendingMachineValidatorTest {
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(actualCoinShelfCapacity, 2);
 
         try {
-            VendingMachineValidator.validate(mockConfigValidation, productShelves, coinShelves);
+            VendingMachineValidator.validateNewVendingMachineParameters(mockConfigValidation, productShelves, coinShelves);
         } catch (InvalidShelfSizeException invalidShelfException) {
             exceptionThrown = true;
             Assert.assertEquals(VendingMachineMessages.UNABLE_TO_CREATE_VENDING_MACHINE_EXCEEDED_PRODUCT_SHELF_CAPACITY.label, invalidShelfException.getMessage());
@@ -210,8 +211,100 @@ public class VendingMachineValidatorTest {
         VendingMachineConfiguration configMock = getConfigMock(configCoinShelfCapacity, configProductShelfCount, configProductShelfCapacity);
         Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(TestUtils.buildStubListOfProducts(3), 2, configProductShelfCapacity);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(configCoinShelfCapacity, 5);
-        VendingMachineValidator.validate(configMock, productShelves, coinShelves);
+        VendingMachineValidator.validateNewVendingMachineParameters(configMock, productShelves, coinShelves);
 
         verifyConfigMock(configMock, 1, 1, 1);
+    }
+
+    /**
+     * Establishes the returning values for the respective methods on the vending machine mock
+     * @param isSoldOut return value for isSoldOut
+     * @param credit return value for getCredit
+     * @param isStackEmpty return value for isStackEmpty
+     * @param selectedProduct return value for getSelectedProduct
+     * @return a mock of the vending machine with given return values for specific methods
+     * @throws Exception
+     */
+    private VendingMachine provideMockReturningValuesForState(boolean isSoldOut, int credit, boolean isStackEmpty, Product selectedProduct)  throws Exception {
+        VendingMachine vendingMachineMock  = PowerMockito.mock(VendingMachine.class);
+        PowerMockito.when(vendingMachineMock, "isSoldOut").thenReturn(isSoldOut);
+        PowerMockito.when(vendingMachineMock, "getCredit").thenReturn(credit);
+        PowerMockito.when(vendingMachineMock, "isCreditStackEmpty").thenReturn(isStackEmpty);
+        PowerMockito.when(vendingMachineMock, "getSelectedProduct").thenReturn(selectedProduct);
+        return vendingMachineMock;
+    }
+
+    /**
+     * Verifies calls to mock methods
+     * @param vendingMachineMock the mock to validate
+     * @param exceptionRequired if an exception was expected
+     * @param exceptionThrown if an exception was thrown
+     * @param amountTotalProducts calls to countTotalAmountProducts
+     * @param amountCallsCredit calls to getCredit
+     * @param amountCallsStackEmpty calls to isStackEmpty
+     * @param amountCallsSelectedProduct calls to getSelectedProduct
+     */
+    private void verifyMockExecutionForState(VendingMachine vendingMachineMock, boolean exceptionRequired, boolean exceptionThrown,
+                                             int amountTotalProducts, int amountCallsCredit, int amountCallsStackEmpty, int amountCallsSelectedProduct) {
+        if (exceptionRequired) Assert.assertTrue(exceptionThrown);
+        Mockito.verify(vendingMachineMock, Mockito.times(amountTotalProducts)).isSoldOut();
+        Mockito.verify(vendingMachineMock, Mockito.times(amountCallsCredit)).getCredit();
+        Mockito.verify(vendingMachineMock, Mockito.times(amountCallsStackEmpty)).isCreditStackEmpty();
+        Mockito.verify(vendingMachineMock, Mockito.times(amountCallsSelectedProduct)).getSelectedProduct();
+    }
+
+    @Test
+    public void should_fail_machine_is_sold_out() throws Exception {
+        VendingMachine vendingMachineMock  = provideMockReturningValuesForState(true, 0, false, null);
+        boolean exceptionThrown = false;
+        try {
+            VendingMachineValidator.validateToReadyStateMachine(vendingMachineMock);
+        } catch (IllegalStateException ise) {
+            exceptionThrown = true;
+        }
+        verifyMockExecutionForState(vendingMachineMock, true, exceptionThrown, 1, 1, 1, 1);
+    }
+
+    @Test
+    public void should_fail_machine_has_credit() throws Exception {
+        VendingMachine vendingMachineMock  = provideMockReturningValuesForState(false, 100, false, null);
+        boolean exceptionThrown = false;
+        try {
+            VendingMachineValidator.validateToReadyStateMachine(vendingMachineMock);
+        } catch (IllegalStateException ise) {
+            exceptionThrown = true;
+        }
+        verifyMockExecutionForState(vendingMachineMock, true, exceptionThrown,1, 2, 1, 1);
+    }
+
+    @Test
+    public void should_fail_machine_has_credit_stack() throws Exception {
+        VendingMachine vendingMachineMock  = provideMockReturningValuesForState(false, 0, false, null);
+        boolean exceptionThrown = false;
+        try {
+            VendingMachineValidator.validateToReadyStateMachine(vendingMachineMock);
+        } catch (IllegalStateException ise) {
+            exceptionThrown = true;
+        }
+        verifyMockExecutionForState(vendingMachineMock, true, exceptionThrown,1, 2, 2, 1);
+    }
+
+    @Test
+    public void should_fail_machine_has_product_selected() throws Exception {
+        VendingMachine vendingMachineMock  = provideMockReturningValuesForState(false, 0, true, Mockito.mock(Product.class));
+        boolean exceptionThrown = false;
+        try {
+            VendingMachineValidator.validateToReadyStateMachine(vendingMachineMock);
+        } catch (IllegalStateException ise) {
+            exceptionThrown = true;
+        }
+        verifyMockExecutionForState(vendingMachineMock, true, exceptionThrown,1, 2, 2, 2);
+    }
+
+    @Test
+    public void should_validate_machine_qualifies_to_ready() throws Exception {
+        VendingMachine vendingMachineMock  = provideMockReturningValuesForState(false, 0, true, null);
+        VendingMachineValidator.validateToReadyStateMachine(vendingMachineMock);
+        verifyMockExecutionForState(vendingMachineMock, false, false, 1, 1, 1, 1);
     }
 }

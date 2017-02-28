@@ -1,6 +1,7 @@
 package tdd.vendingMachine.validation;
 
 import lombok.NonNull;
+import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.Coin;
 import tdd.vendingMachine.domain.Product;
 import tdd.vendingMachine.domain.Shelf;
@@ -55,9 +56,30 @@ public class VendingMachineValidator {
      * @param productShelves the given product shelves
      * @param coinShelves the given coin dispenser
      */
-    public static void validate(@NonNull VendingMachineConfiguration vendingMachineConfiguration, @NonNull Map<Integer, Shelf<Product>> productShelves,
-                                @NonNull Map<Coin, Shelf<Coin>> coinShelves) {
+    public static void validateNewVendingMachineParameters(@NonNull VendingMachineConfiguration vendingMachineConfiguration,
+           @NonNull Map<Integer, Shelf<Product>> productShelves, @NonNull Map<Coin, Shelf<Coin>> coinShelves) {
         validateCoinShelves(vendingMachineConfiguration, coinShelves);
         validateProductShelves(vendingMachineConfiguration, productShelves);
+    }
+
+    /**
+     * Validates if the given vending machine is in suitable state to be ReadyState
+     * @param vendingMachine the subject to validate
+     * @throws IllegalStateException if vending machine does not qualifies to be on ReadyState
+     */
+    public static void validateToReadyStateMachine(@NonNull VendingMachine vendingMachine) throws IllegalStateException {
+        boolean isMachineSoldOut = vendingMachine.isSoldOut();
+        if (isMachineSoldOut
+            || vendingMachine.getCredit() > 0
+            || !vendingMachine.isCreditStackEmpty()
+            || null != vendingMachine.getSelectedProduct()
+            ) {
+            throw new IllegalStateException("Current values don't qualify for ReadyState"
+                + " isSoldOut: " + isMachineSoldOut
+                + " currentCredit: " + vendingMachine.getCredit()
+                + " isCreditStackEmpty: " + vendingMachine.isCreditStackEmpty()
+                + " isProductSelected: " + (vendingMachine.getSelectedProduct() != null)
+            );
+        }
     }
 }

@@ -370,28 +370,4 @@ public class InsufficientCreditStateTest implements StateTest {
         Assert.assertTrue(spied.vendingMachine.getCurrentState() instanceof TechnicalErrorState);
         Mockito.verify(spied, Mockito.times(1)).attemptSell();
     }
-
-    @Test
-    public void should_send_to_technical_error_state_on_insertCoin() throws Exception {
-        int coinShelfCapacity = 5;
-        int productShelfCount = 5;
-        int productShelfCapacity = 10;
-        VendingMachineConfiguration configMock = getConfigMock(coinShelfCapacity, productShelfCount, productShelfCapacity);
-        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(configMock);
-
-        int actualProductShelfCapacity = 5;
-        Map<Integer, Shelf<Product>> productShelf = TestUtils.buildShelfStubFromProductImports(
-            Arrays.asList(new ProductImport("p1", 100, 0), new ProductImport("p2", 100, 1)), actualProductShelfCapacity);
-        Map<Coin, Shelf<Coin>> fullShelfDispenser = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, coinShelfCapacity - 1);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelf, fullShelfDispenser);
-        insufficientCreditState = transformToAndValidateInitialState(vendingMachine);
-
-        InsufficientCreditState spied = PowerMockito.spy(insufficientCreditState);
-        PowerMockito.doThrow(new UnsupportedOperationException("not valid state for sell")).when(spied).attemptSell();
-
-        spied.insertCoin(Coin.TWENTY_CENTS);
-
-        Assert.assertTrue(spied.vendingMachine.getCurrentState() instanceof TechnicalErrorState);
-        Mockito.verify(spied, Mockito.times(1)).attemptSell();
-    }
 }

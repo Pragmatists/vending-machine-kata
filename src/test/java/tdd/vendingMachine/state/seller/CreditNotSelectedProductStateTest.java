@@ -379,28 +379,4 @@ public class CreditNotSelectedProductStateTest implements StateTest {
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
         verifyConfigMock(configMock, 3, 2, 2);
     }
-
-    @Test
-    public void should_send_to_technical_error_state() throws Exception {
-        int initialCoinsOnShelf = 10;
-        VendingMachineConfiguration configMock = getConfigMock(10, 10, 10);
-        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(configMock);
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
-        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(initialCoinsOnShelf, 5);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelves,
-            coinShelves);
-        creditNotSelectedProductState = transformToAndValidateInitialState(vendingMachine);
-
-        creditNotSelectedProductState.insertCoin(Coin.ONE);
-        creditNotSelectedProductState.insertCoin(Coin.TWENTY_CENTS);
-        creditNotSelectedProductState.insertCoin(Coin.TWENTY_CENTS);
-
-        CreditNotSelectedProductState spied = PowerMockito.spy(creditNotSelectedProductState);
-        PowerMockito.doThrow(new UnsupportedOperationException("invalid state")).when(spied).attemptSell();
-
-        spied.selectShelfNumber(0);
-
-        Assert.assertTrue(spied.vendingMachine.getCurrentState() instanceof TechnicalErrorState);
-        Mockito.verify(spied, Mockito.times(1)).attemptSell();
-    }
 }

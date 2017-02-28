@@ -17,13 +17,13 @@ import java.util.NoSuchElementException;
  * State representing a machine with a selected product but with credit lower than
  * the selected product's price
  */
-public class InsufficientCreditState extends State {
+public class InsufficientCreditState extends SellerState {
 
     private static final Logger logger = Logger.getLogger(InsufficientCreditState.class);
     public static final String label = "HAS CREDIT PRODUCT SELECTED";
 
     public InsufficientCreditState(VendingMachine vendingMachine) {
-        super(vendingMachine, true);
+        super(vendingMachine);
     }
 
     @Override
@@ -41,10 +41,6 @@ public class InsufficientCreditState extends State {
             logger.error(unableToProvideBalanceException);
             this.returnCreditStackToCashPickupBucketAndSetToReadyState(unableToProvideBalanceException.getMessage(),
                 unableToProvideBalanceException.getPendingBalance());
-        } catch (UnsupportedOperationException uoe) {
-            logger.error(uoe);
-            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
-            vendingMachine.setCurrentState(vendingMachine.getTechnicalErrorState());
         }
 
     }

@@ -15,13 +15,13 @@ import java.util.NoSuchElementException;
  * @since 1.0
  * State representing that machine has credit received and no product has been selected.
  */
-public class CreditNotSelectedProductState extends State {
+public class CreditNotSelectedProductState extends SellerState {
 
     private static final Logger logger = Logger.getLogger(CreditNotSelectedProductState.class);
     public static final String label = "HAS CREDIT NO PRODUCT SELECTED";
 
     public CreditNotSelectedProductState(VendingMachine vendingMachine) {
-        super(vendingMachine, true);
+        super(vendingMachine);
     }
 
     @Override
@@ -61,12 +61,7 @@ public class CreditNotSelectedProductState extends State {
             logger.error(unableToProvideBalanceException);
             this.returnCreditStackToCashPickupBucketAndSetToReadyState(unableToProvideBalanceException.getMessage(),
                 unableToProvideBalanceException.getPendingBalance());
-        } catch (UnsupportedOperationException uoe) {
-            logger.error(uoe);
-            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
-            vendingMachine.setCurrentState(vendingMachine.getTechnicalErrorState());
         }
-
     }
 
     @Override

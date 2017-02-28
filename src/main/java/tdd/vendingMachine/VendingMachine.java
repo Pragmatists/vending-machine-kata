@@ -5,6 +5,9 @@ import org.apache.log4j.Logger;
 import tdd.vendingMachine.domain.*;
 import tdd.vendingMachine.domain.exception.*;
 import tdd.vendingMachine.state.*;
+import tdd.vendingMachine.state.seller.CreditNotSelectedProductState;
+import tdd.vendingMachine.state.seller.InsufficientCreditState;
+import tdd.vendingMachine.state.seller.NoCreditSelectedProductState;
 import tdd.vendingMachine.util.Constants;
 import tdd.vendingMachine.validation.VendingMachineValidator;
 import tdd.vendingMachine.view.VendingMachineMessages;
@@ -38,7 +41,7 @@ public final class VendingMachine {
 
     VendingMachine(@NonNull Map<Integer, Shelf<Product>> productShelves, @NonNull Map<Coin, Shelf<Coin>> coinShelves) {
         vendingMachineConfiguration = new VendingMachineConfiguration();
-        VendingMachineValidator.validate(vendingMachineConfiguration, productShelves, coinShelves);
+        VendingMachineValidator.validateNewVendingMachineParameters(vendingMachineConfiguration, productShelves, coinShelves);
         this.productShelves = productShelves;
         this.coinShelves = Collections.unmodifiableMap(coinShelves);
         this.credit = new AtomicInteger(0);
@@ -92,34 +95,6 @@ public final class VendingMachine {
         return currentState;
     }
 
-    public void setCurrentState(State state) {
-        this.currentState = state;
-    }
-
-    public SoldOutState getSoldOutState() {
-        return soldOutState;
-    }
-
-    public CreditNotSelectedProductState getCreditNotSelectedProductState() {
-        return creditNotSelectedProductState;
-    }
-
-    public ReadyState getReadyState() {
-        return readyState;
-    }
-
-    public NoCreditSelectedProductState getNoCreditSelectedProductState() {
-        return noCreditSelectedProductState;
-    }
-
-    public InsufficientCreditState getInsufficientCreditState() {
-        return this.insufficientCreditState;
-    }
-
-    public State getTechnicalErrorState() {
-        return technicalErrorState;
-    }
-
     public Product getSelectedProduct() {
         return selectedShelf != null ? this.selectedShelf.getType() : null;
     }
@@ -128,7 +103,7 @@ public final class VendingMachine {
      * Returns the available credit on the vending machine
      * @return int must be greater or equal to zero.
      */
-    public int getCredit() {
+    public final int getCredit() {
         return credit.get();
     }
 
@@ -378,4 +353,52 @@ public final class VendingMachine {
         }
     }
 
+    /**
+     * Evaluates if there are products in the vending machine
+     * @return true if all product shelves are empty false otherwise
+     */
+    public boolean isSoldOut() {
+        return countTotalAmountProducts() == 0;
+    }
+
+    public void setStateToTechnicalErrorState() {
+        this.currentState = technicalErrorState;
+    }
+
+    /**
+     * Attempts to set the vending machine to soldOut state
+     */
+    public void setStateToSoldOutState() {
+        if (!isSoldOut()) setStateToTechnicalErrorState();
+        this.currentState = soldOutState;
+    }
+
+    /**
+     * Attempts to send the vending machine to ReadyState
+     */
+    public void setStateToReadyState() {
+        VendingMachineValidator.validateToReadyStateMachine(this);
+        this.currentState = readyState;
+    }
+
+    /**
+     * Attempts to send the vending machine to InsufficientCreditState
+     */
+    public void setStateToInsufficientCreditState() {
+        this.currentState = insufficientCreditState;
+    }
+
+    /**
+     * Attempts to send the vending machine to NoCreditSelectedProductState
+     */
+    public void setStateToNoCreditSelectedProductState() {
+        this.currentState = noCreditSelectedProductState;
+    }
+
+    /**
+     * Attempts to send the vending machine to NotSelectedProductState
+     */
+    public void setStateToCreditNotSelectedProductState() {
+        this.currentState = creditNotSelectedProductState;
+    }
 }
