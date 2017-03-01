@@ -258,7 +258,7 @@ public class VendingMachineValidatorTest {
         VendingMachine vendingMachineMock  = provideMockReturningValuesForState(true, 0, false, null);
         boolean exceptionThrown = false;
         try {
-            VendingMachineValidator.validateToReadyStateMachine(vendingMachineMock);
+            VendingMachineValidator.validateToReadyState(vendingMachineMock);
         } catch (IllegalStateException ise) {
             exceptionThrown = true;
         }
@@ -270,7 +270,7 @@ public class VendingMachineValidatorTest {
         VendingMachine vendingMachineMock  = provideMockReturningValuesForState(false, 100, false, null);
         boolean exceptionThrown = false;
         try {
-            VendingMachineValidator.validateToReadyStateMachine(vendingMachineMock);
+            VendingMachineValidator.validateToReadyState(vendingMachineMock);
         } catch (IllegalStateException ise) {
             exceptionThrown = true;
         }
@@ -282,7 +282,7 @@ public class VendingMachineValidatorTest {
         VendingMachine vendingMachineMock  = provideMockReturningValuesForState(false, 0, false, null);
         boolean exceptionThrown = false;
         try {
-            VendingMachineValidator.validateToReadyStateMachine(vendingMachineMock);
+            VendingMachineValidator.validateToReadyState(vendingMachineMock);
         } catch (IllegalStateException ise) {
             exceptionThrown = true;
         }
@@ -294,7 +294,7 @@ public class VendingMachineValidatorTest {
         VendingMachine vendingMachineMock  = provideMockReturningValuesForState(false, 0, true, Mockito.mock(Product.class));
         boolean exceptionThrown = false;
         try {
-            VendingMachineValidator.validateToReadyStateMachine(vendingMachineMock);
+            VendingMachineValidator.validateToReadyState(vendingMachineMock);
         } catch (IllegalStateException ise) {
             exceptionThrown = true;
         }
@@ -304,7 +304,7 @@ public class VendingMachineValidatorTest {
     @Test
     public void should_validate_machine_qualifies_to_ready() throws Exception {
         VendingMachine vendingMachineMock  = provideMockReturningValuesForState(false, 0, true, null);
-        VendingMachineValidator.validateToReadyStateMachine(vendingMachineMock);
+        VendingMachineValidator.validateToReadyState(vendingMachineMock);
         verifyMockExecutionForState(vendingMachineMock, false, false, 1, 1, 1, 1);
     }
 }

@@ -3,8 +3,14 @@ package tdd.vendingMachine;
 import lombok.NonNull;
 import org.apache.log4j.Logger;
 import tdd.vendingMachine.domain.*;
-import tdd.vendingMachine.domain.exception.*;
-import tdd.vendingMachine.state.*;
+import tdd.vendingMachine.domain.exception.CashDispenserFullException;
+import tdd.vendingMachine.domain.exception.NotEnoughSlotsAvailableDispenserException;
+import tdd.vendingMachine.domain.exception.ShelfEmptyNotAvailableForSelectionException;
+import tdd.vendingMachine.domain.exception.UnableToProvideBalanceException;
+import tdd.vendingMachine.state.ReadyState;
+import tdd.vendingMachine.state.SoldOutState;
+import tdd.vendingMachine.state.State;
+import tdd.vendingMachine.state.TechnicalErrorState;
 import tdd.vendingMachine.state.seller.CreditNotSelectedProductState;
 import tdd.vendingMachine.state.seller.InsufficientCreditState;
 import tdd.vendingMachine.state.seller.NoCreditSelectedProductState;
@@ -361,15 +367,11 @@ public final class VendingMachine {
         return countTotalAmountProducts() == 0;
     }
 
-    public void setStateToTechnicalErrorState() {
-        this.currentState = technicalErrorState;
-    }
-
     /**
      * Attempts to set the vending machine to soldOut state
      */
     public void setStateToSoldOutState() {
-        if (!isSoldOut()) setStateToTechnicalErrorState();
+        VendingMachineValidator.validateToSoldOutState(this);
         this.currentState = soldOutState;
     }
 
@@ -377,7 +379,7 @@ public final class VendingMachine {
      * Attempts to send the vending machine to ReadyState
      */
     public void setStateToReadyState() {
-        VendingMachineValidator.validateToReadyStateMachine(this);
+        VendingMachineValidator.validateToReadyState(this);
         this.currentState = readyState;
     }
 
@@ -385,6 +387,7 @@ public final class VendingMachine {
      * Attempts to send the vending machine to InsufficientCreditState
      */
     public void setStateToInsufficientCreditState() {
+        VendingMachineValidator.validateToInsufficientCreditState(this);
         this.currentState = insufficientCreditState;
     }
 
@@ -392,6 +395,7 @@ public final class VendingMachine {
      * Attempts to send the vending machine to NoCreditSelectedProductState
      */
     public void setStateToNoCreditSelectedProductState() {
+        VendingMachineValidator.validateToNoCreditSelectedProductState(this);
         this.currentState = noCreditSelectedProductState;
     }
 
@@ -399,6 +403,14 @@ public final class VendingMachine {
      * Attempts to send the vending machine to NotSelectedProductState
      */
     public void setStateToCreditNotSelectedProductState() {
+        VendingMachineValidator.validateCreditNotSelectedProductState(this);
         this.currentState = creditNotSelectedProductState;
+    }
+
+    /**
+     * Sets the machine state to technical error state
+     */
+    public void setStateToTechnicalErrorState() {
+        this.currentState = technicalErrorState;
     }
 }

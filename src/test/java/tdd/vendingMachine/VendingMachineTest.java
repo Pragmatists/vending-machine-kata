@@ -16,8 +16,12 @@ import tdd.vendingMachine.domain.Product;
 import tdd.vendingMachine.domain.Shelf;
 import tdd.vendingMachine.domain.VendingMachineConfiguration;
 import tdd.vendingMachine.domain.exception.*;
+import tdd.vendingMachine.state.ReadyState;
 import tdd.vendingMachine.state.SoldOutState;
-import tdd.vendingMachine.state.State;
+import tdd.vendingMachine.state.TechnicalErrorState;
+import tdd.vendingMachine.state.seller.CreditNotSelectedProductState;
+import tdd.vendingMachine.state.seller.InsufficientCreditState;
+import tdd.vendingMachine.state.seller.NoCreditSelectedProductState;
 import tdd.vendingMachine.util.Constants;
 import tdd.vendingMachine.util.TestUtils.TestUtils;
 import tdd.vendingMachine.view.VendingMachineMessages;
@@ -31,16 +35,16 @@ import java.util.*;
 @PowerMockIgnore(value = {"javax.management.*"})
 public class VendingMachineTest {
 
-    private Product COLA_199_025;
+    private Product COLA_190_025;
 
     @Before
     public void setup() throws Exception {
-        COLA_199_025 = new Product(190, "COLA_199_025");
+        COLA_190_025 = new Product(190, "COLA_190_025");
     }
 
     @After
     public void tearDown() {
-        COLA_199_025 = null;
+        COLA_190_025 = null;
     }
 
     /**
@@ -99,7 +103,7 @@ public class VendingMachineTest {
     public void should_fail_displaying_product_price_invalid_shelf_number() throws Exception {
         int coinShelfCapacity = 10;
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, 5);
 
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
@@ -114,7 +118,7 @@ public class VendingMachineTest {
     public void should_display_product_price_for_valid_shelf_number() throws Exception {
         int coinShelfCapacity = 10;
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, 5);
 
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
@@ -132,7 +136,7 @@ public class VendingMachineTest {
     public void should_add_coin_to_credit_stack() throws Exception {
         int coinShelfCapacity = 10;
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItem(COLA_199_025, 1, coinShelfCapacity);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItem(COLA_190_025, 1, coinShelfCapacity);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, 5);
 
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
@@ -158,7 +162,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, 10);
         VendingMachine vendingMachineCashDispenserFull = new VendingMachine(productShelves, coinShelves);
 
@@ -176,7 +180,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachineCashDispenserFull = new VendingMachine(productShelves, coinShelves);
 
@@ -204,7 +208,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -221,7 +225,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -239,7 +243,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -260,7 +264,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -289,7 +293,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -306,22 +310,17 @@ public class VendingMachineTest {
     }
 
     @Test
-    public void should_validate_states_are_not_null() throws Exception {
+    public void should_validate_current_state_is_not_null() throws Exception {
         int initialShelfCount = 7;
         int coinShelfCapacity = 10;
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
         Assert.assertNotNull(vendingMachine.getCurrentState());
-        Assert.assertNotNull(vendingMachine.getReadyState());
-        Assert.assertNotNull(vendingMachine.getCreditNotSelectedProductState());
-        Assert.assertNotNull(vendingMachine.getNoCreditSelectedProductState());
-        Assert.assertNotNull(vendingMachine.getInsufficientCreditState());
-        Assert.assertNotNull(vendingMachine.getSoldOutState());
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
         verifyConfigMock(mockConfig, 1, 1, 1);
@@ -334,7 +333,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -353,7 +352,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -370,7 +369,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        List<Product> products = Collections.singletonList(COLA_199_025);
+        List<Product> products = Collections.singletonList(COLA_190_025);
         VendingMachine soldOutVendingMachine = new VendingMachineFactory().buildSoldOutVendingMachineNoCash(products);
         Assert.assertNull(soldOutVendingMachine.getSelectedProduct());
         soldOutVendingMachine.selectProductGivenShelfNumber(0);
@@ -386,7 +385,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        VendingMachine vendingMachine = new VendingMachine(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
+        VendingMachine vendingMachine = new VendingMachine(TestUtils.buildShelvesWithItems(COLA_190_025, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, coinsPerShelf));
 
         int totalAmountOnDispenser = Arrays.stream(Coin.values())
@@ -406,7 +405,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        VendingMachine spiedVendingMachine = PowerMockito.spy(new VendingMachine(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
+        VendingMachine spiedVendingMachine = PowerMockito.spy(new VendingMachine(TestUtils.buildShelvesWithItems(COLA_190_025, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, 10)));
         Mockito.when(spiedVendingMachine.dispenserHasCoinSlotAvailable(tenCents)).thenReturn(true);//mock accepting coins to a full cash dispenser
 
@@ -428,7 +427,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -463,7 +462,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -493,7 +492,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -511,7 +510,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
         vendingMachine.countProductsOnShelf(invalidShelfNumber);
@@ -547,7 +546,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -573,7 +572,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -591,7 +590,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -628,7 +627,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -646,7 +645,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -661,13 +660,13 @@ public class VendingMachineTest {
 
     @Test
     public void should_give_pending_balance_as_selected_product_price_minus_total_credit() throws Exception {
-        Product expectedSelectedProduct = COLA_199_025;
+        Product expectedSelectedProduct = COLA_190_025;
         int initialShelfCount = 7;
         int coinShelfCapacity = 10;
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -689,7 +688,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -880,26 +879,6 @@ public class VendingMachineTest {
     }
 
     @Test
-    public void should_update_state() throws Exception {
-        int initialShelfCount = 7;
-        int coinShelfCapacity = 10;
-        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
-        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
-
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
-        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
-        VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
-
-        State soldOutState = vendingMachine.getSoldOutState();
-        Assert.assertFalse(vendingMachine.getCurrentState() instanceof SoldOutState);
-        vendingMachine.setCurrentState(soldOutState);
-        Assert.assertTrue(vendingMachine.getCurrentState() instanceof SoldOutState);
-
-        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
-        verifyConfigMock(mockConfig, 1, 1, 1);
-    }
-
-    @Test
     public void should_fail_since_no_coin_shelves_are_provided() throws Exception {
         int coinShelfCapacity = 6;
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
@@ -929,7 +908,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, productShelfCount, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         boolean thrownException = false;
 
@@ -955,7 +934,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 1, productShelfCapacity);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
 
         boolean thrownException = false;
@@ -979,7 +958,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -999,7 +978,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -1020,7 +999,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -1049,7 +1028,7 @@ public class VendingMachineTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_199_025, 1);
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
         VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
 
@@ -1071,4 +1050,322 @@ public class VendingMachineTest {
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
         verifyConfigMock(mockConfig, 1, 1, 1);
     }
+
+
+    @Test
+    public void should_update_state_to_sold_out() throws Exception {
+        int initialShelfCount = 7;
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 0);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
+        VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
+
+        vendingMachine.setStateToSoldOutState();
+
+        Assert.assertTrue(vendingMachine.getCurrentState() instanceof SoldOutState);
+
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
+        verifyConfigMock(mockConfig, 1, 1, 1);
+    }
+
+
+    @Test(expected = IllegalStateException.class)
+    public void should_fail_update_state_to_sold_out() throws Exception {
+        int initialShelfCount = 7;
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
+        VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
+
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
+        verifyConfigMock(mockConfig, 1, 1, 1);
+
+        vendingMachine.setStateToSoldOutState();
+    }
+
+    @Test
+    public void should_update_state_to_insufficientCredit() throws Exception {
+        int initialShelfCount = 7;
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
+        VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
+        verifyConfigMock(mockConfig, 1, 1, 1);
+
+        vendingMachine.selectProductGivenShelfNumber(0);
+        vendingMachine.setStateToInsufficientCreditState();
+
+        Assert.assertTrue(vendingMachine.getCurrentState() instanceof InsufficientCreditState);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void should_fail_update_state_to_insufficientCredit_no_selectedProduct() throws Exception {
+        int initialShelfCount = 7;
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
+        VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
+        verifyConfigMock(mockConfig, 1, 1, 1);
+
+        vendingMachine.setStateToInsufficientCreditState();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void should_fail_update_state_to_insufficientCredit_no_hasExactCredit() throws Exception {
+        int initialShelfCount = 5;
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
+        VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
+        verifyConfigMock(mockConfig, 1, 1, 1);
+
+        List<Coin> totalProductPriceInCoins = Arrays.asList(Coin.TWENTY_CENTS, Coin.TWENTY_CENTS, Coin.FIFTY_CENTS, Coin.ONE);
+
+        for(Coin coin: totalProductPriceInCoins) {
+            vendingMachine.addCoinToCredit(coin);
+        }
+
+        vendingMachine.selectProductGivenShelfNumber(0);
+        vendingMachine.setStateToInsufficientCreditState();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void should_fail_update_state_to_insufficientCredit_no_creditExceedsPrice() throws Exception {
+        int initialShelfCount = 5;
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
+        VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
+        verifyConfigMock(mockConfig, 1, 1, 1);
+
+        List<Coin> totalProductPriceInCoins = Arrays.asList(Coin.FIFTY_CENTS, Coin.TWENTY_CENTS, Coin.FIFTY_CENTS, Coin.ONE);
+
+        for(Coin coin: totalProductPriceInCoins) {
+            vendingMachine.addCoinToCredit(coin);
+        }
+
+        vendingMachine.selectProductGivenShelfNumber(0);
+        vendingMachine.setStateToInsufficientCreditState();
+    }
+
+    @Test
+    public void should_update_state_to_noCreditSelectedProductState() throws Exception {
+        int initialShelfCount = 7;
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
+        VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
+        verifyConfigMock(mockConfig, 1, 1, 1);
+
+        vendingMachine.selectProductGivenShelfNumber(0);
+        vendingMachine.setStateToNoCreditSelectedProductState();
+
+        Assert.assertTrue(vendingMachine.getCurrentState() instanceof NoCreditSelectedProductState);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void should_fail_update_state_to_noCreditSelectedProductState_no_selected_product() throws Exception {
+        int initialShelfCount = 7;
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
+        VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
+        verifyConfigMock(mockConfig, 1, 1, 1);
+
+        vendingMachine.setStateToNoCreditSelectedProductState();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void should_fail_update_state_to_noCreditSelectedProductState_has_credit() throws Exception {
+        int initialShelfCount = 7;
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
+        VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
+        verifyConfigMock(mockConfig, 1, 1, 1);
+
+        vendingMachine.addCoinToCredit(Coin.TEN_CENTS);
+        vendingMachine.setStateToNoCreditSelectedProductState();
+    }
+
+    @Test
+    public void should_update_state_to_readyState() throws Exception {
+        int initialShelfCount = 7;
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
+        VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
+
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
+        verifyConfigMock(mockConfig, 1, 1, 1);
+
+        vendingMachine.setStateToReadyState();
+
+        Assert.assertTrue(vendingMachine.getCurrentState() instanceof ReadyState);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void should_fail_update_state_to_readyState_soldOut() throws Exception {
+        int initialShelfCount = 7;
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 0);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
+        VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
+
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
+        verifyConfigMock(mockConfig, 1, 1, 1);
+
+        vendingMachine.setStateToReadyState();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void should_fail_update_state_to_readyState_hasCredit() throws Exception {
+        int initialShelfCount = 7;
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
+        VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
+
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
+        verifyConfigMock(mockConfig, 1, 1, 1);
+
+        vendingMachine.addCoinToCredit(Coin.TEN_CENTS);
+        vendingMachine.setStateToReadyState();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void should_fail_update_state_to_readyState_hasSelectedProduct() throws Exception {
+        int initialShelfCount = 7;
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
+        VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
+
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
+        verifyConfigMock(mockConfig, 1, 1, 1);
+
+        vendingMachine.selectProductGivenShelfNumber(0);
+        vendingMachine.setStateToReadyState();
+    }
+
+    @Test
+    public void should_update_state_to_CreditNotSelectedProduct() throws Exception {
+        int initialShelfCount = 7;
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
+        VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
+
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
+        verifyConfigMock(mockConfig, 1, 1, 1);
+
+        vendingMachine.addCoinToCredit(Coin.FIFTY_CENTS);
+        vendingMachine.setStateToCreditNotSelectedProductState();
+
+        Assert.assertTrue(vendingMachine.getCurrentState() instanceof CreditNotSelectedProductState);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void should_fail_update_state_to_CreditNotSelectedProduct_hasNoCredit() throws Exception {
+        int initialShelfCount = 7;
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
+        VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
+
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
+        verifyConfigMock(mockConfig, 1, 1, 1);
+
+        vendingMachine.setStateToCreditNotSelectedProductState();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void should_fail_update_state_to_CreditNotSelectedProduct_hasSelectedProduct() throws Exception {
+        int initialShelfCount = 7;
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
+        VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
+
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
+        verifyConfigMock(mockConfig, 1, 1, 1);
+
+        vendingMachine.selectProductGivenShelfNumber(0);
+        vendingMachine.setStateToCreditNotSelectedProductState();
+    }
+
+    @Test
+    public void should_update_state_to_TechnicalErrorState() throws Exception {
+        int initialShelfCount = 7;
+        int coinShelfCapacity = 10;
+        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+
+        Map<Integer, Shelf<Product>> productShelves = TestUtils.buildShelvesWithItems(COLA_190_025, 1);
+        Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialShelfCount);
+        VendingMachine vendingMachine = new VendingMachine(productShelves, coinShelves);
+
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
+        verifyConfigMock(mockConfig, 1, 1, 1);
+
+        vendingMachine.setStateToTechnicalErrorState();
+
+        Assert.assertTrue(vendingMachine.getCurrentState() instanceof TechnicalErrorState);
+    }
+
 }
