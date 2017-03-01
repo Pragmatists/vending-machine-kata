@@ -1,4 +1,4 @@
-package tdd.vendingMachine.state;
+package tdd.vendingMachine.state.seller;
 
 import org.apache.log4j.Logger;
 import tdd.vendingMachine.VendingMachine;
@@ -34,6 +34,10 @@ public class CreditNotSelectedProductState extends SellerState {
                 cashDispenserFullException.getMessage(),
                 VendingMachineMessages.provideCashToDisplay(cashDispenserFullException.getAmountDeclined()))
             );
+        } catch (Exception uoe) {
+            logger.error(uoe);
+            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
+            vendingMachine.setStateToTechnicalErrorState();
         }
     }
 
@@ -43,8 +47,8 @@ public class CreditNotSelectedProductState extends SellerState {
             vendingMachine.selectProductGivenShelfNumber(shelfNumber);
             vendingMachine.displayProductPrice(shelfNumber);
             this.attemptSell();
-            if (vendingMachine.getCurrentState() instanceof CreditNotSelectedProductState) {
-                vendingMachine.setCurrentState(vendingMachine.getInsufficientCreditState());
+            if (vendingMachine.getCurrentState().equals(this)) {
+                vendingMachine.setStateToInsufficientCreditState();
             }
         } catch (NoSuchElementException nse) {
             logger.error(nse);
@@ -61,12 +65,23 @@ public class CreditNotSelectedProductState extends SellerState {
             logger.error(unableToProvideBalanceException);
             this.returnCreditStackToCashPickupBucketAndSetToReadyState(unableToProvideBalanceException.getMessage(),
                 unableToProvideBalanceException.getPendingBalance());
+        } catch (Exception uoe) {
+            logger.error(uoe);
+            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
+            vendingMachine.setStateToTechnicalErrorState();
         }
     }
 
     @Override
     public void cancel() {
-        vendingMachine.returnAllCreditToBucket();
-        vendingMachine.setCurrentState(vendingMachine.getReadyState());
+        try {
+            vendingMachine.returnAllCreditToBucket();
+            vendingMachine.setStateToReadyState();
+        } catch (Exception e) {
+            logger.error(e);
+            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
+            vendingMachine.setStateToTechnicalErrorState();
+
+        }
     }
 }

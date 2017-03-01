@@ -1,4 +1,4 @@
-package tdd.vendingMachine.state;
+package tdd.vendingMachine.state.seller;
 
 import org.apache.log4j.Logger;
 import tdd.vendingMachine.VendingMachine;
@@ -29,8 +29,8 @@ public class NoCreditSelectedProductState extends SellerState {
         try {
             vendingMachine.addCoinToCredit(coin);
             this.attemptSell();
-            if (vendingMachine.getCurrentState() instanceof NoCreditSelectedProductState) {
-                vendingMachine.setCurrentState(vendingMachine.getInsufficientCreditState());
+            if (vendingMachine.getCurrentState().equals(this)) {
+                vendingMachine.setStateToInsufficientCreditState();
             }
         } catch (CashDispenserFullException cashDispenserFullException) {
             logger.error(cashDispenserFullException);
@@ -42,6 +42,10 @@ public class NoCreditSelectedProductState extends SellerState {
             logger.error(unableToProvideBalanceException);
             this.returnCreditStackToCashPickupBucketAndSetToReadyState(unableToProvideBalanceException.getMessage(),
                 unableToProvideBalanceException.getPendingBalance());
+        } catch (Exception uoe) {
+            logger.error(uoe);
+            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
+            vendingMachine.setStateToTechnicalErrorState();
         }
     }
 
@@ -61,11 +65,22 @@ public class NoCreditSelectedProductState extends SellerState {
                 VendingMachineMessages.UNABLE_TO_SELECT_EMPTY_SHELF.label,
                 e.getShelfNumber(), false)
             );
+        } catch (Exception uoe) {
+            logger.error(uoe);
+            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
+            vendingMachine.setStateToTechnicalErrorState();
         }
     }
 
     @Override
     public void cancel() {
-        vendingMachine.setCurrentState(vendingMachine.getReadyState());
+        try {
+            vendingMachine.undoProductSelection();
+            vendingMachine.setStateToReadyState();
+        } catch (Exception e) {
+            logger.error(e);
+            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
+            vendingMachine.setStateToTechnicalErrorState();
+        }
     }
 }

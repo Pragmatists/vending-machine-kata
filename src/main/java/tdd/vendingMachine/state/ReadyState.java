@@ -14,25 +14,30 @@ import java.util.NoSuchElementException;
  * @since 1.0
  * State representing a vending machine with no credit and no selected product
  */
-public class ReadyState extends State {
+public class ReadyState implements State {
 
     private static final Logger logger = Logger.getLogger(ReadyState.class);
     public static final String label = "READY";
+    protected final VendingMachine vendingMachine;
 
     public ReadyState(VendingMachine vendingMachine) {
-        super(vendingMachine, false);
+        this.vendingMachine = vendingMachine;
     }
 
     @Override
     public void insertCoin(Coin coin) {
         try {
             vendingMachine.addCoinToCredit(coin);
-            vendingMachine.setCurrentState(vendingMachine.getCreditNotSelectedProductState());
+            vendingMachine.setStateToCreditNotSelectedProductState();
         } catch (CashDispenserFullException cashDispenserFullException) {
             logger.error(cashDispenserFullException);
             this.vendingMachine.showMessageOnDisplay(String.format("%s %s: %s", coin.label,
                 VendingMachineMessages.CASH_NOT_ACCEPTED_DISPENSER_FULL.label,
                 VendingMachineMessages.provideCashToDisplay(this.vendingMachine.getCredit())));
+        } catch (Exception uoe) {
+            logger.error(uoe);
+            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
+            vendingMachine.setStateToTechnicalErrorState();
         }
     }
 
@@ -41,7 +46,7 @@ public class ReadyState extends State {
         try {
             vendingMachine.selectProductGivenShelfNumber(shelfNumber);
             vendingMachine.displayProductPrice(shelfNumber);
-            vendingMachine.setCurrentState(vendingMachine.getNoCreditSelectedProductState());
+            vendingMachine.setStateToNoCreditSelectedProductState();
         } catch (NoSuchElementException nse) {
             logger.error(nse);
             vendingMachine.showMessageOnDisplay(
@@ -51,6 +56,10 @@ public class ReadyState extends State {
             vendingMachine.showMessageOnDisplay(String.format("%s: %d",
                 shelfEmptyException.getMessage(),
                 shelfEmptyException.getShelfNumber()));
+        } catch (Exception uoe) {
+            logger.error(uoe);
+            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
+            vendingMachine.setStateToTechnicalErrorState();
         }
     }
 

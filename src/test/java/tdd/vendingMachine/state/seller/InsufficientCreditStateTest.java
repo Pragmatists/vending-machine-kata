@@ -1,4 +1,4 @@
-package tdd.vendingMachine.state;
+package tdd.vendingMachine.state.seller;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -17,7 +17,12 @@ import tdd.vendingMachine.domain.Product;
 import tdd.vendingMachine.domain.Shelf;
 import tdd.vendingMachine.domain.VendingMachineConfiguration;
 import tdd.vendingMachine.dto.ProductImport;
+import tdd.vendingMachine.state.ReadyState;
+import tdd.vendingMachine.state.State;
+import tdd.vendingMachine.state.StateTest;
+import tdd.vendingMachine.state.TechnicalErrorState;
 import tdd.vendingMachine.util.TestUtils.TestUtils;
+import tdd.vendingMachine.validation.VendingMachineValidator;
 import tdd.vendingMachine.view.VendingMachineMessages;
 
 import java.util.Arrays;
@@ -32,7 +37,7 @@ import java.util.Map;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({InsufficientCreditState.class, VendingMachineConfiguration.class,
-    VendingMachineFactory.class, VendingMachine.class, State.class})
+    VendingMachineFactory.class, VendingMachine.class, State.class, SellerState.class})
 @PowerMockIgnore(value = {"javax.management.*"})
 public class InsufficientCreditStateTest implements StateTest {
 
@@ -41,22 +46,21 @@ public class InsufficientCreditStateTest implements StateTest {
 
     @Override
     public InsufficientCreditState transformToAndValidateInitialState(VendingMachine vendingMachine) {
-        Assert.assertEquals(0, vendingMachine.getCredit()); //no credit
-        Assert.assertNull(vendingMachine.getSelectedProduct()); //no product
+        VendingMachineValidator.validateToReadyState(vendingMachine);
         Assert.assertTrue(vendingMachine.getCurrentState() instanceof ReadyState);
         ReadyState initialState = (ReadyState) vendingMachine.getCurrentState();
 
         //modify to get desired state
         Coin tenCents = Coin.TEN_CENTS;
         initialState.insertCoin(tenCents);
-        Assert.assertTrue(initialState.vendingMachine.getCurrentState() instanceof CreditNotSelectedProductState);
-        initialState.vendingMachine.getCurrentState().selectShelfNumber(1);
+        Assert.assertTrue(vendingMachine.getCurrentState() instanceof CreditNotSelectedProductState);
+        vendingMachine.getCurrentState().selectShelfNumber(1);
 
         //validate initial state
-        Assert.assertEquals(tenCents.denomination, initialState.vendingMachine.getCredit());
-        Assert.assertNotNull(initialState.vendingMachine.getSelectedProduct());
-        Assert.assertTrue(initialState.vendingMachine.getCurrentState() instanceof InsufficientCreditState);
-        return (InsufficientCreditState) initialState.vendingMachine.getCurrentState();
+        Assert.assertEquals(tenCents.denomination, vendingMachine.getCredit());
+        Assert.assertNotNull(vendingMachine.getSelectedProduct());
+        Assert.assertTrue(vendingMachine.getCurrentState() instanceof InsufficientCreditState);
+        return (InsufficientCreditState) vendingMachine.getCurrentState();
     }
 
     @Before @Override
@@ -132,7 +136,7 @@ public class InsufficientCreditStateTest implements StateTest {
         Assert.assertEquals(0, insufficientCreditState.vendingMachine.getCredit());
 
         //state validation
-        Assert.assertNull(insufficientCreditState.vendingMachine.getSelectedProduct());
+        VendingMachineValidator.validateToReadyState(insufficientCreditState.vendingMachine);
         Assert.assertTrue(insufficientCreditState.vendingMachine.getCurrentState() instanceof ReadyState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
@@ -153,8 +157,7 @@ public class InsufficientCreditStateTest implements StateTest {
 
         insufficientCreditState.cancel();
 
-        Assert.assertEquals(0, insufficientCreditState.vendingMachine.getCreditStackSize());
-        Assert.assertEquals(0, insufficientCreditState.vendingMachine.getCredit());
+        VendingMachineValidator.validateToReadyState(insufficientCreditState.vendingMachine);
         Assert.assertTrue(insufficientCreditState.vendingMachine.getCurrentState() instanceof ReadyState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
@@ -211,8 +214,7 @@ public class InsufficientCreditStateTest implements StateTest {
         Assert.assertEquals(productsBeforeSell - 1, insufficientCreditState.vendingMachine.countTotalAmountProducts());
 
         //cash validation
-        Assert.assertTrue(insufficientCreditState.vendingMachine.isCreditStackEmpty());
-        Assert.assertEquals(0, insufficientCreditState.vendingMachine.getCredit());
+        VendingMachineValidator.validateToReadyState(insufficientCreditState.vendingMachine);
         Assert.assertTrue(insufficientCreditState.vendingMachine.getCurrentState() instanceof ReadyState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
@@ -249,8 +251,7 @@ public class InsufficientCreditStateTest implements StateTest {
         Assert.assertEquals(productsBeforeSell - 1, insufficientCreditState.vendingMachine.countTotalAmountProducts());
 
         //cash validation
-        Assert.assertTrue(insufficientCreditState.vendingMachine.isCreditStackEmpty());
-        Assert.assertEquals(0, insufficientCreditState.vendingMachine.getCredit());
+        VendingMachineValidator.validateToReadyState(insufficientCreditState.vendingMachine);
         Assert.assertTrue(insufficientCreditState.vendingMachine.getCurrentState() instanceof ReadyState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
@@ -285,8 +286,7 @@ public class InsufficientCreditStateTest implements StateTest {
         Assert.assertEquals(productsBeforeSell, insufficientCreditState.vendingMachine.countTotalAmountProducts());
 
         //cash validation
-        Assert.assertTrue(insufficientCreditState.vendingMachine.isCreditStackEmpty());
-        Assert.assertEquals(0, insufficientCreditState.vendingMachine.getCredit());
+        VendingMachineValidator.validateToReadyState(insufficientCreditState.vendingMachine);
         Assert.assertTrue(insufficientCreditState.vendingMachine.getCurrentState() instanceof ReadyState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
@@ -369,5 +369,67 @@ public class InsufficientCreditStateTest implements StateTest {
 
         Assert.assertTrue(spied.vendingMachine.getCurrentState() instanceof TechnicalErrorState);
         Mockito.verify(spied, Mockito.times(1)).attemptSell();
+    }
+
+    @Test
+    public void should_send_machine_to_technical_error_state_fail_adding_coins() throws Exception {
+        Coin fiftyCents = Coin.FIFTY_CENTS;
+        VendingMachineConfiguration configMock = getConfigMock(10, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(configMock);
+
+        VendingMachine spied = PowerMockito.spy(new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(products.get(0), 1),
+            TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(10, 5)));
+        PowerMockito.doThrow(new RuntimeException("fail to error")).when(spied, "addCoinToCredit", fiftyCents);
+
+        insufficientCreditState = new InsufficientCreditState(spied);
+
+        insufficientCreditState.insertCoin(fiftyCents);
+
+        Assert.assertTrue(insufficientCreditState.vendingMachine.getCurrentState() instanceof TechnicalErrorState);
+
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
+        Mockito.verify(spied, Mockito.times(1)).addCoinToCredit(fiftyCents);
+        verifyConfigMock(configMock, 3, 2, 2);
+    }
+
+    @Test
+    public void should_send_machine_to_technical_error_state_fail_selecting_shelf() throws Exception {
+        int shelfNumber = 0;
+        VendingMachineConfiguration configMock = getConfigMock(10, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(configMock);
+
+        VendingMachine spied = PowerMockito.spy(new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(products.get(0), 1),
+            TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(10, 5)));
+        PowerMockito.doThrow(new RuntimeException("fail to error")).when(spied, "selectProductGivenShelfNumber", shelfNumber);
+
+        insufficientCreditState = new InsufficientCreditState(spied);
+
+        insufficientCreditState.selectShelfNumber(shelfNumber);
+
+        Assert.assertTrue(insufficientCreditState.vendingMachine.getCurrentState() instanceof TechnicalErrorState);
+
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
+        Mockito.verify(spied, Mockito.times(1)).selectProductGivenShelfNumber(shelfNumber);
+        verifyConfigMock(configMock, 3, 2, 2);
+    }
+
+    @Test
+    public void should_send_machine_to_technical_error_state_fail_on_cancel() throws Exception {
+        VendingMachineConfiguration configMock = getConfigMock(10, 10, 10);
+        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(configMock);
+
+        VendingMachine spied = PowerMockito.spy(new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(products.get(0), 1),
+            TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(10, 5)));
+        PowerMockito.doThrow(new RuntimeException("fail to error")).when(spied, "returnAllCreditToBucket");
+
+        insufficientCreditState = new InsufficientCreditState(spied);
+
+        insufficientCreditState.cancel();
+
+        Assert.assertTrue(insufficientCreditState.vendingMachine.getCurrentState() instanceof TechnicalErrorState);
+
+        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
+        Mockito.verify(spied, Mockito.times(1)).returnAllCreditToBucket();
+        verifyConfigMock(configMock, 3, 2, 2);
     }
 }
