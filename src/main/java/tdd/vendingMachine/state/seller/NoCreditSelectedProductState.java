@@ -1,4 +1,4 @@
-package tdd.vendingMachine.state;
+package tdd.vendingMachine.state.seller;
 
 import org.apache.log4j.Logger;
 import tdd.vendingMachine.VendingMachine;
@@ -15,13 +15,13 @@ import java.util.NoSuchElementException;
  * @since 1.0
  * State representing a machine with no credit, but with a selected product.
  */
-public class NoCreditSelectedProductState extends State {
+public class NoCreditSelectedProductState extends SellerState {
 
     private static final Logger logger = Logger.getLogger(NoCreditSelectedProductState.class);
     public static final String label = "NO CREDIT SELECTED PRODUCT";
 
     public NoCreditSelectedProductState(VendingMachine vendingMachine) {
-        super(vendingMachine, true);
+        super(vendingMachine);
     }
 
     @Override
@@ -29,8 +29,8 @@ public class NoCreditSelectedProductState extends State {
         try {
             vendingMachine.addCoinToCredit(coin);
             this.attemptSell();
-            if (vendingMachine.getCurrentState() instanceof NoCreditSelectedProductState) {
-                vendingMachine.setCurrentState(vendingMachine.getInsufficientCreditState());
+            if (vendingMachine.getCurrentState().equals(this)) {
+                vendingMachine.setStateToInsufficientCreditState();
             }
         } catch (CashDispenserFullException cashDispenserFullException) {
             logger.error(cashDispenserFullException);
@@ -42,12 +42,11 @@ public class NoCreditSelectedProductState extends State {
             logger.error(unableToProvideBalanceException);
             this.returnCreditStackToCashPickupBucketAndSetToReadyState(unableToProvideBalanceException.getMessage(),
                 unableToProvideBalanceException.getPendingBalance());
-        } catch (UnsupportedOperationException uoe) {
+        } catch (Exception uoe) {
             logger.error(uoe);
             vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
-            vendingMachine.setCurrentState(vendingMachine.getTechnicalErrorState());
+            vendingMachine.setStateToTechnicalErrorState();
         }
-
     }
 
     @Override
@@ -66,11 +65,22 @@ public class NoCreditSelectedProductState extends State {
                 VendingMachineMessages.UNABLE_TO_SELECT_EMPTY_SHELF.label,
                 e.getShelfNumber(), false)
             );
+        } catch (Exception uoe) {
+            logger.error(uoe);
+            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
+            vendingMachine.setStateToTechnicalErrorState();
         }
     }
 
     @Override
     public void cancel() {
-        vendingMachine.setCurrentState(vendingMachine.getReadyState());
+        try {
+            vendingMachine.undoProductSelection();
+            vendingMachine.setStateToReadyState();
+        } catch (Exception e) {
+            logger.error(e);
+            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
+            vendingMachine.setStateToTechnicalErrorState();
+        }
     }
 }

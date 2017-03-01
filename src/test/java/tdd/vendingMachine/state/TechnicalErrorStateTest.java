@@ -64,7 +64,7 @@ public class TechnicalErrorStateTest implements StateTest {
     }
     @Override
     public TechnicalErrorState transformToAndValidateInitialState(VendingMachine vendingMachine) {
-        vendingMachine.setCurrentState(vendingMachine.getTechnicalErrorState());
+        vendingMachine.setStateToTechnicalErrorState();
         return (TechnicalErrorState) vendingMachine.getCurrentState();
     }
 
@@ -119,15 +119,5 @@ public class TechnicalErrorStateTest implements StateTest {
         Assert.assertTrue(StringUtils.isEmpty(technicalErrorState.vendingMachine.getDisplayCurrentMessage()));
         technicalErrorState.selectShelfNumber(0);
         Assert.assertTrue(technicalErrorState.vendingMachine.getDisplayCurrentMessage().contains(VendingMachineMessages.TECHNICAL_ERROR.label));
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void should_fail_on_attempt_to_sell() throws UnableToProvideBalanceException {
-        technicalErrorState.attemptSell();
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void should_fail_on_attempt_to_rollback() throws UnableToProvideBalanceException {
-        technicalErrorState.returnCreditStackToCashPickupBucketAndSetToReadyState("", 0);
     }
 }

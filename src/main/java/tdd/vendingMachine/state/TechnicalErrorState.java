@@ -9,10 +9,12 @@ import tdd.vendingMachine.view.VendingMachineMessages;
  * @since 1.0
  * State describing that vending machine requires technical assistance
  */
-public class TechnicalErrorState extends State {
+public class TechnicalErrorState implements State {
+
+    protected final VendingMachine vendingMachine;
 
     public TechnicalErrorState(VendingMachine vendingMachine) {
-        super(vendingMachine, false);
+        this.vendingMachine = vendingMachine;
     }
 
     @Override

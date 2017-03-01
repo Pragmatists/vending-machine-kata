@@ -71,7 +71,7 @@ public class VendingMachineFactoryTest {
         Product product = new Product(100, "product");
         VendingMachine soldOutVendingMachine = new VendingMachineFactory().buildSoldOutVendingMachineNoCash(product);
         Assert.assertEquals(0, soldOutVendingMachine.countCashInDispenser());
-        Assert.assertEquals(0, soldOutVendingMachine.countTotalAmountProducts());
+        Assert.assertTrue(soldOutVendingMachine.isSoldOut());
     }
 
     @Test(expected = NullPointerException.class)
