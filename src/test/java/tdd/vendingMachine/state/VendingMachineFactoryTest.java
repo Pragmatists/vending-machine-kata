@@ -1,4 +1,4 @@
-package tdd.vendingMachine;
+package tdd.vendingMachine.state;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -10,6 +10,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.Product;
 import tdd.vendingMachine.domain.Shelf;
 import tdd.vendingMachine.domain.VendingMachineConfiguration;
@@ -70,7 +71,6 @@ public class VendingMachineFactoryTest {
     public void should_build_sold_out_vending_machine() {
         Product product = new Product(100, "product");
         VendingMachine soldOutVendingMachine = new VendingMachineFactory().buildSoldOutVendingMachineNoCash(product);
-        Assert.assertEquals(0, soldOutVendingMachine.countCashInDispenser());
         Assert.assertTrue(soldOutVendingMachine.isSoldOut());
     }
 

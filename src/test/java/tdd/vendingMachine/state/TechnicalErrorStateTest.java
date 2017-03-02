@@ -11,13 +11,11 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import tdd.vendingMachine.VendingMachine;
-import tdd.vendingMachine.VendingMachineFactory;
 import tdd.vendingMachine.domain.Coin;
 import tdd.vendingMachine.domain.Product;
 import tdd.vendingMachine.domain.Shelf;
 import tdd.vendingMachine.domain.VendingMachineConfiguration;
-import tdd.vendingMachine.domain.exception.UnableToProvideBalanceException;
+import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.util.TestUtils.TestUtils;
 import tdd.vendingMachine.view.VendingMachineMessages;
 
@@ -28,7 +26,8 @@ import java.util.Map;
  * @since 1.0
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({TechnicalErrorState.class, VendingMachineConfiguration.class, VendingMachineFactory.class, VendingMachine.class})
+@PrepareForTest({TechnicalErrorState.class,
+    VendingMachineConfiguration.class, VendingMachineFactory.class, VendingMachine.class, VendingMachineImpl.class,})
 @PowerMockIgnore(value = {"javax.management.*"})
 public class TechnicalErrorStateTest implements StateTest {
 
@@ -64,8 +63,8 @@ public class TechnicalErrorStateTest implements StateTest {
     }
     @Override
     public TechnicalErrorState transformToAndValidateInitialState(VendingMachine vendingMachine) {
-        vendingMachine.setStateToTechnicalErrorState();
-        return (TechnicalErrorState) vendingMachine.getCurrentState();
+        vendingMachine.sendStateTo(TechnicalErrorState.state);
+        return (TechnicalErrorState) vendingMachine.provideCurrentState();
     }
 
     @Before @Override

@@ -10,12 +10,10 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import tdd.vendingMachine.VendingMachine;
-import tdd.vendingMachine.VendingMachineFactory;
 import tdd.vendingMachine.domain.Coin;
 import tdd.vendingMachine.domain.Product;
 import tdd.vendingMachine.domain.VendingMachineConfiguration;
-import tdd.vendingMachine.domain.exception.UnableToProvideBalanceException;
+import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.util.TestUtils.TestUtils;
 import tdd.vendingMachine.view.VendingMachineMessages;
 
@@ -24,7 +22,7 @@ import tdd.vendingMachine.view.VendingMachineMessages;
  * @since 1.0
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({VendingMachine.class, SoldOutState.class})
+@PrepareForTest({VendingMachine.class, VendingMachineImpl.class, SoldOutState.class})
 @PowerMockIgnore(value = {"javax.management.*"})
 public class SoldOutStateTest implements StateTest {
 
@@ -62,10 +60,10 @@ public class SoldOutStateTest implements StateTest {
 
     @Override
     public SoldOutState transformToAndValidateInitialState(VendingMachine vendingMachine) {
-        Assert.assertEquals(0, vendingMachine.getCredit()); //no credit
-        Assert.assertNull(vendingMachine.getSelectedProduct()); //no product
-        Assert.assertTrue(vendingMachine.getCurrentState() instanceof SoldOutState);
-        return (SoldOutState) vendingMachine.getCurrentState();
+        Assert.assertEquals(0, vendingMachine.provideCredit()); //no credit
+        Assert.assertNull(vendingMachine.provideSelectedProduct()); //no product
+        Assert.assertTrue(vendingMachine.provideCurrentState() instanceof SoldOutState);
+        return (SoldOutState) vendingMachine.provideCurrentState();
     }
 
     @Before @Override
@@ -86,8 +84,9 @@ public class SoldOutStateTest implements StateTest {
     public void should_remain_sold_out_after_inserting_coin_and_return_coin_to_pickup_shelf() {
         soldOutState.insertCoin(Coin.FIFTY_CENTS);
 
-        Assert.assertEquals(0, soldOutState.vendingMachine.getCredit());
-        Assert.assertTrue(soldOutState.vendingMachine.getCurrentState() instanceof SoldOutState);
+        Assert.assertEquals(0, soldOutState.vendingMachine.provideCredit());
+        Assert.assertTrue(soldOutState.vendingMachine.isSoldOut());
+        Assert.assertTrue(soldOutState.vendingMachine.provideCurrentState() instanceof SoldOutState);
     }
 
     @Test
@@ -96,8 +95,8 @@ public class SoldOutStateTest implements StateTest {
 
         Assert.assertTrue(soldOutState.vendingMachine.getDisplayCurrentMessage()
             .contains(VendingMachineMessages.PRICE.label));//TODO: view todo list on googlespreadsheets
-        Assert.assertEquals(0, soldOutState.vendingMachine.getCredit());
-        Assert.assertTrue(soldOutState.vendingMachine.getCurrentState() instanceof SoldOutState);
+        Assert.assertEquals(0, soldOutState.vendingMachine.provideCredit());
+        Assert.assertTrue(soldOutState.vendingMachine.provideCurrentState() instanceof SoldOutState);
     }
 
     @Test
@@ -106,16 +105,16 @@ public class SoldOutStateTest implements StateTest {
 
         Assert.assertTrue(soldOutState.vendingMachine.getDisplayCurrentMessage()
             .contains(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label));//TODO: view todo list on googlespreadsheets
-        Assert.assertEquals(0, soldOutState.vendingMachine.getCredit());
-        Assert.assertTrue(soldOutState.vendingMachine.getCurrentState() instanceof SoldOutState);
+        Assert.assertEquals(0, soldOutState.vendingMachine.provideCredit());
+        Assert.assertTrue(soldOutState.vendingMachine.provideCurrentState() instanceof SoldOutState);
     }
 
     @Test
     public void should_perform_no_actions_on_cancel_operation() {
         soldOutState.cancel();
-        Assert.assertEquals(0, soldOutState.vendingMachine.getCredit());
-        Assert.assertNull(soldOutState.vendingMachine.getSelectedProduct());
-        Assert.assertTrue(soldOutState.vendingMachine.getCurrentState() instanceof SoldOutState);
+        Assert.assertEquals(0, soldOutState.vendingMachine.provideCredit());
+        Assert.assertNull(soldOutState.vendingMachine.provideSelectedProduct());
+        Assert.assertTrue(soldOutState.vendingMachine.provideCurrentState() instanceof SoldOutState);
     }
 
     @Test
@@ -132,7 +131,7 @@ public class SoldOutStateTest implements StateTest {
 
         soldOutState.selectShelfNumber(shelfNumber);
 
-        Assert.assertTrue(soldOutState.vendingMachine.getCurrentState() instanceof TechnicalErrorState);
+        Assert.assertTrue(soldOutState.vendingMachine.provideCurrentState() instanceof TechnicalErrorState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
         Mockito.verify(spied, Mockito.times(1)).displayProductPrice(shelfNumber);

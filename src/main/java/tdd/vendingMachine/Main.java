@@ -1,5 +1,7 @@
 package tdd.vendingMachine;
 
+import tdd.vendingMachine.state.VendingMachineFactory;
+
 /**
  * @author Agustin on 2/26/2017.
  * @since 2.0

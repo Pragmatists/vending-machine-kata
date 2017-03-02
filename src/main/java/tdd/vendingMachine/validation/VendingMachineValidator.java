@@ -1,12 +1,12 @@
 package tdd.vendingMachine.validation;
 
 import lombok.NonNull;
-import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.Coin;
 import tdd.vendingMachine.domain.Product;
 import tdd.vendingMachine.domain.Shelf;
 import tdd.vendingMachine.domain.VendingMachineConfiguration;
 import tdd.vendingMachine.domain.exception.InvalidShelfSizeException;
+import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.view.VendingMachineMessages;
 
 import java.util.Map;
@@ -77,12 +77,12 @@ public class VendingMachineValidator {
      * @param vendingMachine the subject to validate
      */
     public static void validateToInsufficientCreditState(VendingMachine vendingMachine) {
-        if (null == vendingMachine.getSelectedProduct()
-            || vendingMachine.getCredit() >= vendingMachine.getSelectedProduct().getPrice()) {
+        if (null == vendingMachine.provideSelectedProduct()
+            || vendingMachine.provideCredit() >= vendingMachine.provideSelectedProduct().getPrice()) {
             throw new IllegalStateException("machine not suitable for insufficientCreditState"
-                + " hasSelectedProduct: " + vendingMachine.getSelectedProduct()
-                + " credit: " + vendingMachine.getCredit()
-                + " product price : " + (vendingMachine.getSelectedProduct() != null ? vendingMachine.getSelectedProduct().getPrice() : "--")
+                + " hasSelectedProduct: " + vendingMachine.provideSelectedProduct()
+                + " credit: " + vendingMachine.provideCredit()
+                + " product price : " + (vendingMachine.provideSelectedProduct() != null ? vendingMachine.provideSelectedProduct().getPrice() : "--")
             );
         }
     }
@@ -92,13 +92,13 @@ public class VendingMachineValidator {
      * @param vendingMachine the subject to validate
      */
     public static void validateToNoCreditSelectedProductState(VendingMachine vendingMachine) {
-        if (vendingMachine.getCredit() > 0
+        if (vendingMachine.provideCredit() > 0
             || !vendingMachine.isCreditStackEmpty()
-            || null == vendingMachine.getSelectedProduct()) {
+            || null == vendingMachine.provideSelectedProduct()) {
             throw new IllegalStateException("machine not suitable for NoCreditSelectedProductState"
-                + " credit: " + vendingMachine.getCredit()
+                + " credit: " + vendingMachine.provideCredit()
                 + " creditStackEmpty: " + vendingMachine.isCreditStackEmpty()
-                + " product: " + (vendingMachine.getSelectedProduct() == null ? "--" : vendingMachine.getSelectedProduct().getType())
+                + " product: " + (vendingMachine.provideSelectedProduct() == null ? "--" : vendingMachine.provideSelectedProduct().getType())
             );
         }
 
@@ -109,13 +109,13 @@ public class VendingMachineValidator {
      * @param vendingMachine the subject to validate
      */
     public static void validateCreditNotSelectedProductState(VendingMachine vendingMachine) {
-        if (vendingMachine.getCredit() == 0
+        if (vendingMachine.provideCredit() == 0
             || vendingMachine.isCreditStackEmpty()
-            || null != vendingMachine.getSelectedProduct()) {
+            || null != vendingMachine.provideSelectedProduct()) {
             throw new IllegalStateException("machine not suitable for CreditNotSelectedProductState"
-                + " credit: " + vendingMachine.getCredit()
+                + " credit: " + vendingMachine.provideCredit()
                 + " creditStackEmpty: " + vendingMachine.isCreditStackEmpty()
-                + " product: " + (vendingMachine.getSelectedProduct() == null ? "--" : vendingMachine.getSelectedProduct().getType())
+                + " product: " + (vendingMachine.provideSelectedProduct() == null ? "--" : vendingMachine.provideSelectedProduct().getType())
             );
         }
     }
@@ -128,15 +128,15 @@ public class VendingMachineValidator {
     public static void validateToReadyState(@NonNull VendingMachine vendingMachine) throws IllegalStateException {
         boolean isMachineSoldOut = vendingMachine.isSoldOut();
         if (isMachineSoldOut
-            || vendingMachine.getCredit() > 0
+            || vendingMachine.provideCredit() > 0
             || !vendingMachine.isCreditStackEmpty()
-            || null != vendingMachine.getSelectedProduct()
+            || null != vendingMachine.provideSelectedProduct()
             ) {
             throw new IllegalStateException("Current values don't qualify for ReadyState"
                 + " isSoldOut: " + isMachineSoldOut
-                + " currentCredit: " + vendingMachine.getCredit()
+                + " currentCredit: " + vendingMachine.provideCredit()
                 + " isCreditStackEmpty: " + vendingMachine.isCreditStackEmpty()
-                + " isProductSelected: " + (vendingMachine.getSelectedProduct() != null)
+                + " isProductSelected: " + (vendingMachine.provideSelectedProduct() != null)
             );
         }
     }

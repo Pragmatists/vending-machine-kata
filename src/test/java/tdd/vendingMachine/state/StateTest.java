@@ -1,7 +1,5 @@
 package tdd.vendingMachine.state;
 
-import org.junit.After;
-import org.junit.Before;
 import tdd.vendingMachine.VendingMachine;
 
 /**

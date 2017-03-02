@@ -1,9 +1,6 @@
 package tdd.vendingMachine.state;
 
-import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.Coin;
-import tdd.vendingMachine.domain.exception.UnableToProvideBalanceException;
-import tdd.vendingMachine.view.VendingMachineMessages;
 
 /**
  * @author Agustin Cabra on 2/20/2017.
@@ -46,4 +43,5 @@ public interface State {
      * 3. Sets selectedProduct as null.
      */
     void cancel();
+
 }

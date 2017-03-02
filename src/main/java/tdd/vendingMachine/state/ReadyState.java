@@ -1,10 +1,10 @@
 package tdd.vendingMachine.state;
 
 import org.apache.log4j.Logger;
-import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.Coin;
 import tdd.vendingMachine.domain.exception.CashDispenserFullException;
 import tdd.vendingMachine.domain.exception.ShelfEmptyNotAvailableForSelectionException;
+import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.view.VendingMachineMessages;
 
 import java.util.NoSuchElementException;
@@ -17,8 +17,9 @@ import java.util.NoSuchElementException;
 public class ReadyState implements State {
 
     private static final Logger logger = Logger.getLogger(ReadyState.class);
-    public static final String label = "READY";
     protected final VendingMachine vendingMachine;
+
+    public static final StateEnum state = StateEnum.READY;
 
     public ReadyState(VendingMachine vendingMachine) {
         this.vendingMachine = vendingMachine;
@@ -28,16 +29,16 @@ public class ReadyState implements State {
     public void insertCoin(Coin coin) {
         try {
             vendingMachine.addCoinToCredit(coin);
-            vendingMachine.setStateToCreditNotSelectedProductState();
+            vendingMachine.sendStateTo(CreditNotSelectedProductState.state);
         } catch (CashDispenserFullException cashDispenserFullException) {
             logger.error(cashDispenserFullException);
             this.vendingMachine.showMessageOnDisplay(String.format("%s %s: %s", coin.label,
                 VendingMachineMessages.CASH_NOT_ACCEPTED_DISPENSER_FULL.label,
-                VendingMachineMessages.provideCashToDisplay(this.vendingMachine.getCredit())));
+                VendingMachineMessages.provideCashToDisplay(this.vendingMachine.provideCredit())));
         } catch (Exception uoe) {
             logger.error(uoe);
             vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
-            vendingMachine.setStateToTechnicalErrorState();
+            vendingMachine.sendStateTo(TechnicalErrorState.state);
         }
     }
 
@@ -46,7 +47,7 @@ public class ReadyState implements State {
         try {
             vendingMachine.selectProductGivenShelfNumber(shelfNumber);
             vendingMachine.displayProductPrice(shelfNumber);
-            vendingMachine.setStateToNoCreditSelectedProductState();
+            vendingMachine.sendStateTo(NoCreditSelectedProductState.state);
         } catch (NoSuchElementException nse) {
             logger.error(nse);
             vendingMachine.showMessageOnDisplay(
@@ -59,7 +60,7 @@ public class ReadyState implements State {
         } catch (Exception uoe) {
             logger.error(uoe);
             vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
-            vendingMachine.setStateToTechnicalErrorState();
+            vendingMachine.sendStateTo(TechnicalErrorState.state);
         }
     }
 
