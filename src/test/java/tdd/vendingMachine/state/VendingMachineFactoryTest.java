@@ -11,6 +11,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import tdd.vendingMachine.VendingMachine;
+import tdd.vendingMachine.domain.CoinDispenserFactory;
 import tdd.vendingMachine.domain.Product;
 import tdd.vendingMachine.domain.Shelf;
 import tdd.vendingMachine.domain.VendingMachineConfiguration;
@@ -68,10 +69,19 @@ public class VendingMachineFactoryTest {
     }
 
     @Test
-    public void should_build_sold_out_vending_machine() {
+    public void should_build_sold_out_vending_machine() throws Exception {
         Product product = new Product(100, "product");
+
+        VendingMachineConfiguration configMock = getConfigMock(10, 10, 10);
+        PowerMockito.spy(VendingMachineFactory.class);
+        PowerMockito.when(VendingMachineFactory.getConfig()).thenReturn(configMock);
+
         VendingMachine soldOutVendingMachine = VendingMachineFactory.buildSoldOutVendingMachineNoCash(product);
         Assert.assertTrue(soldOutVendingMachine.isSoldOut());
+
+        PowerMockito.verifyStatic(Mockito.times(2));
+        VendingMachineFactory.getConfig();
+        verifyConfigMock(configMock, 2, 1, 2);
     }
 
     @Test(expected = NullPointerException.class)
@@ -82,6 +92,14 @@ public class VendingMachineFactoryTest {
     @Test(expected = NullPointerException.class)
     public void should_fail_product_shelves_null() {
         VendingMachineFactory.customVendingMachineForTesting(null, TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(10, 10));
+    }
+
+    @Test
+    public void should_build_shelves() {
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(TestUtils.buildStubListOfProducts(2), 1, 3),
+            TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(10, 3)
+        );
+        Assert.assertNotNull(vendingMachine);
     }
 
     @Test
@@ -98,7 +116,9 @@ public class VendingMachineFactoryTest {
         int productShelfCount = 10;
         int productShelfCapacity = 10;
         VendingMachineConfiguration configMock = getConfigMock(10, productShelfCount, productShelfCapacity);
-        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(configMock);
+
+        PowerMockito.spy(VendingMachineFactory.class);
+        PowerMockito.when(VendingMachineFactory.getConfig()).thenReturn(configMock);
 
         ProductImport productImport1 = new ProductImport("p1", 100, 10);
         ProductImport productImport2 = new ProductImport("p2", 200, 10);
@@ -114,11 +134,11 @@ public class VendingMachineFactoryTest {
         Assert.assertEquals(productImport2.getType(), productShelves.get(1).getType().getType());
         Assert.assertEquals(productImport2.getPrice(), productShelves.get(1).getType().getPrice());
 
-        productShelves.values().forEach(productShelf -> {
-            Assert.assertEquals(productShelfCapacity, productShelf.capacity);
-        });
+        productShelves.values().forEach(productShelf -> Assert.assertEquals(productShelfCapacity, productShelf.capacity));
 
-        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(1)).withNoArguments();
-        verifyConfigMock(configMock, 1, 0, 1);
+        PowerMockito.verifyStatic(Mockito.times(1));
+        VendingMachineFactory.getConfig();
+
+        verifyConfigMock(configMock, 0, 0, 1);
     }
 }

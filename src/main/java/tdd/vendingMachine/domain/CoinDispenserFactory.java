@@ -18,9 +18,7 @@ public class CoinDispenserFactory {
 
     private static final VendingMachineConfiguration vendingMachineConfiguration = new VendingMachineConfiguration();
 
-    private CoinDispenserFactory() {
-        throw new AssertionError("CoinDispenserFactory should not be instantiated");
-    }
+    private CoinDispenserFactory() { throw new AssertionError("CoinDispenserFactory should not be instantiated"); }
 
     static VendingMachineConfiguration getConfig() {
         return vendingMachineConfiguration;
@@ -67,11 +65,11 @@ public class CoinDispenserFactory {
      * @param cashImportsCollection the collection of imports that want to get loaded
      * @return a coin dispenser with given amounts if capacity exceeded excess will be discarded
      */
-    public static Map<Coin, Shelf<Coin>> buildShelf(final @NonNull Collection<CashImport> cashImportsCollection) {
+    public static Map<Coin, Shelf<Coin>> buildShelf(@NonNull VendingMachineConfiguration config, final @NonNull Collection<CashImport> cashImportsCollection) {
         Map<Coin, CashImport> cashImports = provideCoinMapImport(cashImportsCollection);
         Map<Coin, Shelf<Coin>> cashDispenser = new HashMap<>();
         int counter = 0;
-        int configCapacity = getConfig().getCoinShelfCapacity();
+        int configCapacity = config.getCoinShelfCapacity();
         for(Coin c: Coin.ascendingDenominationIterable()) {
             cashDispenser.put(c, ShelfFactory.buildShelf(counter++, c, configCapacity, 0));
             logger.info(String.format("building coin shelf [%s]", c.label));
@@ -97,8 +95,19 @@ public class CoinDispenserFactory {
      * @param givenCashImport the import that want to get loaded
      * @return a coin dispenser with given amounts if capacity exceeded excess will be discarded
      */
-    public static Map<Coin, Shelf<Coin>> buildShelf(final @NonNull CashImport givenCashImport) {
-        return buildShelf(Collections.singleton(givenCashImport));
+    public static Map<Coin, Shelf<Coin>> buildShelf(@NonNull CashImport givenCashImport) {
+        return buildShelf(getConfig(), Collections.singleton(givenCashImport));
+    }
+
+    /**
+     * Builds a cash dispenser as a map of shelves based on the cash imports loaded.
+     * If the amount in a cash import exceeds the shelf's capacity the shelf will get full and
+     * the remaining amount will be discarded back.
+     * @param cashImports the import that want to get loaded
+     * @return a coin dispenser with given amounts if capacity exceeded excess will be discarded
+     */
+    public static Map<Coin, Shelf<Coin>> buildShelf(@NonNull Collection<CashImport> cashImports) {
+        return buildShelf(getConfig(), cashImports);
     }
 
     /**
@@ -108,5 +117,9 @@ public class CoinDispenserFactory {
      */
     public static Map<Coin, Shelf<Coin>> buildShelfWithGivenCoinItemCount(int coinItemCount) {
         return buildShelfWithGivenCoinItemCount(getConfig().getCoinShelfCapacity(), coinItemCount);
+    }
+
+    public static Map<Coin, Shelf<Coin>> buildShelfWithGivenCoinItemCount(@NonNull VendingMachineConfiguration config, int coinItemCount) {
+        return buildShelfWithGivenCoinItemCount(config.getCoinShelfCapacity(), coinItemCount);
     }
 }

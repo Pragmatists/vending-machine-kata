@@ -38,7 +38,7 @@ public class VendingMachineFactory {
         return productShelf;
     }
 
-    private static VendingMachineConfiguration getConfig() {
+    static VendingMachineConfiguration getConfig() {
         return vendingMachineConfiguration;
     }
 
@@ -58,8 +58,9 @@ public class VendingMachineFactory {
      */
     public static VendingMachine buildSoldOutVendingMachineNoCash(@NonNull List<Product> products) {
         Map<Integer, Shelf<Product>> productShelves = buildProductShelf(products, 0);
-        Map<Coin, Shelf<Coin>> coinShelves = CoinDispenserFactory.buildShelfWithGivenCoinItemCount(0);
-        VendingMachineValidator.validateNewVendingMachineParameters(getConfig(), productShelves, coinShelves);
+        VendingMachineConfiguration config = getConfig();
+        Map<Coin, Shelf<Coin>> coinShelves = CoinDispenserFactory.buildShelfWithGivenCoinItemCount(config, 0);
+        VendingMachineValidator.validateNewVendingMachineParameters(config, productShelves, coinShelves);
         return new VendingMachineImpl(productShelves, coinShelves);
     }
 
@@ -75,8 +76,9 @@ public class VendingMachineFactory {
         if(productItemCount < 0) throw new InputMismatchException("Product amount must be non-negative");
         if(coinItemCount < 0) throw new InputMismatchException("Coin amount must be non-negative");
         Map<Integer, Shelf<Product>> productShelves = buildProductShelf(products, productItemCount);
-        Map<Coin, Shelf<Coin>> coinShelves = CoinDispenserFactory.buildShelfWithGivenCoinItemCount(coinItemCount);
-        VendingMachineValidator.validateNewVendingMachineParameters(getConfig(), productShelves, coinShelves);
+        VendingMachineConfiguration config = getConfig();
+        Map<Coin, Shelf<Coin>> coinShelves = CoinDispenserFactory.buildShelfWithGivenCoinItemCount(config, coinItemCount);
+        VendingMachineValidator.validateNewVendingMachineParameters(config, productShelves, coinShelves);
         return new VendingMachineImpl(productShelves, coinShelves);
     }
 
@@ -118,11 +120,12 @@ public class VendingMachineFactory {
     public static VendingMachine buildVendingMachineFromResourceFiles() {
         InputStream streamCashImports = VendingMachineFactory.class.getClassLoader().getResourceAsStream("cash.csv");
         List<CashImport> cashImports = FileReaderHelper.retrieveCashImportFromFileStream(streamCashImports).orElse(Collections.emptyList());
-        InputStream streamProducts = VendingMachineFactory.class.getClass().getClassLoader().getResourceAsStream("products.csv");
+        InputStream streamProducts = VendingMachineFactory.class.getClassLoader().getResourceAsStream("products.csv");
         List<ProductImport> productImports = FileReaderHelper.retrieveProductsImportFromFileStream(streamProducts).orElse(Collections.emptyList());
-        Map<Coin, Shelf<Coin>> cashDispenser = CoinDispenserFactory.buildShelf(cashImports);
+        VendingMachineConfiguration config = getConfig();
+        Map<Coin, Shelf<Coin>> cashDispenser = CoinDispenserFactory.buildShelf(config, cashImports);
         Map<Integer, Shelf<Product>> productShelves = VendingMachineFactory.buildProductShelfFromCashImports(productImports);
-        VendingMachineValidator.validateNewVendingMachineParameters(getConfig(), productShelves, cashDispenser);
+        VendingMachineValidator.validateNewVendingMachineParameters(config, productShelves, cashDispenser);
         return new VendingMachineImpl(productShelves, cashDispenser);
     }
 }
