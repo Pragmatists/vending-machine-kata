@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.14" icons="true" always-add-relationships="false" generalizations="true" realizations="true"
+  associations="true" dependencies="false" nesting-relationships="true" router="FAN">
+  <interface id="1" language="java" name="tdd.vendingMachine.domain.ShelfItem" project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/domain/ShelfItem.java" binary="false"
+    corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="753" y="378"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </interface>
+  <class id="2" language="java" name="tdd.vendingMachine.domain.Product" project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/domain/Product.java" binary="false"
+    corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="927" y="550"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <class id="3" language="java" name="tdd.vendingMachine.domain.Shelf" project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/domain/Shelf.java" binary="false" corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="1329" y="99"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <class id="4" language="java" name="tdd.vendingMachine.domain.Coin.CoinOrderIterator" project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/domain/Coin.java" binary="false" corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="596" y="1257"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <enumeration id="5" language="java" name="tdd.vendingMachine.domain.Coin" project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/domain/Coin.java" binary="false" corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="586" y="844"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </enumeration>
+  <class id="6" language="java" name="tdd.vendingMachine.domain.CoinDispenserFactory" project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/domain/CoinDispenserFactory.java" binary="false"
+    corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="572" y="108"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <class id="7" language="java" name="tdd.vendingMachine.domain.ShelfFactory" project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/domain/ShelfFactory.java" binary="false"
+    corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="945" y="204"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <class id="8" language="java" name="tdd.vendingMachine.domain.VendingMachineConfiguration"
+    project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/domain/VendingMachineConfiguration.java" binary="false"
+    corner="BOTTOM_RIGHT">
+    <position height="423" width="228" x="-5" y="-102"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <class id="9" language="java" name="tdd.vendingMachine.VendingMachine" project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/VendingMachine.java" binary="false"
+    corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="1236" y="1045"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <class id="10" language="java" name="tdd.vendingMachine.domain.VendingMachineDisplay" project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/domain/VendingMachineDisplay.java" binary="false"
+    corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="878" y="1405"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <class id="11" language="java" name="tdd.vendingMachine.validation.VendingMachineValidator"
+    project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/validation/VendingMachineValidator.java" binary="false"
+    corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="719" y="1934"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <class id="12" language="java" name="tdd.vendingMachine.state.VendingMachineFactory" project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/VendingMachineFactory.java" binary="false"
+    corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="11" y="1166"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <class id="13" language="java" name="tdd.vendingMachine.state.CreditNotSelectedProductState"
+    project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/state/seller/CreditNotSelectedProductState.java"
+    binary="false" corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="2399" y="1296"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <class id="14" language="java" name="tdd.vendingMachine.state.SoldOutState" project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/state/SoldOutState.java" binary="false"
+    corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="2147" y="720"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <class id="15" language="java" name="tdd.vendingMachine.state.NoCreditSelectedProductState"
+    project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/state/seller/NoCreditSelectedProductState.java"
+    binary="false" corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="2681" y="1443"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <class id="16" language="java" name="tdd.vendingMachine.state.TechnicalErrorState" project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/state/TechnicalErrorState.java" binary="false"
+    corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="1711" y="282"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <class id="17" language="java" name="tdd.vendingMachine.state.InsufficientCreditState"
+    project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/state/seller/InsufficientCreditState.java"
+    binary="false" corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="2181" y="1056"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <class id="18" language="java" name="tdd.vendingMachine.state.ReadyState" project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/state/ReadyState.java" binary="false"
+    corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="1798" y="478"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <enumeration id="19" language="java" name="tdd.vendingMachine.view.VendingMachineMessages"
+    project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/view/VendingMachineMessages.java" binary="false"
+    corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="38" y="1674"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </enumeration>
+  <class id="20" language="java" name="tdd.vendingMachine.util.FileReaderHelper" project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/util/FileReaderHelper.java" binary="false"
+    corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="567" y="1669"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <class id="21" language="java" name="tdd.vendingMachine.dto.ProductImport" project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/dto/ProductImport.java" binary="false"
+    corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="432" y="1466"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <class id="22" language="java" name="tdd.vendingMachine.dto.CashImport" project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/dto/CashImport.java" binary="false"
+    corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="1009" y="-27"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <class id="23" language="java" name="tdd.vendingMachine.state.seller.SellerState" project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/state/seller/SellerState.java" binary="false"
+    corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="2503" y="766"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </class>
+  <interface id="24" language="java" name="tdd.vendingMachine.state.State" project="vending-machine-kata"
+    file="/vending-machine-kata/src/main/java/tdd/vendingMachine/state/State.java" binary="false" corner="BOTTOM_RIGHT">
+    <position height="-1" width="-1" x="2292" y="327"/>
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+      sort-features="false" accessors="true" visibility="true">
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>
+      <operations public="true" package="true" protected="true" private="true" static="true"/>
+    </display>
+  </interface>
+  <association id="25">
+    <end type="SOURCE" refId="9" navigable="false">
+      <attribute id="26" name="readyState">
+        <position height="0" width="0" x="-633" y="-791"/>
+      </attribute>
+      <multiplicity id="27" minimum="0" maximum="1">
+        <position height="0" width="0" x="-633" y="-791"/>
+      </multiplicity>
+    </end>
+    <end type="TARGET" refId="18" navigable="true"/>
+    <display labels="true" multiplicity="true"/>
+  </association>
+  <association id="28">
+    <end type="SOURCE" refId="6" navigable="false">
+      <attribute id="29" name="vendingMachineConfiguration">
+        <position height="0" width="0" x="0" y="0"/>
+      </attribute>
+      <multiplicity id="30" minimum="0" maximum="1">
+        <position height="0" width="0" x="0" y="0"/>
+      </multiplicity>
+    </end>
+    <end type="TARGET" refId="8" navigable="true"/>
+    <display labels="true" multiplicity="true"/>
+  </association>
+  <association id="31">
+    <end type="SOURCE" refId="12" navigable="false">
+      <attribute id="32" name="vendingMachineConfiguration">
+        <position height="0" width="0" x="0" y="0"/>
+      </attribute>
+      <multiplicity id="33" minimum="0" maximum="1">
+        <position height="0" width="0" x="0" y="0"/>
+      </multiplicity>
+    </end>
+    <end type="TARGET" refId="8" navigable="true"/>
+    <display labels="true" multiplicity="true"/>
+  </association>
+  <realization id="34">
+    <end type="SOURCE" refId="14"/>
+    <end type="TARGET" refId="24"/>
+  </realization>
+  <dependency id="35">
+    <end type="SOURCE" refId="6"/>
+    <end type="TARGET" refId="7"/>
+  </dependency>
+  <dependency id="36">
+    <end type="SOURCE" refId="7"/>
+    <end type="TARGET" refId="3"/>
+  </dependency>
+  <realization id="37">
+    <end type="SOURCE" refId="18"/>
+    <end type="TARGET" refId="24"/>
+  </realization>
+  <realization id="38">
+    <end type="SOURCE" refId="5"/>
+    <end type="TARGET" refId="1"/>
+  </realization>
+  <association id="39">
+    <end type="SOURCE" refId="23" navigable="false">
+      <attribute id="40" name="vendingMachine"/>
+      <multiplicity id="41" minimum="0" maximum="1"/>
+    </end>
+    <end type="TARGET" refId="9" navigable="true"/>
+    <display labels="true" multiplicity="true"/>
+  </association>
+  <generalization id="42">
+    <end type="SOURCE" refId="15"/>
+    <end type="TARGET" refId="23"/>
+  </generalization>
+  <association id="43">
+    <end type="SOURCE" refId="9" navigable="false">
+      <attribute id="44" name="technicalErrorState">
+        <position height="0" width="0" x="-86" y="-455"/>
+      </attribute>
+      <multiplicity id="45" minimum="0" maximum="1">
+        <position height="0" width="0" x="-86" y="-455"/>
+      </multiplicity>
+    </end>
+    <end type="TARGET" refId="16" navigable="true"/>
+    <display labels="true" multiplicity="true"/>
+  </association>
+  <association id="46">
+    <end type="SOURCE" refId="12" navigable="false">
+      <attribute id="47" name="coinDispenserFactory">
+        <position height="0" width="0" x="0" y="0"/>
+      </attribute>
+      <multiplicity id="48" minimum="0" maximum="1">
+        <position height="0" width="0" x="0" y="0"/>
+      </multiplicity>
+    </end>
+    <end type="TARGET" refId="6" navigable="true"/>
+    <display labels="true" multiplicity="true"/>
+  </association>
+  <nesting id="49">
+    <end type="SOURCE" refId="5"/>
+    <end type="TARGET" refId="4"/>
+  </nesting>
+  <association id="50">
+    <end type="SOURCE" refId="9" navigable="false">
+      <attribute id="51" name="creditStack">
+        <position height="0" width="0" x="-136" y="-103"/>
+      </attribute>
+      <multiplicity id="52" minimum="0" maximum="2147483647">
+        <position height="0" width="0" x="-136" y="-103"/>
+      </multiplicity>
+    </end>
+    <end type="TARGET" refId="5" navigable="true"/>
+    <display labels="true" multiplicity="true"/>
+  </association>
+  <generalization id="53">
+    <end type="SOURCE" refId="13"/>
+    <end type="TARGET" refId="23"/>
+  </generalization>
+  <association id="54">
+    <end type="SOURCE" refId="9" navigable="false">
+      <attribute id="55" name="currentState"/>
+      <multiplicity id="56" minimum="0" maximum="1"/>
+    </end>
+    <end type="TARGET" refId="24" navigable="true"/>
+    <display labels="true" multiplicity="true"/>
+  </association>
+  <dependency id="57">
+    <end type="SOURCE" refId="9"/>
+    <end type="TARGET" refId="2"/>
+  </dependency>
+  <association id="58">
+    <end type="SOURCE" refId="9" navigable="false">
+      <attribute id="59" name="creditNotSelectedProductState">
+        <position height="18" width="155" x="2097" y="1212"/>
+      </attribute>
+      <multiplicity id="60" minimum="0" maximum="1">
+        <position height="0" width="0" x="157" y="226"/>
+      </multiplicity>
+    </end>
+    <end type="TARGET" refId="13" navigable="true"/>
+    <display labels="true" multiplicity="true"/>
+  </association>
+  <realization id="61">
+    <end type="SOURCE" refId="2"/>
+    <end type="TARGET" refId="1"/>
+  </realization>
+  <dependency id="62">
+    <end type="SOURCE" refId="6"/>
+    <end type="TARGET" refId="5"/>
+  </dependency>
+  <association id="63">
+    <end type="SOURCE" refId="9" navigable="false">
+      <attribute id="64" name="vendingMachineConfiguration">
+        <position height="0" width="0" x="0" y="0"/>
+      </attribute>
+      <multiplicity id="65" minimum="0" maximum="1">
+        <position height="0" width="0" x="0" y="0"/>
+      </multiplicity>
+    </end>
+    <end type="TARGET" refId="8" navigable="true"/>
+    <display labels="true" multiplicity="true"/>
+  </association>
+  <association id="66">
+    <bendpoint x="1505" y="319"/>
+    <end type="SOURCE" refId="9" navigable="false">
+      <attribute id="67" name="productShelves">
+        <position height="0" width="0" x="0" y="0"/>
+      </attribute>
+      <multiplicity id="68" minimum="0" maximum="2147483647">
+        <position height="0" width="0" x="0" y="0"/>
+      </multiplicity>
+    </end>
+    <end type="TARGET" refId="3" navigable="true"/>
+    <display labels="true" multiplicity="true"/>
+  </association>
+  <association id="69">
+    <bendpoint x="1025" y="1394"/>
+    <end type="SOURCE" refId="9" navigable="false">
+      <attribute id="70" name="display">
+        <position height="0" width="0" x="0" y="0"/>
+      </attribute>
+      <multiplicity id="71" minimum="0" maximum="1">
+        <position height="0" width="0" x="0" y="0"/>
+      </multiplicity>
+    </end>
+    <end type="TARGET" refId="10" navigable="true"/>
+    <display labels="true" multiplicity="true"/>
+  </association>
+  <realization id="72">
+    <end type="SOURCE" refId="23"/>
+    <end type="TARGET" refId="24"/>
+  </realization>
+  <dependency id="73">
+    <end type="SOURCE" refId="6"/>
+    <end type="TARGET" refId="3"/>
+  </dependency>
+  <association id="74">
+    <bendpoint x="1833" y="1438"/>
+    <end type="SOURCE" refId="9" navigable="false">
+      <attribute id="75" name="noCreditSelectedProductState">
+        <position height="0" width="0" x="0" y="0"/>
+      </attribute>
+      <multiplicity id="76" minimum="0" maximum="1">
+        <position height="0" width="0" x="0" y="0"/>
+      </multiplicity>
+    </end>
+    <end type="TARGET" refId="15" navigable="true"/>
+    <display labels="true" multiplicity="true"/>
+  </association>
+  <association id="77">
+    <bendpoint x="1582" y="214"/>
+    <end type="SOURCE" refId="9" navigable="false">
+      <attribute id="78" name="coinShelves">
+        <position height="0" width="0" x="0" y="0"/>
+      </attribute>
+      <multiplicity id="79" minimum="0" maximum="2147483647">
+        <position height="0" width="0" x="0" y="0"/>
+      </multiplicity>
+    </end>
+    <end type="TARGET" refId="3" navigable="true"/>
+    <display labels="true" multiplicity="true"/>
+  </association>
+  <association id="80">
+    <end type="SOURCE" refId="9" navigable="false">
+      <attribute id="81" name="soldOutState">
+        <position height="0" width="0" x="254" y="-213"/>
+      </attribute>
+      <multiplicity id="82" minimum="0" maximum="1">
+        <position height="0" width="0" x="254" y="-213"/>
+      </multiplicity>
+    </end>
+    <end type="TARGET" refId="14" navigable="true"/>
+    <display labels="true" multiplicity="true"/>
+  </association>
+  <dependency id="83">
+    <end type="SOURCE" refId="7"/>
+    <end type="TARGET" refId="1"/>
+  </dependency>
+  <association id="84">
+    <end type="SOURCE" refId="9" navigable="false">
+      <attribute id="85" name="insufficientCreditState">
+        <position height="0" width="0" x="342" y="665"/>
+      </attribute>
+      <multiplicity id="86" minimum="0" maximum="1">
+        <position height="0" width="0" x="342" y="665"/>
+      </multiplicity>
+    </end>
+    <end type="TARGET" refId="17" navigable="true"/>
+    <display labels="true" multiplicity="true"/>
+  </association>
+  <realization id="87">
+    <end type="SOURCE" refId="16"/>
+    <end type="TARGET" refId="24"/>
+  </realization>
+  <association id="88">
+    <bendpoint x="1064" y="290"/>
+    <end type="SOURCE" refId="3" navigable="false">
+      <attribute id="89" name="type">
+        <position height="0" width="0" x="0" y="0"/>
+      </attribute>
+      <multiplicity id="90" minimum="0" maximum="1">
+        <position height="0" width="0" x="0" y="0"/>
+      </multiplicity>
+    </end>
+    <end type="TARGET" refId="1" navigable="true"/>
+    <display labels="true" multiplicity="true"/>
+  </association>
+  <association id="91">
+    <end type="SOURCE" refId="6" navigable="false">
+      <attribute id="92" name="cashImports">
+        <position height="0" width="0" x="524" y="-1434"/>
+      </attribute>
+      <multiplicity id="93" minimum="0" maximum="2147483647">
+        <position height="0" width="0" x="524" y="-1434"/>
+      </multiplicity>
+    </end>
+    <end type="TARGET" refId="22" navigable="true"/>
+    <display labels="true" multiplicity="true"/>
+  </association>
+  <generalization id="94">
+    <end type="SOURCE" refId="17"/>
+    <end type="TARGET" refId="23"/>
+  </generalization>
+  <association id="95">
+    <end type="SOURCE" refId="9" navigable="false">
+      <attribute id="96" name="selectedShelf">
+        <position height="0" width="0" x="0" y="0"/>
+      </attribute>
+      <multiplicity id="97" minimum="0" maximum="1">
+        <position height="0" width="0" x="0" y="0"/>
+      </multiplicity>
+    </end>
+    <end type="TARGET" refId="3" navigable="true"/>
+    <display labels="true" multiplicity="true"/>
+  </association>
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true"
+    sort-features="false" accessors="true" visibility="true">
+    <attributes public="true" package="true" protected="true" private="true" static="true"/>
+    <operations public="true" package="true" protected="true" private="true" static="true"/>
+  </classifier-display>
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>
