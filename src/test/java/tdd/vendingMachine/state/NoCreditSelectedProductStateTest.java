@@ -120,7 +120,7 @@ public class NoCreditSelectedProductStateTest implements StateTest {
 
         Map<Integer, Shelf<Product>> productShelf = TestUtils.buildShelfStubFromProductImports(productImportList, productShelfCapacity);
         Map<Coin, Shelf<Coin>> coinShelf = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialCoinsPerShelf);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelf, coinShelf);
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(productShelf, coinShelf);
         noCreditSelectedProductState = transformToAndValidateInitialState(vendingMachine);
         Product selectedBeforeAttempt = noCreditSelectedProductState.vendingMachine.provideSelectedProduct();
 
@@ -147,7 +147,7 @@ public class NoCreditSelectedProductStateTest implements StateTest {
 
         Map<Integer, Shelf<Product>> productShelf = TestUtils.buildShelfStubFromProductImports(productImportList, productShelfCapacity);
         Map<Coin, Shelf<Coin>> coinShelf = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialCoinsPerShelf);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelf, coinShelf);
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(productShelf, coinShelf);
         noCreditSelectedProductState = transformToAndValidateInitialState(vendingMachine);
         Product selectedBeforeAttempt = noCreditSelectedProductState.vendingMachine.provideSelectedProduct();
 
@@ -175,7 +175,7 @@ public class NoCreditSelectedProductStateTest implements StateTest {
 
         Map<Integer, Shelf<Product>> productShelf = TestUtils.buildShelfStubFromProductImports(productImportList, productShelfCapacity);
         Map<Coin, Shelf<Coin>> coinShelf = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialCoinsPerShelf);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelf, coinShelf);
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(productShelf, coinShelf);
         noCreditSelectedProductState = transformToAndValidateInitialState(vendingMachine);
         Product selectedBeforeAttempt = noCreditSelectedProductState.vendingMachine.provideSelectedProduct();
 
@@ -201,7 +201,7 @@ public class NoCreditSelectedProductStateTest implements StateTest {
 
         Map<Integer, Shelf<Product>> productShelf = TestUtils.buildShelfStubFromProductImports(productImportList, productShelfCapacity);
         Map<Coin, Shelf<Coin>> coinShelf = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, coinShelfCapacity);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelf, coinShelf);
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(productShelf, coinShelf);
         noCreditSelectedProductState = transformToAndValidateInitialState(vendingMachine);
         Product selectedBeforeAttempt = noCreditSelectedProductState.vendingMachine.provideSelectedProduct();
 
@@ -230,7 +230,7 @@ public class NoCreditSelectedProductStateTest implements StateTest {
 
         Map<Integer, Shelf<Product>> productShelf = TestUtils.buildShelfStubFromProductImports(productImportList, productShelfCapacity);
         Map<Coin, Shelf<Coin>> coinShelf = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialCoinsDispenser);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelf, coinShelf);
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(productShelf, coinShelf);
         noCreditSelectedProductState = transformToAndValidateInitialState(vendingMachine);
 
         noCreditSelectedProductState.insertCoin(Coin.FIVE);
@@ -256,7 +256,7 @@ public class NoCreditSelectedProductStateTest implements StateTest {
 
         Map<Integer, Shelf<Product>> productShelf = TestUtils.buildShelfStubFromProductImports(productImportList, productShelfCapacity);
         Map<Coin, Shelf<Coin>> coinShelf = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialCoinsDispenser);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelf, coinShelf);
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(productShelf, coinShelf);
         noCreditSelectedProductState = transformToAndValidateInitialState(vendingMachine);
         int creditBefore = noCreditSelectedProductState.vendingMachine.provideCredit();
         int sizeCreditBefore = noCreditSelectedProductState.vendingMachine.getCreditStackSize();
@@ -288,7 +288,7 @@ public class NoCreditSelectedProductStateTest implements StateTest {
 
         Map<Integer, Shelf<Product>> productShelf = TestUtils.buildShelfStubFromProductImports(productImportList, productShelfCapacity);
         Map<Coin, Shelf<Coin>> coinShelf = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialCoinsDispenser);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelf, coinShelf);
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(productShelf, coinShelf);
         noCreditSelectedProductState = transformToAndValidateInitialState(vendingMachine);
 
         Coin twentyCents = Coin.TWO;
@@ -315,7 +315,7 @@ public class NoCreditSelectedProductStateTest implements StateTest {
 
         Map<Integer, Shelf<Product>> productShelf = TestUtils.buildShelfStubFromProductImports(productImportList, productShelfCapacity);
         Map<Coin, Shelf<Coin>> coinShelf = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialCoinsDispenser);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelf, coinShelf);
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(productShelf, coinShelf);
         noCreditSelectedProductState = transformToAndValidateInitialState(vendingMachine);
 
 
@@ -334,7 +334,7 @@ public class NoCreditSelectedProductStateTest implements StateTest {
         VendingMachineConfiguration configMock = getConfigMock(10, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(configMock);
 
-        VendingMachine spied = PowerMockito.spy(new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
+        VendingMachine spied = PowerMockito.spy(VendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(10, 5)));
         PowerMockito.doThrow(new RuntimeException("fail to error")).when(spied, "addCoinToCredit", fiftyCents);
 
@@ -355,7 +355,7 @@ public class NoCreditSelectedProductStateTest implements StateTest {
         VendingMachineConfiguration configMock = getConfigMock(10, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(configMock);
 
-        VendingMachine spied = PowerMockito.spy(new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
+        VendingMachine spied = PowerMockito.spy(VendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(10, 5)));
         PowerMockito.doThrow(new RuntimeException("fail to error")).when(spied, "selectProductGivenShelfNumber", shelfNumber);
 
@@ -375,7 +375,7 @@ public class NoCreditSelectedProductStateTest implements StateTest {
         VendingMachineConfiguration configMock = getConfigMock(10, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(configMock);
 
-        VendingMachine spied = PowerMockito.spy(new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
+        VendingMachine spied = PowerMockito.spy(VendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(10, 5)));
         PowerMockito.doThrow(new RuntimeException("fail to error")).when(spied, "undoProductSelection");
 

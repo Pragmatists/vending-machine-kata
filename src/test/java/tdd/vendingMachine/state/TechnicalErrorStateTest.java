@@ -83,7 +83,7 @@ public class TechnicalErrorStateTest implements StateTest {
 
         Map<Integer, Shelf<Product>> productShelf = TestUtils.buildShelvesWithItems(TestUtils.buildStubListOfProducts(3), 3, shelfCapacityProducts);
         Map<Coin, Shelf<Coin>> coinShelf = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(shelfCapacityCoins, 5);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelf, coinShelf);
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(productShelf, coinShelf);
         technicalErrorState = transformToAndValidateInitialState(vendingMachine);
     }
 

@@ -93,7 +93,7 @@ public class ReadyStateTest implements StateTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialCoinsOnShelf));
         readyState = transformToAndValidateInitialState(vendingMachine);
 
@@ -116,7 +116,7 @@ public class ReadyStateTest implements StateTest {
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(CHOCOLATE_BAR, 1),
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(CHOCOLATE_BAR, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, coinShelfCapacity));
         readyState = transformToAndValidateInitialState(vendingMachine);
 
@@ -134,7 +134,7 @@ public class ReadyStateTest implements StateTest {
         int coinShelfCapacity = 10;
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(CHOCOLATE_BAR, 1),
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(CHOCOLATE_BAR, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, coinShelfCapacity));
         readyState = transformToAndValidateInitialState(vendingMachine);
 
@@ -153,7 +153,7 @@ public class ReadyStateTest implements StateTest {
         int coinShelfCapacity = 10;
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(CHOCOLATE_BAR, 1),
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(CHOCOLATE_BAR, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, coinShelfCapacity));
         readyState = transformToAndValidateInitialState(vendingMachine);
 
@@ -175,7 +175,7 @@ public class ReadyStateTest implements StateTest {
 
         Map<Integer, Shelf<Product>> productImportStub = TestUtils.buildShelfStubFromProductImports(products, productShelfCapacity);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, coinShelfCapacity);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productImportStub, coinShelves);
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(productImportStub, coinShelves);
         readyState = transformToAndValidateInitialState(vendingMachine);
         int emptyShelfId = 1;
 
@@ -191,7 +191,7 @@ public class ReadyStateTest implements StateTest {
         int coinShelfCapacity = 10;
         VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(CHOCOLATE_BAR, 1),
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(CHOCOLATE_BAR, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, coinShelfCapacity));
         readyState = transformToAndValidateInitialState(vendingMachine);
 
@@ -208,7 +208,7 @@ public class ReadyStateTest implements StateTest {
         VendingMachineConfiguration configMock = getConfigMock(10, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(configMock);
 
-        VendingMachine spied = PowerMockito.spy(new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
+        VendingMachine spied = PowerMockito.spy(VendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(10, 5)));
         PowerMockito.doThrow(new RuntimeException("fail to error")).when(spied, "addCoinToCredit", fiftyCents);
 
@@ -229,7 +229,7 @@ public class ReadyStateTest implements StateTest {
         VendingMachineConfiguration configMock = getConfigMock(10, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(configMock);
 
-        VendingMachine spied = PowerMockito.spy(new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
+        VendingMachine spied = PowerMockito.spy(VendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(10, 5)));
         PowerMockito.doThrow(new RuntimeException("fail to error")).when(spied, "selectProductGivenShelfNumber", shelfNumber);
 

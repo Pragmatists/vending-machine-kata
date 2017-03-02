@@ -70,19 +70,18 @@ public class VendingMachineFactoryTest {
     @Test
     public void should_build_sold_out_vending_machine() {
         Product product = new Product(100, "product");
-        VendingMachine soldOutVendingMachine = new VendingMachineFactory().buildSoldOutVendingMachineNoCash(product);
+        VendingMachine soldOutVendingMachine = VendingMachineFactory.buildSoldOutVendingMachineNoCash(product);
         Assert.assertTrue(soldOutVendingMachine.isSoldOut());
     }
 
     @Test(expected = NullPointerException.class)
     public void should_fail_coin_shelves_null() {
-        new VendingMachineFactory().customVendingMachineForTesting(Collections.emptyMap(), null);
+        VendingMachineFactory.customVendingMachineForTesting(Collections.emptyMap(), null);
     }
 
     @Test(expected = NullPointerException.class)
     public void should_fail_product_shelves_null() {
-        VendingMachineFactory vendingMachineFactory = new VendingMachineFactory();
-        vendingMachineFactory.customVendingMachineForTesting(null, TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(10, 10));
+        VendingMachineFactory.customVendingMachineForTesting(null, TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(10, 10));
     }
 
     @Test
@@ -91,7 +90,7 @@ public class VendingMachineFactoryTest {
         int productItemCount = 3;
         int coinItemCount = 5;
         Collection<Product> productList = TestUtils.buildStubListOfProducts(amountProducts);
-        new VendingMachineFactory().buildVendingMachineGivenProductsAndInitialShelfItemCounts(productList, productItemCount, coinItemCount);
+        VendingMachineFactory.buildVendingMachineGivenProductsAndInitialShelfItemCounts(productList, productItemCount, coinItemCount);
     }
 
     @Test
@@ -104,7 +103,7 @@ public class VendingMachineFactoryTest {
         ProductImport productImport1 = new ProductImport("p1", 100, 10);
         ProductImport productImport2 = new ProductImport("p2", 200, 10);
         Collection<ProductImport> productImports = Arrays.asList(productImport1, productImport2);
-        Map<Integer, Shelf<Product>> productShelves = new VendingMachineFactory().buildProductShelfFromCashImports(productImports);
+        Map<Integer, Shelf<Product>> productShelves = VendingMachineFactory.buildProductShelfFromCashImports(productImports);
 
         Assert.assertNotNull(productImports);
         Assert.assertTrue(productShelves.size() <= productShelfCount );
