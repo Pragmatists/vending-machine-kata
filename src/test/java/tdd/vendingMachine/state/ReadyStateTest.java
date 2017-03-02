@@ -10,15 +10,12 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import tdd.vendingMachine.VendingMachine;
-import tdd.vendingMachine.VendingMachineFactory;
 import tdd.vendingMachine.domain.Coin;
 import tdd.vendingMachine.domain.Product;
 import tdd.vendingMachine.domain.Shelf;
 import tdd.vendingMachine.domain.VendingMachineConfiguration;
 import tdd.vendingMachine.dto.ProductImport;
-import tdd.vendingMachine.state.seller.CreditNotSelectedProductState;
-import tdd.vendingMachine.state.seller.NoCreditSelectedProductState;
+import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.util.TestUtils.TestUtils;
 import tdd.vendingMachine.validation.VendingMachineValidator;
 import tdd.vendingMachine.view.VendingMachineMessages;
@@ -32,7 +29,7 @@ import java.util.Map;
  * @since 1.0
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({VendingMachine.class, VendingMachineConfiguration.class, VendingMachineFactory.class})
+@PrepareForTest({VendingMachine.class, VendingMachineImpl.class, VendingMachineConfiguration.class, VendingMachineFactory.class})
 @PowerMockIgnore(value = {"javax.management.*"})
 public class ReadyStateTest implements StateTest {
 
@@ -72,8 +69,8 @@ public class ReadyStateTest implements StateTest {
     @Override
     public ReadyState transformToAndValidateInitialState(VendingMachine vendingMachine) {
         VendingMachineValidator.validateToReadyState(vendingMachine);
-        Assert.assertTrue(vendingMachine.getCurrentState() instanceof ReadyState);
-        return (ReadyState) vendingMachine.getCurrentState();
+        Assert.assertTrue(vendingMachine.provideCurrentState() instanceof ReadyState);
+        return (ReadyState) vendingMachine.provideCurrentState();
     }
 
     @Before @Override
@@ -104,8 +101,8 @@ public class ReadyStateTest implements StateTest {
 
         readyState.insertCoin(tenCents);
 
-        Assert.assertEquals(tenCents.denomination, readyState.vendingMachine.getCredit());
-        Assert.assertTrue(readyState.vendingMachine.getCurrentState() instanceof CreditNotSelectedProductState);
+        Assert.assertEquals(tenCents.denomination, readyState.vendingMachine.provideCredit());
+        Assert.assertTrue(readyState.vendingMachine.provideCurrentState() instanceof CreditNotSelectedProductState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
         verifyConfigMock(mockConfig, 3, 2, 2);
@@ -126,7 +123,7 @@ public class ReadyStateTest implements StateTest {
         readyState.insertCoin(tenCents);
 
         VendingMachineValidator.validateToReadyState(readyState.vendingMachine);
-        Assert.assertTrue(readyState.vendingMachine.getCurrentState() instanceof ReadyState);
+        Assert.assertTrue(readyState.vendingMachine.provideCurrentState() instanceof ReadyState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
         verifyConfigMock(mockConfig, 3, 2, 2);
@@ -144,8 +141,8 @@ public class ReadyStateTest implements StateTest {
         readyState.selectShelfNumber(0);
         Assert.assertTrue(readyState.vendingMachine.getDisplayCurrentMessage()
             .contains(VendingMachineMessages.PENDING.label));
-        Assert.assertNotNull(readyState.vendingMachine.getSelectedProduct());
-        Assert.assertTrue(readyState.vendingMachine.getCurrentState() instanceof NoCreditSelectedProductState);
+        Assert.assertNotNull(readyState.vendingMachine.provideSelectedProduct());
+        Assert.assertTrue(readyState.vendingMachine.provideCurrentState() instanceof NoCreditSelectedProductState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
         verifyConfigMock(mockConfig, 3, 2, 2);
@@ -219,7 +216,7 @@ public class ReadyStateTest implements StateTest {
 
         readyState.insertCoin(fiftyCents);
 
-        Assert.assertTrue(readyState.vendingMachine.getCurrentState() instanceof TechnicalErrorState);
+        Assert.assertTrue(readyState.vendingMachine.provideCurrentState() instanceof TechnicalErrorState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
         Mockito.verify(spied, Mockito.times(1)).addCoinToCredit(fiftyCents);
@@ -240,7 +237,7 @@ public class ReadyStateTest implements StateTest {
 
         readyState.selectShelfNumber(shelfNumber);
 
-        Assert.assertTrue(readyState.vendingMachine.getCurrentState() instanceof TechnicalErrorState);
+        Assert.assertTrue(readyState.vendingMachine.provideCurrentState() instanceof TechnicalErrorState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
         Mockito.verify(spied, Mockito.times(1)).selectProductGivenShelfNumber(shelfNumber);

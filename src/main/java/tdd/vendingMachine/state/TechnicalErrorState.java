@@ -1,7 +1,7 @@
 package tdd.vendingMachine.state;
 
-import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.Coin;
+import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.view.VendingMachineMessages;
 
 /**
@@ -12,6 +12,8 @@ import tdd.vendingMachine.view.VendingMachineMessages;
 public class TechnicalErrorState implements State {
 
     protected final VendingMachine vendingMachine;
+
+    public static final StateEnum state = StateEnum.TECHNICAL_ERROR;
 
     public TechnicalErrorState(VendingMachine vendingMachine) {
         this.vendingMachine = vendingMachine;

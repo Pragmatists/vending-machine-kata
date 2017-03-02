@@ -10,10 +10,10 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.*;
 import tdd.vendingMachine.domain.exception.InvalidShelfSizeException;
 import tdd.vendingMachine.dto.ProductImport;
+import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.util.TestUtils.TestUtils;
 import tdd.vendingMachine.view.VendingMachineMessages;
 
@@ -219,18 +219,18 @@ public class VendingMachineValidatorTest {
     /**
      * Establishes the returning values for the respective methods on the vending machine mock
      * @param isSoldOut return value for isSoldOut
-     * @param credit return value for getCredit
+     * @param credit return value for provideCredit
      * @param isStackEmpty return value for isStackEmpty
-     * @param selectedProduct return value for getSelectedProduct
+     * @param selectedProduct return value for provideSelectedProduct
      * @return a mock of the vending machine with given return values for specific methods
      * @throws Exception
      */
     private VendingMachine provideMockReturningValuesForState(boolean isSoldOut, int credit, boolean isStackEmpty, Product selectedProduct)  throws Exception {
         VendingMachine vendingMachineMock  = PowerMockito.mock(VendingMachine.class);
         PowerMockito.when(vendingMachineMock, "isSoldOut").thenReturn(isSoldOut);
-        PowerMockito.when(vendingMachineMock, "getCredit").thenReturn(credit);
+        PowerMockito.when(vendingMachineMock, "provideCredit").thenReturn(credit);
         PowerMockito.when(vendingMachineMock, "isCreditStackEmpty").thenReturn(isStackEmpty);
-        PowerMockito.when(vendingMachineMock, "getSelectedProduct").thenReturn(selectedProduct);
+        PowerMockito.when(vendingMachineMock, "provideSelectedProduct").thenReturn(selectedProduct);
         return vendingMachineMock;
     }
 
@@ -240,17 +240,17 @@ public class VendingMachineValidatorTest {
      * @param exceptionRequired if an exception was expected
      * @param exceptionThrown if an exception was thrown
      * @param amountTotalProducts calls to countTotalAmountProducts
-     * @param amountCallsCredit calls to getCredit
+     * @param amountCallsCredit calls to provideCredit
      * @param amountCallsStackEmpty calls to isStackEmpty
-     * @param amountCallsSelectedProduct calls to getSelectedProduct
+     * @param amountCallsSelectedProduct calls to provideSelectedProduct
      */
     private void verifyMockExecutionForState(VendingMachine vendingMachineMock, boolean exceptionRequired, boolean exceptionThrown,
                                              int amountTotalProducts, int amountCallsCredit, int amountCallsStackEmpty, int amountCallsSelectedProduct) {
         if (exceptionRequired) Assert.assertTrue(exceptionThrown);
         Mockito.verify(vendingMachineMock, Mockito.times(amountTotalProducts)).isSoldOut();
-        Mockito.verify(vendingMachineMock, Mockito.times(amountCallsCredit)).getCredit();
+        Mockito.verify(vendingMachineMock, Mockito.times(amountCallsCredit)).provideCredit();
         Mockito.verify(vendingMachineMock, Mockito.times(amountCallsStackEmpty)).isCreditStackEmpty();
-        Mockito.verify(vendingMachineMock, Mockito.times(amountCallsSelectedProduct)).getSelectedProduct();
+        Mockito.verify(vendingMachineMock, Mockito.times(amountCallsSelectedProduct)).provideSelectedProduct();
     }
 
     @Test

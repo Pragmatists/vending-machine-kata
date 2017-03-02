@@ -1,4 +1,4 @@
-package tdd.vendingMachine.state.seller;
+package tdd.vendingMachine.state;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -11,15 +11,11 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import tdd.vendingMachine.VendingMachine;
-import tdd.vendingMachine.VendingMachineFactory;
 import tdd.vendingMachine.domain.Coin;
 import tdd.vendingMachine.domain.Product;
 import tdd.vendingMachine.domain.Shelf;
 import tdd.vendingMachine.domain.VendingMachineConfiguration;
 import tdd.vendingMachine.dto.ProductImport;
-import tdd.vendingMachine.state.ReadyState;
-import tdd.vendingMachine.state.StateTest;
-import tdd.vendingMachine.state.TechnicalErrorState;
 import tdd.vendingMachine.util.TestUtils.TestUtils;
 import tdd.vendingMachine.validation.VendingMachineValidator;
 import tdd.vendingMachine.view.VendingMachineMessages;
@@ -35,7 +31,8 @@ import java.util.Map;
  * State representing a machine with a product selected without credit.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({NoCreditSelectedProductState.class, VendingMachineConfiguration.class, VendingMachineFactory.class, VendingMachine.class})
+@PrepareForTest({NoCreditSelectedProductState.class, VendingMachineConfiguration.class,
+    VendingMachineFactory.class, VendingMachine.class, VendingMachineImpl.class,})
 @PowerMockIgnore(value = {"javax.management.*"})
 public class NoCreditSelectedProductStateTest implements StateTest {
 
@@ -77,16 +74,16 @@ public class NoCreditSelectedProductStateTest implements StateTest {
     @Override
     public NoCreditSelectedProductState transformToAndValidateInitialState(VendingMachine vendingMachine) {
         VendingMachineValidator.validateToReadyState(vendingMachine);
-        Assert.assertTrue(vendingMachine.getCurrentState() instanceof ReadyState);
-        ReadyState initialState = (ReadyState) vendingMachine.getCurrentState();
+        Assert.assertTrue(vendingMachine.provideCurrentState() instanceof ReadyState);
+        ReadyState initialState = (ReadyState) vendingMachine.provideCurrentState();
 
         //transform to get desired state
         initialState.selectShelfNumber(nonEmptyShelfNumber);
 
         //validate initial state
-        Assert.assertNotNull(vendingMachine.getSelectedProduct());
-        Assert.assertTrue(vendingMachine.getCurrentState() instanceof NoCreditSelectedProductState);
-        return (NoCreditSelectedProductState) vendingMachine.getCurrentState();
+        Assert.assertNotNull(vendingMachine.provideSelectedProduct());
+        Assert.assertTrue(vendingMachine.provideCurrentState() instanceof NoCreditSelectedProductState);
+        return (NoCreditSelectedProductState) vendingMachine.provideCurrentState();
     }
 
     @Before @Override
@@ -125,14 +122,14 @@ public class NoCreditSelectedProductStateTest implements StateTest {
         Map<Coin, Shelf<Coin>> coinShelf = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialCoinsPerShelf);
         VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelf, coinShelf);
         noCreditSelectedProductState = transformToAndValidateInitialState(vendingMachine);
-        Product selectedBeforeAttempt = noCreditSelectedProductState.vendingMachine.getSelectedProduct();
+        Product selectedBeforeAttempt = noCreditSelectedProductState.vendingMachine.provideSelectedProduct();
 
         noCreditSelectedProductState.selectShelfNumber(otherNonEmptyShelfNumber);
 
         Assert.assertTrue(noCreditSelectedProductState.vendingMachine.getDisplayCurrentMessage()
             .contains(VendingMachineMessages.PENDING.label));
-        Assert.assertNotEquals(selectedBeforeAttempt, noCreditSelectedProductState.vendingMachine.getSelectedProduct());
-        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.getCurrentState() instanceof NoCreditSelectedProductState);
+        Assert.assertNotEquals(selectedBeforeAttempt, noCreditSelectedProductState.vendingMachine.provideSelectedProduct());
+        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.provideCurrentState() instanceof NoCreditSelectedProductState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
         verifyConfigMock(configMock, 3, 2, 2);
@@ -152,15 +149,15 @@ public class NoCreditSelectedProductStateTest implements StateTest {
         Map<Coin, Shelf<Coin>> coinShelf = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialCoinsPerShelf);
         VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelf, coinShelf);
         noCreditSelectedProductState = transformToAndValidateInitialState(vendingMachine);
-        Product selectedBeforeAttempt = noCreditSelectedProductState.vendingMachine.getSelectedProduct();
+        Product selectedBeforeAttempt = noCreditSelectedProductState.vendingMachine.provideSelectedProduct();
 
         int invalidShelfNumber = 42342;
         noCreditSelectedProductState.selectShelfNumber(invalidShelfNumber);
 
         Assert.assertTrue(noCreditSelectedProductState.vendingMachine.getDisplayCurrentMessage()
             .contains(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label));
-        Assert.assertEquals(selectedBeforeAttempt, noCreditSelectedProductState.vendingMachine.getSelectedProduct());
-        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.getCurrentState() instanceof NoCreditSelectedProductState);
+        Assert.assertEquals(selectedBeforeAttempt, noCreditSelectedProductState.vendingMachine.provideSelectedProduct());
+        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.provideCurrentState() instanceof NoCreditSelectedProductState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
         verifyConfigMock(configMock, 3, 2, 2);
@@ -180,14 +177,14 @@ public class NoCreditSelectedProductStateTest implements StateTest {
         Map<Coin, Shelf<Coin>> coinShelf = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialCoinsPerShelf);
         VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelf, coinShelf);
         noCreditSelectedProductState = transformToAndValidateInitialState(vendingMachine);
-        Product selectedBeforeAttempt = noCreditSelectedProductState.vendingMachine.getSelectedProduct();
+        Product selectedBeforeAttempt = noCreditSelectedProductState.vendingMachine.provideSelectedProduct();
 
         noCreditSelectedProductState.selectShelfNumber(emptyShelfNumber);
 
         Assert.assertTrue(noCreditSelectedProductState.vendingMachine.getDisplayCurrentMessage()
             .contains(VendingMachineMessages.UNABLE_TO_SELECT_EMPTY_SHELF.label));
-        Assert.assertEquals(selectedBeforeAttempt, noCreditSelectedProductState.vendingMachine.getSelectedProduct());
-        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.getCurrentState() instanceof NoCreditSelectedProductState);
+        Assert.assertEquals(selectedBeforeAttempt, noCreditSelectedProductState.vendingMachine.provideSelectedProduct());
+        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.provideCurrentState() instanceof NoCreditSelectedProductState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
         verifyConfigMock(configMock, 3, 2, 2);
@@ -206,16 +203,16 @@ public class NoCreditSelectedProductStateTest implements StateTest {
         Map<Coin, Shelf<Coin>> coinShelf = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, coinShelfCapacity);
         VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelf, coinShelf);
         noCreditSelectedProductState = transformToAndValidateInitialState(vendingMachine);
-        Product selectedBeforeAttempt = noCreditSelectedProductState.vendingMachine.getSelectedProduct();
+        Product selectedBeforeAttempt = noCreditSelectedProductState.vendingMachine.provideSelectedProduct();
 
         noCreditSelectedProductState.insertCoin(Coin.FIFTY_CENTS);
 
         Assert.assertEquals(0, noCreditSelectedProductState.vendingMachine.getCreditStackSize());
-        Assert.assertEquals(0, noCreditSelectedProductState.vendingMachine.getCredit());
+        Assert.assertEquals(0, noCreditSelectedProductState.vendingMachine.provideCredit());
         Assert.assertTrue(noCreditSelectedProductState.vendingMachine.getDisplayCurrentMessage()
             .contains(VendingMachineMessages.CASH_NOT_ACCEPTED_DISPENSER_FULL.label));
-        Assert.assertEquals(selectedBeforeAttempt, noCreditSelectedProductState.vendingMachine.getSelectedProduct());
-        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.getCurrentState() instanceof NoCreditSelectedProductState);
+        Assert.assertEquals(selectedBeforeAttempt, noCreditSelectedProductState.vendingMachine.provideSelectedProduct());
+        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.provideCurrentState() instanceof NoCreditSelectedProductState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
         verifyConfigMock(configMock, 3, 2, 2);
@@ -241,7 +238,7 @@ public class NoCreditSelectedProductStateTest implements StateTest {
         Assert.assertTrue(noCreditSelectedProductState.vendingMachine.getDisplayCurrentMessage()
             .contains(VendingMachineMessages.RETURN_TO_BUCKET_CREDIT.label));
         VendingMachineValidator.validateToReadyState(noCreditSelectedProductState.vendingMachine);
-        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.getCurrentState() instanceof ReadyState);
+        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.provideCurrentState() instanceof ReadyState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
         verifyConfigMock(configMock, 3, 2, 2);
@@ -261,19 +258,19 @@ public class NoCreditSelectedProductStateTest implements StateTest {
         Map<Coin, Shelf<Coin>> coinShelf = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialCoinsDispenser);
         VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelf, coinShelf);
         noCreditSelectedProductState = transformToAndValidateInitialState(vendingMachine);
-        int creditBefore = noCreditSelectedProductState.vendingMachine.getCredit();
+        int creditBefore = noCreditSelectedProductState.vendingMachine.provideCredit();
         int sizeCreditBefore = noCreditSelectedProductState.vendingMachine.getCreditStackSize();
-        Product product = noCreditSelectedProductState.vendingMachine.getSelectedProduct();
+        Product product = noCreditSelectedProductState.vendingMachine.provideSelectedProduct();
 
         Coin twentyCents = Coin.TWENTY_CENTS;
         noCreditSelectedProductState.insertCoin(twentyCents);
 
         Assert.assertEquals(sizeCreditBefore + 1, noCreditSelectedProductState.vendingMachine.getCreditStackSize());
-        Assert.assertEquals(creditBefore + twentyCents.denomination, noCreditSelectedProductState.vendingMachine.getCredit());
+        Assert.assertEquals(creditBefore + twentyCents.denomination, noCreditSelectedProductState.vendingMachine.provideCredit());
         Assert.assertTrue(noCreditSelectedProductState.vendingMachine.getDisplayCurrentMessage().contains(VendingMachineMessages.PENDING.label));
-        Assert.assertNotNull(noCreditSelectedProductState.vendingMachine.getSelectedProduct());
-        Assert.assertEquals(product, noCreditSelectedProductState.vendingMachine.getSelectedProduct());
-        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.getCurrentState() instanceof InsufficientCreditState);
+        Assert.assertNotNull(noCreditSelectedProductState.vendingMachine.provideSelectedProduct());
+        Assert.assertEquals(product, noCreditSelectedProductState.vendingMachine.provideSelectedProduct());
+        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.provideCurrentState() instanceof InsufficientCreditState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
         verifyConfigMock(configMock, 3, 2, 2);
@@ -300,7 +297,7 @@ public class NoCreditSelectedProductStateTest implements StateTest {
         Assert.assertTrue(noCreditSelectedProductState.vendingMachine.getDisplayCurrentMessage()
             .contains(VendingMachineMessages.DISPENSED_TO_BUCKET.label));
         VendingMachineValidator.validateToReadyState(noCreditSelectedProductState.vendingMachine);
-        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.getCurrentState() instanceof ReadyState);
+        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.provideCurrentState() instanceof ReadyState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
         verifyConfigMock(configMock, 3, 2, 2);
@@ -325,7 +322,7 @@ public class NoCreditSelectedProductStateTest implements StateTest {
         noCreditSelectedProductState.cancel();
 
         VendingMachineValidator.validateToReadyState(noCreditSelectedProductState.vendingMachine);
-        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.getCurrentState() instanceof ReadyState);
+        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.provideCurrentState() instanceof ReadyState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
         verifyConfigMock(configMock, 3, 2, 2);
@@ -341,11 +338,11 @@ public class NoCreditSelectedProductStateTest implements StateTest {
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(10, 5)));
         PowerMockito.doThrow(new RuntimeException("fail to error")).when(spied, "addCoinToCredit", fiftyCents);
 
-        noCreditSelectedProductState = new NoCreditSelectedProductState(spied);
+        noCreditSelectedProductState = new NoCreditSelectedProductState((VendingMachineImpl) spied);
 
         noCreditSelectedProductState.insertCoin(fiftyCents);
 
-        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.getCurrentState() instanceof TechnicalErrorState);
+        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.provideCurrentState() instanceof TechnicalErrorState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
         Mockito.verify(spied, Mockito.times(1)).addCoinToCredit(fiftyCents);
@@ -362,11 +359,11 @@ public class NoCreditSelectedProductStateTest implements StateTest {
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(10, 5)));
         PowerMockito.doThrow(new RuntimeException("fail to error")).when(spied, "selectProductGivenShelfNumber", shelfNumber);
 
-        noCreditSelectedProductState = new NoCreditSelectedProductState(spied);
+        noCreditSelectedProductState = new NoCreditSelectedProductState((VendingMachineImpl) spied);
 
         noCreditSelectedProductState.selectShelfNumber(shelfNumber);
 
-        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.getCurrentState() instanceof TechnicalErrorState);
+        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.provideCurrentState() instanceof TechnicalErrorState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
         Mockito.verify(spied, Mockito.times(1)).selectProductGivenShelfNumber(shelfNumber);
@@ -382,11 +379,11 @@ public class NoCreditSelectedProductStateTest implements StateTest {
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(10, 5)));
         PowerMockito.doThrow(new RuntimeException("fail to error")).when(spied, "undoProductSelection");
 
-        noCreditSelectedProductState = new NoCreditSelectedProductState(spied);
+        noCreditSelectedProductState = new NoCreditSelectedProductState((VendingMachineImpl) spied);
 
         noCreditSelectedProductState.cancel();
 
-        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.getCurrentState() instanceof TechnicalErrorState);
+        Assert.assertTrue(noCreditSelectedProductState.vendingMachine.provideCurrentState() instanceof TechnicalErrorState);
 
         PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
         Mockito.verify(spied, Mockito.times(1)).undoProductSelection();

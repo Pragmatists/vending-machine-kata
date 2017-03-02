@@ -1,7 +1,8 @@
-package tdd.vendingMachine;
+package tdd.vendingMachine.state;
 
 import lombok.NonNull;
 import org.apache.log4j.Logger;
+import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.*;
 import tdd.vendingMachine.dto.CashImport;
 import tdd.vendingMachine.dto.ProductImport;
@@ -61,7 +62,7 @@ public class VendingMachineFactory {
         Map<Integer, Shelf<Product>> productShelves = buildProductShelf(products, 0);
         Map<Coin, Shelf<Coin>> coinShelves = buildEmptyCoinShelf();
         VendingMachineValidator.validateNewVendingMachineParameters(vendingMachineConfiguration, productShelves, coinShelves);
-        return new VendingMachine(productShelves, coinShelves);
+        return new VendingMachineImpl(productShelves, coinShelves);
     }
 
     /**
@@ -78,7 +79,7 @@ public class VendingMachineFactory {
         Map<Integer, Shelf<Product>> productShelves = buildProductShelf(products, productItemCount);
         Map<Coin, Shelf<Coin>> coinShelves = coinDispenserFactory.buildShelfWithGivenCoinItemCount(coinItemCount);
         VendingMachineValidator.validateNewVendingMachineParameters(vendingMachineConfiguration, productShelves, coinShelves);
-        return new VendingMachine(productShelves, coinShelves);
+        return new VendingMachineImpl(productShelves, coinShelves);
     }
 
     /**
@@ -89,7 +90,7 @@ public class VendingMachineFactory {
      */
     public VendingMachine customVendingMachineForTesting(Map<Integer, Shelf<Product>> productShelves, Map<Coin, Shelf<Coin>> coinShelves) {
         VendingMachineValidator.validateNewVendingMachineParameters(vendingMachineConfiguration, productShelves, coinShelves);
-        return new VendingMachine(productShelves, coinShelves);
+        return new VendingMachineImpl(productShelves, coinShelves);
     }
 
     /**
@@ -124,6 +125,6 @@ public class VendingMachineFactory {
         Map<Coin, Shelf<Coin>> cashDispenser = new CoinDispenserFactory(vendingMachineConfiguration).buildShelf(cashImports);
         Map<Integer, Shelf<Product>> productShelves = buildProductShelfFromCashImports(productImports);
         VendingMachineValidator.validateNewVendingMachineParameters(vendingMachineConfiguration, productShelves, cashDispenser);
-        return new VendingMachine(productShelves, cashDispenser);
+        return new VendingMachineImpl(productShelves, cashDispenser);
     }
 }
