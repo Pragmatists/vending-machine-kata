@@ -9,6 +9,6 @@ import tdd.vendingMachine.state.VendingMachineFactory;
 public class Main {
 
     public static void main (String... args) {
-        VendingMachine vendingMachine = new VendingMachineFactory().buildVendingMachineFromResourceFiles();
+        VendingMachine vendingMachine = VendingMachineFactory.buildVendingMachineFromResourceFiles();
     }
 }

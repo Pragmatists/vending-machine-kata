@@ -28,7 +28,6 @@ public class SoldOutStateTest implements StateTest {
 
     private Product COLA_025;
     private SoldOutState soldOutState;
-    private VendingMachineFactory vendingMachineFactory;
 
     /**
      * Creates a mock for the class VendingMachineConfiguration
@@ -68,15 +67,13 @@ public class SoldOutStateTest implements StateTest {
 
     @Before @Override
     public void setup() {
-        vendingMachineFactory = new VendingMachineFactory();
         COLA_025 = new Product(100, "COLA_025cl");
-        soldOutState = transformToAndValidateInitialState(vendingMachineFactory.buildSoldOutVendingMachineNoCash(COLA_025));
+        soldOutState = transformToAndValidateInitialState(VendingMachineFactory.buildSoldOutVendingMachineNoCash(COLA_025));
     }
 
     @After @Override
     public void tearDown() {
         soldOutState = null;
-        vendingMachineFactory = null;
         COLA_025 = null;
     }
 
@@ -123,7 +120,7 @@ public class SoldOutStateTest implements StateTest {
         VendingMachineConfiguration configMock = getConfigMock(10, 10, 10);
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(configMock);
 
-        VendingMachine spied = PowerMockito.spy(new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_025, 1),
+        VendingMachine spied = PowerMockito.spy(VendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_025, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(10, 5)));
         PowerMockito.doThrow(new RuntimeException("fail to error")).when(spied, "displayProductPrice", shelfNumber);
 

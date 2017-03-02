@@ -21,27 +21,25 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class VendingMachineFactory {
 
     private static final Logger logger = Logger.getLogger(VendingMachineFactory.class);
-    private final VendingMachineConfiguration vendingMachineConfiguration;
-    private final CoinDispenserFactory coinDispenserFactory;
+    private static final VendingMachineConfiguration vendingMachineConfiguration = new VendingMachineConfiguration();
 
-    public VendingMachineFactory() {
-        this.vendingMachineConfiguration = new VendingMachineConfiguration();
-        this.coinDispenserFactory = new CoinDispenserFactory(vendingMachineConfiguration);
+    private VendingMachineFactory() {
+        throw new AssertionError("VendingMachineFactory should not be instantiated");
     }
 
-    private Map<Coin, Shelf<Coin>> buildEmptyCoinShelf() {
-        return coinDispenserFactory.buildShelf();
-    }
-
-    private Map<Integer, Shelf<Product>> buildProductShelf(@NonNull Collection<Product> products, final int amount) {
+    private static Map<Integer, Shelf<Product>> buildProductShelf(@NonNull Collection<Product> products, final int amount) {
         AtomicInteger id = new AtomicInteger(0);
         Map<Integer, Shelf<Product>> productShelf = new HashMap<>();
         for (Product product: products) {
             Shelf<Product> singleShelf = ShelfFactory.buildShelf(id.getAndIncrement(), product,
-                vendingMachineConfiguration.getProductShelfCapacity(), amount);
+                getConfig().getProductShelfCapacity(), amount);
             productShelf.put(singleShelf.id, singleShelf);
         }
         return productShelf;
+    }
+
+    static VendingMachineConfiguration getConfig() {
+        return vendingMachineConfiguration;
     }
 
     /**
@@ -49,7 +47,7 @@ public class VendingMachineFactory {
      * @param product the product to build a shelf from
      * @return a vending machine with a single
      */
-    public VendingMachine buildSoldOutVendingMachineNoCash(@NonNull Product product) {
+    public static VendingMachine buildSoldOutVendingMachineNoCash(@NonNull Product product) {
         return buildSoldOutVendingMachineNoCash(Collections.singletonList(product));
     }
 
@@ -58,10 +56,11 @@ public class VendingMachineFactory {
      * @param products the list of products to include shelves from
      * @return a vending machine
      */
-    public VendingMachine buildSoldOutVendingMachineNoCash(@NonNull List<Product> products) {
+    public static VendingMachine buildSoldOutVendingMachineNoCash(@NonNull List<Product> products) {
         Map<Integer, Shelf<Product>> productShelves = buildProductShelf(products, 0);
-        Map<Coin, Shelf<Coin>> coinShelves = buildEmptyCoinShelf();
-        VendingMachineValidator.validateNewVendingMachineParameters(vendingMachineConfiguration, productShelves, coinShelves);
+        VendingMachineConfiguration config = getConfig();
+        Map<Coin, Shelf<Coin>> coinShelves = CoinDispenserFactory.buildShelfWithGivenCoinItemCount(config, 0);
+        VendingMachineValidator.validateNewVendingMachineParameters(config, productShelves, coinShelves);
         return new VendingMachineImpl(productShelves, coinShelves);
     }
 
@@ -73,12 +72,13 @@ public class VendingMachineFactory {
      * @param coinItemCount the amount of coins per denomination in the cashDispenser
      * @return a vending machine
      */
-    public VendingMachine buildVendingMachineGivenProductsAndInitialShelfItemCounts(@NonNull Collection<Product> products, int productItemCount, int coinItemCount) {
+    public static VendingMachine buildVendingMachineGivenProductsAndInitialShelfItemCounts(@NonNull Collection<Product> products, int productItemCount, int coinItemCount) {
         if(productItemCount < 0) throw new InputMismatchException("Product amount must be non-negative");
         if(coinItemCount < 0) throw new InputMismatchException("Coin amount must be non-negative");
         Map<Integer, Shelf<Product>> productShelves = buildProductShelf(products, productItemCount);
-        Map<Coin, Shelf<Coin>> coinShelves = coinDispenserFactory.buildShelfWithGivenCoinItemCount(coinItemCount);
-        VendingMachineValidator.validateNewVendingMachineParameters(vendingMachineConfiguration, productShelves, coinShelves);
+        VendingMachineConfiguration config = getConfig();
+        Map<Coin, Shelf<Coin>> coinShelves = CoinDispenserFactory.buildShelfWithGivenCoinItemCount(config, coinItemCount);
+        VendingMachineValidator.validateNewVendingMachineParameters(config, productShelves, coinShelves);
         return new VendingMachineImpl(productShelves, coinShelves);
     }
 
@@ -88,8 +88,8 @@ public class VendingMachineFactory {
      * @param coinShelves the coinShelves
      * @return a vending machine with given shelves
      */
-    public VendingMachine customVendingMachineForTesting(Map<Integer, Shelf<Product>> productShelves, Map<Coin, Shelf<Coin>> coinShelves) {
-        VendingMachineValidator.validateNewVendingMachineParameters(vendingMachineConfiguration, productShelves, coinShelves);
+    public static VendingMachine customVendingMachineForTesting(Map<Integer, Shelf<Product>> productShelves, Map<Coin, Shelf<Coin>> coinShelves) {
+        VendingMachineValidator.validateNewVendingMachineParameters(getConfig(), productShelves, coinShelves);
         return new VendingMachineImpl(productShelves, coinShelves);
     }
 
@@ -98,10 +98,10 @@ public class VendingMachineFactory {
      * @param productImports the product imports defining the products to load.
      * @return map containing the product shelves.
      */
-    Map<Integer, Shelf<Product>> buildProductShelfFromCashImports(Collection<ProductImport> productImports) {
+    static Map<Integer, Shelf<Product>> buildProductShelfFromCashImports(Collection<ProductImport> productImports) {
         int idShelfCounter = 0;
         Map<Integer, Shelf<Product>> productShelves = new HashMap<>();
-        int productShelfCapacity = vendingMachineConfiguration.getProductShelfCapacity();
+        int productShelfCapacity = getConfig().getProductShelfCapacity();
         for (ProductImport productImport: productImports) {
             Shelf<Product> productShelf = ShelfFactory.buildShelf(idShelfCounter++,
                 new Product(productImport.getPrice(), productImport.getType()), productShelfCapacity, productImport.getItemCount());
@@ -117,14 +117,15 @@ public class VendingMachineFactory {
      * products.csv for productShelves
      * @return a vending machine.
      */
-    public VendingMachine buildVendingMachineFromResourceFiles() {
-        InputStream streamCashImports = this.getClass().getClassLoader().getResourceAsStream("cash.csv");
+    public static VendingMachine buildVendingMachineFromResourceFiles() {
+        InputStream streamCashImports = VendingMachineFactory.class.getClassLoader().getResourceAsStream("cash.csv");
         List<CashImport> cashImports = FileReaderHelper.retrieveCashImportFromFileStream(streamCashImports).orElse(Collections.emptyList());
-        InputStream streamProducts = this.getClass().getClassLoader().getResourceAsStream("products.csv");
+        InputStream streamProducts = VendingMachineFactory.class.getClassLoader().getResourceAsStream("products.csv");
         List<ProductImport> productImports = FileReaderHelper.retrieveProductsImportFromFileStream(streamProducts).orElse(Collections.emptyList());
-        Map<Coin, Shelf<Coin>> cashDispenser = new CoinDispenserFactory(vendingMachineConfiguration).buildShelf(cashImports);
-        Map<Integer, Shelf<Product>> productShelves = buildProductShelfFromCashImports(productImports);
-        VendingMachineValidator.validateNewVendingMachineParameters(vendingMachineConfiguration, productShelves, cashDispenser);
+        VendingMachineConfiguration config = getConfig();
+        Map<Coin, Shelf<Coin>> cashDispenser = CoinDispenserFactory.buildShelf(config, cashImports);
+        Map<Integer, Shelf<Product>> productShelves = VendingMachineFactory.buildProductShelfFromCashImports(productImports);
+        VendingMachineValidator.validateNewVendingMachineParameters(config, productShelves, cashDispenser);
         return new VendingMachineImpl(productShelves, cashDispenser);
     }
 }

@@ -365,7 +365,7 @@ public class VendingMachineImplTest {
         PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
 
         List<Product> products = Collections.singletonList(COLA_190_025);
-        VendingMachine soldOutVendingMachine = new VendingMachineFactory().buildSoldOutVendingMachineNoCash(products);
+        VendingMachine soldOutVendingMachine = VendingMachineFactory.buildSoldOutVendingMachineNoCash(products);
         Assert.assertNull(soldOutVendingMachine.provideSelectedProduct());
         soldOutVendingMachine.selectProductGivenShelfNumber(0);
 

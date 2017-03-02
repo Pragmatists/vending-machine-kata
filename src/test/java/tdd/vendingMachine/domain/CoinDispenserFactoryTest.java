@@ -4,7 +4,12 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import tdd.vendingMachine.dto.CashImport;
 import tdd.vendingMachine.util.TestUtils.TestUtils;
 
@@ -17,6 +22,9 @@ import java.util.Map;
  * @author Agustin Cabra on 2/21/2017.
  * @since 1.0
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({CoinDispenserFactory.class, VendingMachineConfiguration.class})
+@PowerMockIgnore(value = {"javax.management.*"})
 public class CoinDispenserFactoryTest {
 
     /**
@@ -60,26 +68,34 @@ public class CoinDispenserFactoryTest {
         final int expectedCapacity = 1;
         int expectedSize = Coin.values().length;
         VendingMachineConfiguration configMock = getConfigMock(1, 0, 0);
-        Map<Coin, Shelf<Coin>> cashDispenser = new CoinDispenserFactory(configMock).buildShelf();
+
+        PowerMockito.spy(CoinDispenserFactory.class);
+        PowerMockito.when(CoinDispenserFactory.getConfig()).thenReturn(configMock);
+
+        Map<Coin, Shelf<Coin>> cashDispenser = CoinDispenserFactory.buildShelfWithGivenCoinItemCount(0);
         Assert.assertEquals(expectedSize, cashDispenser.size());
         cashDispenser.values().forEach(coinShelf -> {
             Assert.assertEquals(expectedCapacity, coinShelf.capacity);
             Assert.assertEquals(0, coinShelf.getItemCount());
         });
 
+        PowerMockito.verifyStatic(Mockito.times(1));
+        CoinDispenserFactory.getConfig();
         verifyConfigMock(configMock, 1, 0, 0);
-
     }
 
     @Test
-    public void should_build_full_cashDispenser_with_shelf_capacity_5() {
+    public void should_build_full_cashDispenser_with_shelf_capacity_5() throws Exception {
         final int expectedCapacity = 5;
         final int expectedSize = Coin.values().length;
         final int expectedAmount = 5;
         Collection<CashImport> stubCashImportsFull = TestUtils.getStubCashImportsFull(expectedAmount);
         VendingMachineConfiguration configMock = getConfigMock(expectedCapacity, 0, 0);
-        Map<Coin, Shelf<Coin>> cashDispenser = new CoinDispenserFactory(configMock)
-                .buildShelf(stubCashImportsFull);
+
+        PowerMockito.spy(CoinDispenserFactory.class);
+        PowerMockito.when(CoinDispenserFactory.getConfig()).thenReturn(configMock);
+
+        Map<Coin, Shelf<Coin>> cashDispenser = CoinDispenserFactory.buildShelf(stubCashImportsFull);
         Assert.assertEquals(expectedSize, cashDispenser.size());
         cashDispenser.values().forEach(coinShelf -> {
             Assert.assertEquals(expectedCapacity, coinShelf.capacity);
@@ -87,11 +103,13 @@ public class CoinDispenserFactoryTest {
             Assert.assertTrue(coinShelf.countFreeSlots() == 0);
         });
 
+        PowerMockito.verifyStatic(Mockito.times(1));
+        CoinDispenserFactory.getConfig();
         verifyConfigMock(configMock, 1, 0, 0);
     }
 
     @Test
-    public void should_discard_items_since_shelf_got_full() {
+    public void should_discard_items_since_shelf_got_full()  throws Exception {
         final int expectedSize = Coin.values().length;
         final int expectedCapacity = 4;
         final int givenAmount = 7;
@@ -101,18 +119,22 @@ public class CoinDispenserFactoryTest {
 
         VendingMachineConfiguration configMock = getConfigMock(4, 0, 0);
 
-        Map<Coin, Shelf<Coin>> cashDispenser = new CoinDispenserFactory(configMock)
-            .buildShelf(stubCashImport);
+        PowerMockito.spy(CoinDispenserFactory.class);
+        PowerMockito.when(CoinDispenserFactory.getConfig()).thenReturn(configMock);
+
+        Map<Coin, Shelf<Coin>> cashDispenser = CoinDispenserFactory.buildShelf(stubCashImport);
         Assert.assertEquals(expectedSize, cashDispenser.size());
         Assert.assertEquals(expectedCapacity, cashDispenser.get(fiftyCents).getItemCount());
         Assert.assertEquals(expectedDiscardedItems, stubCashImport.getAmount() - cashDispenser.get(fiftyCents).getItemCount());
         Assert.assertEquals(0, cashDispenser.get(fiftyCents).countFreeSlots());
 
+        PowerMockito.verifyStatic(Mockito.times(1));
+        CoinDispenserFactory.getConfig();
         verifyConfigMock(configMock, 1, 0, 0);
     }
 
     @Test
-    public void should_build_non_full_shelf_since_import_amount_less_than_capacity() {
+    public void should_build_non_full_shelf_since_import_amount_less_than_capacity()  throws Exception {
         final int expectedSize = Coin.values().length;
         final int expectedCapacity = 4;
         final int givenAmount = 3;
@@ -120,22 +142,31 @@ public class CoinDispenserFactoryTest {
         Coin fiftyCents = Coin.FIFTY_CENTS;
         CashImport stubCashImport = new CashImport(fiftyCents.label, givenAmount);
         VendingMachineConfiguration configMock = getConfigMock(expectedCapacity, 0, 0);
-        Map<Coin, Shelf<Coin>> cashDispenser = new CoinDispenserFactory(configMock).buildShelf(stubCashImport);
+
+        PowerMockito.spy(CoinDispenserFactory.class);
+        PowerMockito.when(CoinDispenserFactory.getConfig()).thenReturn(configMock);
+
+        Map<Coin, Shelf<Coin>> cashDispenser = CoinDispenserFactory.buildShelf(stubCashImport);
+
         Assert.assertEquals(expectedSize, cashDispenser.size());
         Assert.assertEquals(stubCashImport.getAmount(), cashDispenser.get(fiftyCents).getItemCount());
         Assert.assertEquals(expectedDiscardedItems, stubCashImport.getAmount() - cashDispenser.get(fiftyCents).getItemCount());
         Assert.assertEquals(expectedCapacity - stubCashImport.getAmount(), cashDispenser.get(fiftyCents).countFreeSlots());
 
+        PowerMockito.verifyStatic(Mockito.times(1));
+        CoinDispenserFactory.getConfig();
         verifyConfigMock(configMock, 1, 0, 0);
     }
 
     @Test
-    public void should_build_coin_dispenser_with_amount_of_coins_given() {
+    public void should_build_coin_dispenser_with_amount_of_coins_given()  throws Exception {
         int expectedCapacity = 8;
         int initialCount = 7;
         VendingMachineConfiguration configMock = getConfigMock(expectedCapacity, 0, 0);
+        PowerMockito.spy(CoinDispenserFactory.class);
+        PowerMockito.when(CoinDispenserFactory.getConfig()).thenReturn(configMock);
 
-        Map<Coin, Shelf<Coin>> coinShelfMap = new CoinDispenserFactory(configMock).buildShelfWithGivenCoinItemCount(initialCount);
+        Map<Coin, Shelf<Coin>> coinShelfMap = CoinDispenserFactory.buildShelfWithGivenCoinItemCount(initialCount);
 
         Assert.assertEquals(Coin.values().length, coinShelfMap.size());
         coinShelfMap.values().forEach(coinShelf -> {
@@ -143,21 +174,25 @@ public class CoinDispenserFactoryTest {
             Assert.assertEquals(initialCount, coinShelf.getItemCount());
         });
 
-        verifyConfigMock(configMock, 2, 0, 0);
+        PowerMockito.verifyStatic(Mockito.times(1));
+        CoinDispenserFactory.getConfig();
+        verifyConfigMock(configMock, 1, 0, 0);
     }
 
     @Test
-    public void should_discard_excess_of_cash_imports_coin_shelf_discarded_must_be_full() {
+    public void should_discard_excess_of_cash_imports_coin_shelf_discarded_must_be_full()  throws Exception {
         int expectedCapacity = 8;
         int firstImportAmount = 3;
         int secondImportAmount = 6;
         int expectedDiscardedItems = 1;
         VendingMachineConfiguration configMock = getConfigMock(expectedCapacity, 0, 0);
+        PowerMockito.spy(CoinDispenserFactory.class);
+        PowerMockito.when(CoinDispenserFactory.getConfig()).thenReturn(configMock);
         Coin fiftyCents = Coin.FIFTY_CENTS;
 
         List<CashImport> cashImportsCollectionStub = Arrays.asList(new CashImport(fiftyCents.label, firstImportAmount),
             new CashImport(fiftyCents.label, secondImportAmount));
-        Map<Coin, Shelf<Coin>> coinShelf = new CoinDispenserFactory(configMock).buildShelf(cashImportsCollectionStub);
+        Map<Coin, Shelf<Coin>> coinShelf = CoinDispenserFactory.buildShelf(cashImportsCollectionStub);
         coinShelf.values().forEach(shelf -> {
             Assert.assertEquals(expectedCapacity, shelf.capacity);
             if (shelf.getType() == fiftyCents) { //the only loaded coin shelf
@@ -170,6 +205,8 @@ public class CoinDispenserFactoryTest {
             }
         });
 
+        PowerMockito.verifyStatic(Mockito.times(1));
+        CoinDispenserFactory.getConfig();
         verifyConfigMock(configMock, 1, 0, 0);
     }
 }

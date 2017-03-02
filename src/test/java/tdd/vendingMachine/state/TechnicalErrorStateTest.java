@@ -75,15 +75,15 @@ public class TechnicalErrorStateTest implements StateTest {
 
         configMock = getConfigMock(shelfCapacityCoins, productShelfCount, shelfCapacityProducts);
         try {
-            PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(configMock);
+            PowerMockito.spy(VendingMachineFactory.class);
+            PowerMockito.when(VendingMachineFactory.getConfig()).thenReturn(configMock);
         }catch (Exception e) {
             Assert.fail();
         }
 
-
         Map<Integer, Shelf<Product>> productShelf = TestUtils.buildShelvesWithItems(TestUtils.buildStubListOfProducts(3), 3, shelfCapacityProducts);
         Map<Coin, Shelf<Coin>> coinShelf = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(shelfCapacityCoins, 5);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelf, coinShelf);
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(productShelf, coinShelf);
         technicalErrorState = transformToAndValidateInitialState(vendingMachine);
     }
 
@@ -91,11 +91,12 @@ public class TechnicalErrorStateTest implements StateTest {
     public void tearDown() {
         technicalErrorState = null;
         try {
-            PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
+            PowerMockito.verifyStatic(Mockito.times(1));
+            VendingMachineFactory.getConfig();
         } catch (Exception e) {
             Assert.fail();
         }
-        verifyConfigMock(configMock, 3, 2, 2);
+        verifyConfigMock(configMock, 1, 1, 1);
         configMock = null;
     }
 

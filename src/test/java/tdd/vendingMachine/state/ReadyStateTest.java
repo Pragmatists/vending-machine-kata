@@ -90,10 +90,11 @@ public class ReadyStateTest implements StateTest {
     public void should_change_state_after_inserting_coin_on_machine_with_dispenser_available() throws Exception {
         int initialCoinsOnShelf = 5;
         int coinShelfCapacity = 10;
-        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
-        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+        VendingMachineConfiguration configMock = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.spy(VendingMachineFactory.class);
+        PowerMockito.when(VendingMachineFactory.getConfig()).thenReturn(configMock);
 
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, initialCoinsOnShelf));
         readyState = transformToAndValidateInitialState(vendingMachine);
 
@@ -104,8 +105,9 @@ public class ReadyStateTest implements StateTest {
         Assert.assertEquals(tenCents.denomination, readyState.vendingMachine.provideCredit());
         Assert.assertTrue(readyState.vendingMachine.provideCurrentState() instanceof CreditNotSelectedProductState);
 
-        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
-        verifyConfigMock(mockConfig, 3, 2, 2);
+        PowerMockito.verifyStatic(Mockito.times(1));
+        VendingMachineFactory.getConfig();
+        verifyConfigMock(configMock, 1, 1, 1);
     }
 
     @Test
@@ -113,10 +115,11 @@ public class ReadyStateTest implements StateTest {
         Coin tenCents = Coin.TEN_CENTS;
 
         int coinShelfCapacity = 10;
-        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
-        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+        VendingMachineConfiguration configMock = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.spy(VendingMachineFactory.class);
+        PowerMockito.when(VendingMachineFactory.getConfig()).thenReturn(configMock);
 
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(CHOCOLATE_BAR, 1),
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(CHOCOLATE_BAR, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, coinShelfCapacity));
         readyState = transformToAndValidateInitialState(vendingMachine);
 
@@ -125,16 +128,18 @@ public class ReadyStateTest implements StateTest {
         VendingMachineValidator.validateToReadyState(readyState.vendingMachine);
         Assert.assertTrue(readyState.vendingMachine.provideCurrentState() instanceof ReadyState);
 
-        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
-        verifyConfigMock(mockConfig, 3, 2, 2);
+        PowerMockito.verifyStatic(Mockito.times(1));
+        VendingMachineFactory.getConfig();
+        verifyConfigMock(configMock, 1, 1, 1);
     }
 
     @Test
     public void should_change_state_after_selecting_valid_shelfNumber_and_display_pending_balance_for_item() throws Exception {
         int coinShelfCapacity = 10;
-        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
-        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(CHOCOLATE_BAR, 1),
+        VendingMachineConfiguration configMock = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.spy(VendingMachineFactory.class);
+        PowerMockito.when(VendingMachineFactory.getConfig()).thenReturn(configMock);
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(CHOCOLATE_BAR, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, coinShelfCapacity));
         readyState = transformToAndValidateInitialState(vendingMachine);
 
@@ -144,71 +149,79 @@ public class ReadyStateTest implements StateTest {
         Assert.assertNotNull(readyState.vendingMachine.provideSelectedProduct());
         Assert.assertTrue(readyState.vendingMachine.provideCurrentState() instanceof NoCreditSelectedProductState);
 
-        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
-        verifyConfigMock(mockConfig, 3, 2, 2);
+        PowerMockito.verifyStatic(Mockito.times(1));
+        VendingMachineFactory.getConfig();
+        verifyConfigMock(configMock, 1, 1, 1);
     }
 
     @Test
     public void should_not_change_state_after_selecting_invalid_shelfNumber() throws Exception {
         int coinShelfCapacity = 10;
-        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
-        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(CHOCOLATE_BAR, 1),
+        VendingMachineConfiguration configMock = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.spy(VendingMachineFactory.class);
+        PowerMockito.when(VendingMachineFactory.getConfig()).thenReturn(configMock);
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(CHOCOLATE_BAR, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, coinShelfCapacity));
         readyState = transformToAndValidateInitialState(vendingMachine);
 
         readyState.selectShelfNumber(5515);
         transformToAndValidateInitialState(readyState.vendingMachine);
 
-        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
-        verifyConfigMock(mockConfig, 3, 2, 2);
+        PowerMockito.verifyStatic(Mockito.times(1));
+        VendingMachineFactory.getConfig();
+        verifyConfigMock(configMock, 1, 1, 1);
     }
 
     @Test
     public void should_not_change_state_after_selecting_empty_shelfNumber() throws Exception {
         int productShelfCapacity = 10;
         int coinShelfCapacity = 10;
-        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, productShelfCapacity);
-        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
+        VendingMachineConfiguration configMock = getConfigMock(coinShelfCapacity, 10, productShelfCapacity);
+        PowerMockito.spy(VendingMachineFactory.class);
+        PowerMockito.when(VendingMachineFactory.getConfig()).thenReturn(configMock);
         Collection<ProductImport> products = Arrays.asList(new ProductImport(CHOCOLATE_BAR.getType(), CHOCOLATE_BAR.getPrice(), 1),
                                                             new ProductImport(COLA_199_025.getType(), COLA_199_025.getPrice(), 0));
 
         Map<Integer, Shelf<Product>> productImportStub = TestUtils.buildShelfStubFromProductImports(products, productShelfCapacity);
         Map<Coin, Shelf<Coin>> coinShelves = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, coinShelfCapacity);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productImportStub, coinShelves);
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(productImportStub, coinShelves);
         readyState = transformToAndValidateInitialState(vendingMachine);
         int emptyShelfId = 1;
 
         readyState.selectShelfNumber(emptyShelfId);
         transformToAndValidateInitialState(readyState.vendingMachine);
 
-        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
-        verifyConfigMock(mockConfig, 3, 2, 2);
+        PowerMockito.verifyStatic(Mockito.times(1));
+        VendingMachineFactory.getConfig();
+        verifyConfigMock(configMock, 1, 1, 1);
     }
 
     @Test
     public void should_not_change_state_after_cancel() throws Exception {
         int coinShelfCapacity = 10;
-        VendingMachineConfiguration mockConfig = getConfigMock(coinShelfCapacity, 10, 10);
-        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(mockConfig);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(CHOCOLATE_BAR, 1),
+        VendingMachineConfiguration configMock = getConfigMock(coinShelfCapacity, 10, 10);
+        PowerMockito.spy(VendingMachineFactory.class);
+        PowerMockito.when(VendingMachineFactory.getConfig()).thenReturn(configMock);
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(CHOCOLATE_BAR, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(coinShelfCapacity, coinShelfCapacity));
         readyState = transformToAndValidateInitialState(vendingMachine);
 
         readyState.cancel();
         transformToAndValidateInitialState(readyState.vendingMachine);
 
-        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
-        verifyConfigMock(mockConfig, 3, 2, 2);
+        PowerMockito.verifyStatic(Mockito.times(1));
+        VendingMachineFactory.getConfig();
+        verifyConfigMock(configMock, 1, 1, 1);
     }
 
     @Test
     public void should_send_machine_to_technicalErrorState_on_insertCoin() throws Exception {
         Coin fiftyCents = Coin.FIFTY_CENTS;
         VendingMachineConfiguration configMock = getConfigMock(10, 10, 10);
-        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(configMock);
+        PowerMockito.spy(VendingMachineFactory.class);
+        PowerMockito.when(VendingMachineFactory.getConfig()).thenReturn(configMock);
 
-        VendingMachine spied = PowerMockito.spy(new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
+        VendingMachine spied = PowerMockito.spy(VendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(10, 5)));
         PowerMockito.doThrow(new RuntimeException("fail to error")).when(spied, "addCoinToCredit", fiftyCents);
 
@@ -218,18 +231,20 @@ public class ReadyStateTest implements StateTest {
 
         Assert.assertTrue(readyState.vendingMachine.provideCurrentState() instanceof TechnicalErrorState);
 
-        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
+        PowerMockito.verifyStatic(Mockito.times(1));
+        VendingMachineFactory.getConfig();
         Mockito.verify(spied, Mockito.times(1)).addCoinToCredit(fiftyCents);
-        verifyConfigMock(configMock, 3, 2, 2);
+        verifyConfigMock(configMock, 1, 1, 1);
     }
 
     @Test
     public void should_send_machine_to_technicalErrorState_on_selectShelf() throws Exception {
         int shelfNumber = 0;
         VendingMachineConfiguration configMock = getConfigMock(10, 10, 10);
-        PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(configMock);
+        PowerMockito.spy(VendingMachineFactory.class);
+        PowerMockito.when(VendingMachineFactory.getConfig()).thenReturn(configMock);
 
-        VendingMachine spied = PowerMockito.spy(new VendingMachineFactory().customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
+        VendingMachine spied = PowerMockito.spy(VendingMachineFactory.customVendingMachineForTesting(TestUtils.buildShelvesWithItems(COLA_199_025, 1),
             TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(10, 5)));
         PowerMockito.doThrow(new RuntimeException("fail to error")).when(spied, "selectProductGivenShelfNumber", shelfNumber);
 
@@ -239,8 +254,9 @@ public class ReadyStateTest implements StateTest {
 
         Assert.assertTrue(readyState.vendingMachine.provideCurrentState() instanceof TechnicalErrorState);
 
-        PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
+        PowerMockito.verifyStatic(Mockito.times(1));
+        VendingMachineFactory.getConfig();
         Mockito.verify(spied, Mockito.times(1)).selectProductGivenShelfNumber(shelfNumber);
-        verifyConfigMock(configMock, 3, 2, 2);
+        verifyConfigMock(configMock, 1, 1, 1);
     }
 }
