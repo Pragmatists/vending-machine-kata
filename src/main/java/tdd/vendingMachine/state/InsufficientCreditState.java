@@ -1,9 +1,7 @@
 package tdd.vendingMachine.state;
 
 import org.apache.log4j.Logger;
-import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.Coin;
-import tdd.vendingMachine.domain.Product;
 import tdd.vendingMachine.domain.exception.CashDispenserFullException;
 import tdd.vendingMachine.domain.exception.ShelfEmptyNotAvailableForSelectionException;
 import tdd.vendingMachine.domain.exception.UnableToProvideBalanceException;
@@ -17,56 +15,58 @@ import java.util.NoSuchElementException;
  * State representing a machine with a selected product but with credit lower than
  * the selected product's price
  */
-public class InsufficientCreditState extends State {
+public class InsufficientCreditState implements State {
 
     private static final Logger logger = Logger.getLogger(InsufficientCreditState.class);
-    public static final String label = "HAS CREDIT PRODUCT SELECTED";
 
-    public InsufficientCreditState(VendingMachine vendingMachine) {
-        super(vendingMachine, true);
+    protected final VendingMachineImpl vendingMachine;
+
+    public final static StateEnum state = StateEnum.INSUFFICIENT_CREDIT;
+
+    public InsufficientCreditState(VendingMachineImpl vendingMachine) {
+        this.vendingMachine = vendingMachine;
     }
 
     @Override
     public void insertCoin(Coin coin) {
         try {
             vendingMachine.addCoinToCredit(coin);
-            this.attemptSell();
+            vendingMachine.attemptSell();
         } catch (CashDispenserFullException cashDispenserFullException) {
             logger.error(cashDispenserFullException);
             String message = String.format("%s %s: %s", coin.label,
                 cashDispenserFullException.getMessage(),
-                VendingMachineMessages.provideCashToDisplay(this.vendingMachine.getCredit()));
+                VendingMachineMessages.provideCashToDisplay(this.vendingMachine.provideCredit()));
             this.vendingMachine.showMessageOnDisplay(message);
         } catch (UnableToProvideBalanceException unableToProvideBalanceException) {
             logger.error(unableToProvideBalanceException);
-            this.returnCreditStackToCashPickupBucketAndSetToReadyState(unableToProvideBalanceException.getMessage(),
+            vendingMachine.rollBackSell(unableToProvideBalanceException.getMessage(),
                 unableToProvideBalanceException.getPendingBalance());
-        } catch (UnsupportedOperationException uoe) {
+        } catch (Exception uoe) {
             logger.error(uoe);
             vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
-            vendingMachine.setCurrentState(vendingMachine.getTechnicalErrorState());
+            vendingMachine.sendStateTo(TechnicalErrorState.state);
         }
 
     }
 
     @Override
     public void selectShelfNumber(int shelfNumber) {
-        Product prev = vendingMachine.getSelectedProduct();
         try {
             vendingMachine.selectProductGivenShelfNumber(shelfNumber);
             vendingMachine.displayProductPrice(shelfNumber);
-            this.attemptSell();
+            vendingMachine.attemptSell();
         } catch (NoSuchElementException nse) {
             logger.error(nse);
             vendingMachine.showMessageOnDisplay(String.format("%s, [%s] %s: %s",
                 VendingMachineMessages.buildWarningMessageWithSubject(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber, false),
-                prev.provideType(),
+                vendingMachine.provideSelectedProduct()!=null ? vendingMachine.provideSelectedProduct().getType() : "",
                 VendingMachineMessages.PENDING.label,
                 VendingMachineMessages.provideCashToDisplay(vendingMachine.calculatePendingBalance()))
             );
         } catch (UnableToProvideBalanceException unableToProvideBalanceException) {
             logger.error(unableToProvideBalanceException);
-            this.returnCreditStackToCashPickupBucketAndSetToReadyState(unableToProvideBalanceException.getMessage(),
+            vendingMachine.rollBackSell(unableToProvideBalanceException.getMessage(),
                 unableToProvideBalanceException.getPendingBalance());
         } catch (ShelfEmptyNotAvailableForSelectionException shelfEmptyException) {
             logger.error(shelfEmptyException);
@@ -74,18 +74,25 @@ public class InsufficientCreditState extends State {
                 VendingMachineMessages.buildWarningMessageWithSubject(shelfEmptyException.getMessage(),
                     shelfEmptyException.getShelfNumber(), false)
             );
-        } catch (UnsupportedOperationException uoe) {
+        } catch (Exception uoe) {
             logger.error(uoe);
             vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
-            vendingMachine.setCurrentState(vendingMachine.getTechnicalErrorState());
+            vendingMachine.sendStateTo(TechnicalErrorState.state);
         }
 
     }
 
     @Override
     public void cancel() {
-        vendingMachine.showMessageOnDisplay(VendingMachineMessages.CANCEL.label);
-        vendingMachine.returnAllCreditToBucket();
-        vendingMachine.setCurrentState(vendingMachine.getReadyState());
+        try {
+            vendingMachine.undoProductSelection();
+            vendingMachine.showMessageOnDisplay(VendingMachineMessages.CANCEL.label);
+            vendingMachine.returnAllCreditToBucket();
+            vendingMachine.sendStateTo(ReadyState.state);
+        } catch (Exception e) {
+            logger.error(e);
+            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
+            vendingMachine.sendStateTo(TechnicalErrorState.state);
+        }
     }
 }

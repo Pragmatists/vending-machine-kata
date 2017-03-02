@@ -1,8 +1,8 @@
 package tdd.vendingMachine.state;
 
 import org.apache.log4j.Logger;
-import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.domain.Coin;
+import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.view.VendingMachineMessages;
 
 import java.util.NoSuchElementException;
@@ -12,13 +12,14 @@ import java.util.NoSuchElementException;
  * @since 1.0
  * State representing a Vending Machine with Empty shelves (sold out).
  */
-public class SoldOutState extends State {
+public class SoldOutState implements State {
 
     private static final Logger logger = Logger.getLogger(SoldOutState.class);
-    public final String label = "SOLD OUT";
+    protected final VendingMachine vendingMachine;
+    public static final StateEnum state = StateEnum.SOLD_OUT;
 
     public SoldOutState(VendingMachine vendingMachine) {
-        super(vendingMachine, false);
+        this.vendingMachine = vendingMachine;
     }
 
     @Override
@@ -35,13 +36,14 @@ public class SoldOutState extends State {
             logger.error(nse);
             vendingMachine.showMessageOnDisplay(
                 VendingMachineMessages.buildWarningMessageWithSubject(VendingMachineMessages.SHELF_NUMBER_NOT_AVAILABLE.label, shelfNumber,false));
+        } catch (Exception uoe) {
+            logger.error(uoe);
+            vendingMachine.showMessageOnDisplay(VendingMachineMessages.buildWarningMessageWithoutSubject(VendingMachineMessages.TECHNICAL_ERROR.label));
+            vendingMachine.sendStateTo(TechnicalErrorState.state);
         }
     }
 
     @Override
     public void cancel() {
-        if (vendingMachine.getCredit() > 0) {
-
-        }
     }
 }

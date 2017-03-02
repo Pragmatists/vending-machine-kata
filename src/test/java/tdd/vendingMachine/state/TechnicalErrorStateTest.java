@@ -11,13 +11,11 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import tdd.vendingMachine.VendingMachine;
-import tdd.vendingMachine.VendingMachineFactory;
 import tdd.vendingMachine.domain.Coin;
 import tdd.vendingMachine.domain.Product;
 import tdd.vendingMachine.domain.Shelf;
 import tdd.vendingMachine.domain.VendingMachineConfiguration;
-import tdd.vendingMachine.domain.exception.UnableToProvideBalanceException;
+import tdd.vendingMachine.VendingMachine;
 import tdd.vendingMachine.util.TestUtils.TestUtils;
 import tdd.vendingMachine.view.VendingMachineMessages;
 
@@ -28,7 +26,8 @@ import java.util.Map;
  * @since 1.0
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({TechnicalErrorState.class, VendingMachineConfiguration.class, VendingMachineFactory.class, VendingMachine.class})
+@PrepareForTest({TechnicalErrorState.class,
+    VendingMachineConfiguration.class, VendingMachineFactory.class, VendingMachine.class, VendingMachineImpl.class,})
 @PowerMockIgnore(value = {"javax.management.*"})
 public class TechnicalErrorStateTest implements StateTest {
 
@@ -64,8 +63,8 @@ public class TechnicalErrorStateTest implements StateTest {
     }
     @Override
     public TechnicalErrorState transformToAndValidateInitialState(VendingMachine vendingMachine) {
-        vendingMachine.setCurrentState(vendingMachine.getTechnicalErrorState());
-        return (TechnicalErrorState) vendingMachine.getCurrentState();
+        vendingMachine.sendStateTo(TechnicalErrorState.state);
+        return (TechnicalErrorState) vendingMachine.provideCurrentState();
     }
 
     @Before @Override
@@ -76,15 +75,15 @@ public class TechnicalErrorStateTest implements StateTest {
 
         configMock = getConfigMock(shelfCapacityCoins, productShelfCount, shelfCapacityProducts);
         try {
-            PowerMockito.whenNew(VendingMachineConfiguration.class).withNoArguments().thenReturn(configMock);
+            PowerMockito.spy(VendingMachineFactory.class);
+            PowerMockito.when(VendingMachineFactory.getConfig()).thenReturn(configMock);
         }catch (Exception e) {
             Assert.fail();
         }
 
-
         Map<Integer, Shelf<Product>> productShelf = TestUtils.buildShelvesWithItems(TestUtils.buildStubListOfProducts(3), 3, shelfCapacityProducts);
         Map<Coin, Shelf<Coin>> coinShelf = TestUtils.buildStubCoinDispenserWithGivenItemsPerShelf(shelfCapacityCoins, 5);
-        VendingMachine vendingMachine = new VendingMachineFactory().customVendingMachineForTesting(productShelf, coinShelf);
+        VendingMachine vendingMachine = VendingMachineFactory.customVendingMachineForTesting(productShelf, coinShelf);
         technicalErrorState = transformToAndValidateInitialState(vendingMachine);
     }
 
@@ -92,11 +91,12 @@ public class TechnicalErrorStateTest implements StateTest {
     public void tearDown() {
         technicalErrorState = null;
         try {
-            PowerMockito.verifyNew(VendingMachineConfiguration.class, Mockito.times(2)).withNoArguments();
+            PowerMockito.verifyStatic(Mockito.times(1));
+            VendingMachineFactory.getConfig();
         } catch (Exception e) {
             Assert.fail();
         }
-        verifyConfigMock(configMock, 3, 2, 2);
+        verifyConfigMock(configMock, 1, 1, 1);
         configMock = null;
     }
 
@@ -119,15 +119,5 @@ public class TechnicalErrorStateTest implements StateTest {
         Assert.assertTrue(StringUtils.isEmpty(technicalErrorState.vendingMachine.getDisplayCurrentMessage()));
         technicalErrorState.selectShelfNumber(0);
         Assert.assertTrue(technicalErrorState.vendingMachine.getDisplayCurrentMessage().contains(VendingMachineMessages.TECHNICAL_ERROR.label));
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void should_fail_on_attempt_to_sell() throws UnableToProvideBalanceException {
-        technicalErrorState.attemptSell();
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void should_fail_on_attempt_to_rollback() throws UnableToProvideBalanceException {
-        technicalErrorState.returnCreditStackToCashPickupBucketAndSetToReadyState("", 0);
     }
 }

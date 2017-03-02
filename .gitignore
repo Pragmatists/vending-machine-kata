@@ -6,3 +6,4 @@
 .project
 # Java build files
 target/
+*.orig
