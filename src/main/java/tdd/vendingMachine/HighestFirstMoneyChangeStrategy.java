@@ -23,9 +23,12 @@ public class HighestFirstMoneyChangeStrategy implements MoneyChangeStrategy {
 
         BigDecimal rest = toChange.setScale(2, BigDecimal.ROUND_HALF_EVEN);
 
+        //set for ensure the enum order
+        Map<Denomination, Integer> coinsQuantity = new TreeMap<>(coinsInCashier);
+
         Map<Denomination, Integer> restDenominations = new TreeMap<>();
 
-        for (Map.Entry<Denomination, Integer> entry : coinsInCashier.entrySet()) {
+        for (Map.Entry<Denomination, Integer> entry : coinsQuantity.entrySet()) {
             BigDecimal denomination = entry.getKey().getDenomination().setScale(2, BigDecimal.ROUND_HALF_EVEN);
             int quantity = entry.getValue();
             if (rest.compareTo(denomination) >= 0 && quantity > 0) {

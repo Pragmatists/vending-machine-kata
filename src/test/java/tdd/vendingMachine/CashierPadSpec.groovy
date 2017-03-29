@@ -3,12 +3,7 @@ package tdd.vendingMachine
 import spock.lang.Specification
 import tdd.vendingMachine.exception.MoneyChangeException
 
-import static tdd.vendingMachine.Denomination.FIVE
-import static tdd.vendingMachine.Denomination.HALF
-import static tdd.vendingMachine.Denomination.ONE
-import static tdd.vendingMachine.Denomination.ONE_FIFTH
-import static tdd.vendingMachine.Denomination.ONE_TENTH
-import static tdd.vendingMachine.Denomination.TWO
+import static tdd.vendingMachine.Denomination.*
 
 /**
  * @author kdkz
@@ -109,9 +104,7 @@ class CashierPadSpec extends Specification {
         def coinsInCashier = [(FIVE): 6, (TWO): 3, (HALF): 5, (ONE_FIFTH): 5, (ONE_TENTH): 9]
         def insertedCoins = [(TWO): 3]
         and:
-        def moneyChangeStrategy = Mock(MoneyChangeStrategy) {
-            countRestInCoinsQuantity(*_) >> [(HALF): 1]
-        }
+        def moneyChangeStrategy = new HighestFirstMoneyChangeStrategy()
 
         when:
         def restCoins = cashierPad.countRestInCoinsQuantity(amountToPay, insertedCoins, coinsInCashier, moneyChangeStrategy)
@@ -139,4 +132,40 @@ class CashierPadSpec extends Specification {
         restCoins == null
     }
 
+    def "insertCoinsAndReturnChange should return valid rest and update cashier state" (){
+        given:
+        cashierPad.coinsInCashier = [(FIVE): 6, (TWO): 3, (HALF): 5, (ONE_FIFTH): 5, (ONE_TENTH): 9]
+        and:
+        def amountToPay = new BigDecimal(5.5)
+        and:
+        def insertedCoins = [(TWO): 3]
+        and:
+        def moneyChangeStrategy = new HighestFirstMoneyChangeStrategy()
+
+        when:
+        def restCoins = cashierPad.insertCoinsAndReturnChange(amountToPay, insertedCoins, moneyChangeStrategy)
+
+        then:
+        restCoins == [(HALF): 1]
+        cashierPad.coinsInCashier == [(FIVE): 6, (TWO): 6, (HALF): 4, (ONE_FIFTH): 5, (ONE_TENTH): 9]
+    }
+
+    def "insertCoinsAndReturnChange should throw MoneyChangeException when money changer can not count the rest and cashier state should stay unchanged" (){
+        given:
+        cashierPad.coinsInCashier = [(HALF): 1, (ONE_FIFTH): 5]
+        and:
+        def amountToPay = new BigDecimal(1.5)
+        and:
+        def insertedCoins = [(FIVE): 1]
+        and:
+        def moneyChangeStrategy = new HighestFirstMoneyChangeStrategy()
+
+        when:
+        def restCoins = cashierPad.insertCoinsAndReturnChange(amountToPay, insertedCoins, moneyChangeStrategy)
+
+        then:
+        thrown(MoneyChangeException)
+        cashierPad.coinsInCashier == [(HALF): 1, (ONE_FIFTH): 5]
+        restCoins == null
+    }
 }
