@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 
 /**
+ * Vending machine products
+ *
  * @author kdkz
  */
 public enum Product {
