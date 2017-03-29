@@ -1,5 +1,7 @@
 package tdd.vendingMachine;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tdd.vendingMachine.exception.MoneyChangeException;
 
 import java.math.BigDecimal;
@@ -15,6 +17,8 @@ import java.util.stream.Stream;
  */
 public class CashierPad {
 
+    final static Logger log = LoggerFactory.getLogger(CashierPad.class);
+
     private Map<Denomination, Integer> coinsInCashier = new HashMap<>();
 
     /**
@@ -28,6 +32,7 @@ public class CashierPad {
      */
     public Map<Denomination, Integer> insertCoinsAndReturnChange(BigDecimal amountToPay,
                                                                  Map<Denomination, Integer> insertedCoins, MoneyChangeStrategy changeStrategy) throws MoneyChangeException {
+        log.debug("Coins inserted: {}, amount to pay: {}", insertedCoins, amountToPay);
         Map<Denomination, Integer> temporaryCoinsSum = sumInsertedCoinsWithCoinsInCashier(insertedCoins, coinsInCashier);
         Map<Denomination, Integer> restInCoins = countRestInCoinsQuantity(amountToPay, insertedCoins, temporaryCoinsSum, changeStrategy);
         changeCashierState(insertedCoins, restInCoins);
@@ -42,7 +47,9 @@ public class CashierPad {
      * @param coinsToReturn coins to return
      */
     private void changeCashierState(Map<Denomination, Integer> insertedCoins, Map<Denomination, Integer> coinsToReturn) {
+        log.debug("Changing cashier state - started.");
         coinsInCashier = subtractCoinsInCashierAndRestCoins(coinsToReturn, sumInsertedCoinsWithCoinsInCashier(insertedCoins, coinsInCashier));
+        log.debug("State set to: {}. Changing cashier state - finished.", coinsInCashier);
     }
 
     /**
