@@ -12,9 +12,9 @@ public enum Product {
 
     EMPTY("EMPTY", BigDecimal.valueOf(0)),
 
-    COLA("Cola", BigDecimal.valueOf(1.5)),
-    CHOCOLATE_BAR("Chocolate bar", BigDecimal.valueOf(1)),
-    MINERAL_WATER("Mineral water", BigDecimal.valueOf(1.25));
+    COLA("Cola", BigDecimal.valueOf(7.4)),
+    CHOCOLATE_BAR("Chocolate bar", BigDecimal.valueOf(1.2)),
+    MINERAL_WATER("Mineral water", BigDecimal.valueOf(3.7));
 
     private String name;
 

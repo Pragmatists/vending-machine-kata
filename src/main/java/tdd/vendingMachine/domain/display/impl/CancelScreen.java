@@ -13,6 +13,6 @@ public class CancelScreen implements Screen {
 
     @Override
     public void show() {
-        log.info("Transaction canceled. Already inserted coins returned.");
+        log.info("Display: Transaction canceled. Already inserted coins returned.");
     }
 }

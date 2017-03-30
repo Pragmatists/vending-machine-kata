@@ -34,5 +34,4 @@ public class ShelfBox {
         log.debug("Shelf {} successfully selected.", shelfNumber);
         return shelves.get(shelfNumber - 1).getProductsOnShelf().getKey().getPrice();
     }
-
 }

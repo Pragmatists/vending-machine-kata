@@ -23,6 +23,6 @@ public class SelectedShelfScreen implements Screen {
 
     @Override
     public void show() {
-        log.info("Shelf number {} selected. Product price is {}.", selectedShelfNumber, selectedProductPrice);
+        log.info("Display: Shelf number {} selected. Product price is {}.", selectedShelfNumber, selectedProductPrice);
     }
 }

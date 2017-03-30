@@ -21,6 +21,6 @@ public class InsertedCoinsStatusScreen implements Screen {
 
     @Override
     public void show() {
-        log.info("Coins inserted. {} amount left", amountLeft);
+        log.info("Display: Coins inserted. {} left", amountLeft);
     }
 }

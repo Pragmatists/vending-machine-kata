@@ -26,6 +26,6 @@ public class ProductSoldScreen implements Screen {
 
     @Override
     public void show() {
-        log.info("Product sold. Rest {} returned in denominations {}.", restAmount, restCoins);
+        log.info("Display: Product sold. Rest {} returned in denominations {}.", restAmount, restCoins);
     }
 }

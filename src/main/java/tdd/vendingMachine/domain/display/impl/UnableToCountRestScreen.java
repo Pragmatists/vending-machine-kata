@@ -13,6 +13,6 @@ public class UnableToCountRestScreen implements Screen {
 
     @Override
     public void show() {
-        log.info("Cant sell product. Vending Machine cant have enough coins to count rest. Try exact amount");
+        log.info("Display: Cant sell product. Vending Machine cant have enough coins to count rest. Try exact amount");
     }
 }
