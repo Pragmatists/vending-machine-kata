@@ -1,6 +1,5 @@
-package tdd.vendingMachine
+package tdd.vendingMachine.domain
 
-import spock.lang.Shared
 import spock.lang.Specification
 import tdd.vendingMachine.exception.VendingException
 
@@ -11,25 +10,8 @@ class ShelfSpec extends Specification {
 
     Shelf shelf
 
-    @Shared
-    int shelfSize
-
     def setup() {
         shelf = new Shelf()
-        shelfSize = shelf.shelfSize
-    }
-
-    def "shelfNumber should increase with every new shelf created"() {
-        given:
-        Shelf shelf2 = new Shelf()
-        Shelf shelf3 = new Shelf()
-        Shelf shelf4 = new Shelf()
-
-        expect:
-        shelf.shelfNumber == 1
-        shelf2.shelfNumber == 2
-        shelf3.shelfNumber == 3
-        shelf4.shelfNumber == 4
     }
 
     def "putProductsOnShelf should set products on shelf with positive value"() {
@@ -43,7 +25,7 @@ class ShelfSpec extends Specification {
         where:
         product      | expectedProduct | quantity | expectedQuantity
         Product.COLA | Product.COLA    | 1        | 1
-        Product.COLA | Product.COLA    | 9        | shelfSize
+        Product.COLA | Product.COLA    | 9        | 8
         "Cola"       | Product.COLA    | 1        | 1
     }
 

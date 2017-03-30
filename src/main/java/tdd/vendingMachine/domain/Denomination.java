@@ -1,4 +1,4 @@
-package tdd.vendingMachine;
+package tdd.vendingMachine.domain;
 
 import java.math.BigDecimal;
 
@@ -7,7 +7,7 @@ import java.math.BigDecimal;
  *
  * @author kdkz
  */
-enum Denomination {
+public enum Denomination {
 
     FIVE(5),
     TWO(2),

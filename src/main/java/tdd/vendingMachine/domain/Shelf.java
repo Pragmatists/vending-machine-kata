@@ -1,4 +1,4 @@
-package tdd.vendingMachine;
+package tdd.vendingMachine.domain;
 
 
 import org.slf4j.Logger;
@@ -8,7 +8,7 @@ import tdd.vendingMachine.exception.VendingException;
 import java.util.AbstractMap;
 import java.util.Map;
 
-import static tdd.vendingMachine.Product.EMPTY;
+import static tdd.vendingMachine.domain.Product.EMPTY;
 
 /**
  * @author kdkz
@@ -19,26 +19,17 @@ public class Shelf {
 
     public static final int DEFAULT_SHELF_SIZE = 8;
 
-    private static int shelfCount = 0;
-
     private int shelfSize;
-
-    private int shelfNumber;
 
     private Map.Entry<Product, Integer> productsOnShelf = new AbstractMap.SimpleEntry<>(EMPTY, 0);
 
     public Shelf() {
-        shelfCount++;
-        shelfNumber = shelfCount;
-        if (System.getProperty("shelf.size") != null) {
-            shelfSize = Integer.parseInt(System.getProperty("shelf.size"));
-        }else {
-            shelfSize = DEFAULT_SHELF_SIZE;
-        }
+        shelfSize = DEFAULT_SHELF_SIZE;
     }
 
-    public int getShelfNumber() {
-        return shelfNumber;
+    public Shelf(Product product, Integer quantity) {
+        super();
+        this.productsOnShelf = new AbstractMap.SimpleEntry<>(product, quantity);
     }
 
     public int getShelfSize() {
@@ -55,7 +46,7 @@ public class Shelf {
 
     public void putProductsOnShelf(Product product, int quantity) throws VendingException {
         if (quantity < 1) {
-            log.error("Failed to put products {} on shelf {}", product.getName(), shelfNumber);
+            log.error("Failed to put products {} on shelf", product.getName());
             throw new VendingException("Failed to put products on shelf.");
         } else if (quantity > shelfSize) {
             log.warn("Failed to put {} products on shelf. The shelf size is {}. Quantity set to {}",

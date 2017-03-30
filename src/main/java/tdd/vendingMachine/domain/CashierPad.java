@@ -1,7 +1,8 @@
-package tdd.vendingMachine;
+package tdd.vendingMachine.domain;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tdd.vendingMachine.domain.strategy.MoneyChangeStrategy;
 import tdd.vendingMachine.exception.MoneyChangeException;
 
 import java.math.BigDecimal;
@@ -20,35 +21,47 @@ public class CashierPad {
     final static Logger log = LoggerFactory.getLogger(CashierPad.class);
 
     private Map<Denomination, Integer> coinsInCashier = new HashMap<>();
+    private Map<Denomination, Integer> insertedCoins = new HashMap<>();
 
     /**
      * Inserts coins to cashier pad and returns rest coins quantity. If rest coins quantity can not be counted
      * MoneyChangeException is thrown
      *
      * @param amountToPay   amount to pay
-     * @param insertedCoins inserted coins
      * @return rest
      * @throws MoneyChangeException money change exception
      */
-    public Map<Denomination, Integer> insertCoinsAndReturnChange(BigDecimal amountToPay,
-                                                                 Map<Denomination, Integer> insertedCoins, MoneyChangeStrategy changeStrategy) throws MoneyChangeException {
+    public Map<Denomination, Integer> payAndReturnChange(BigDecimal amountToPay, MoneyChangeStrategy changeStrategy) throws MoneyChangeException {
         log.debug("Coins inserted: {}, amount to pay: {}", insertedCoins, amountToPay);
-        Map<Denomination, Integer> temporaryCoinsSum = sumInsertedCoinsWithCoinsInCashier(insertedCoins, coinsInCashier);
-        Map<Denomination, Integer> restInCoins = countRestInCoinsQuantity(amountToPay, insertedCoins, temporaryCoinsSum, changeStrategy);
-        changeCashierState(insertedCoins, restInCoins);
+        Map<Denomination, Integer> temporaryCoinsSum = sumInsertedCoinsWithCoinsInCashier();
+        Map<Denomination, Integer> restInCoins = countRestInCoinsQuantity(amountToPay, temporaryCoinsSum, changeStrategy);
+        changeCashierState(restInCoins);
         return restInCoins;
+    }
+
+    public BigDecimal insertCoins(Denomination denomination, Integer quantity) {
+        if (insertedCoins.containsKey(denomination)) {
+            insertedCoins.put(denomination, insertedCoins.get(denomination) + quantity);
+        } else {
+            insertedCoins.put(denomination, quantity);
+        }
+        return getAmountFromCoins(insertedCoins);
+    }
+
+    public void returnInsertedCoins() {
+        insertedCoins.clear();
     }
 
     /**
      * Changes cashier state after successful rest counting. Adds inserted coins to cashier pad and
      * removes rest coins from cashier pad
      *
-     * @param insertedCoins inserted coins
      * @param coinsToReturn coins to return
      */
-    private void changeCashierState(Map<Denomination, Integer> insertedCoins, Map<Denomination, Integer> coinsToReturn) {
+    private void changeCashierState(Map<Denomination, Integer> coinsToReturn) {
         log.debug("Changing cashier state - started.");
-        coinsInCashier = subtractCoinsInCashierAndRestCoins(coinsToReturn, sumInsertedCoinsWithCoinsInCashier(insertedCoins, coinsInCashier));
+        coinsInCashier = subtractCoinsInCashierAndRestCoins(coinsToReturn, sumInsertedCoinsWithCoinsInCashier());
+        insertedCoins.clear();
         log.debug("State set to: {}. Changing cashier state - finished.", coinsInCashier);
     }
 
@@ -57,14 +70,12 @@ public class CashierPad {
      * If rest can not be counted {@link MoneyChangeException} is thrown
      *
      * @param amountToPay    amount to pay
-     * @param insertedCoins  inserted coins
      * @param changeStrategy money change strategy
      * @return rest coins quantity
      * @throws MoneyChangeException money change exception
      */
     private Map<Denomination, Integer> countRestInCoinsQuantity(
         BigDecimal amountToPay,
-        Map<Denomination, Integer> insertedCoins,
         Map<Denomination, Integer> coinsInCashier,
         MoneyChangeStrategy changeStrategy) throws MoneyChangeException {
 
@@ -75,11 +86,8 @@ public class CashierPad {
 
     /**
      * Returns sum of inserted coins and currently existed coins in cashier pad
-     *
-     * @param insertedCoins  inserted coins
-     * @param coinsInCashier coins in cashier
      */
-    private Map<Denomination, Integer> sumInsertedCoinsWithCoinsInCashier(Map<Denomination, Integer> insertedCoins, Map<Denomination, Integer> coinsInCashier) {
+    private Map<Denomination, Integer> sumInsertedCoinsWithCoinsInCashier() {
         return Stream.concat(insertedCoins.entrySet().stream(), coinsInCashier.entrySet().stream())
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, Integer::sum));
     }
@@ -88,7 +96,7 @@ public class CashierPad {
     /**
      * Returns subtract of inserted coins and currently existed coins in cashier pad
      *
-     * @param restCoins  inserted coins
+     * @param restCoins      inserted coins
      * @param coinsInCashier coins in cashier
      */
     private Map<Denomination, Integer> subtractCoinsInCashierAndRestCoins(Map<Denomination, Integer> restCoins, Map<Denomination, Integer> coinsInCashier) {
@@ -102,10 +110,10 @@ public class CashierPad {
      * @param coinsQuantity coins quantity map
      * @return amount
      */
-    private BigDecimal getAmountFromCoins(Map<Denomination, Integer> coinsQuantity) {
+    public BigDecimal getAmountFromCoins(Map<Denomination, Integer> coinsQuantity) {
         return coinsQuantity.entrySet().stream()
             .map(moneyIntegerEntry -> moneyIntegerEntry.getKey().getDenomination().multiply(BigDecimal.valueOf(moneyIntegerEntry.getValue())))
-            .reduce(BigDecimal::add).get();
+            .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 
     /**

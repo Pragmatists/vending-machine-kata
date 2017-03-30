@@ -1,14 +1,16 @@
-package tdd.vendingMachine
+package tdd.vendingMachine.domain.strategy.impl
 
 import spock.lang.Specification
+import tdd.vendingMachine.domain.strategy.MoneyChangeStrategy
+import tdd.vendingMachine.domain.strategy.impl.HighestFirstMoneyChangeStrategy
 import tdd.vendingMachine.exception.MoneyChangeException
 
-import static Denomination.FIVE
-import static Denomination.HALF
-import static Denomination.ONE
-import static Denomination.ONE_FIFTH
-import static Denomination.ONE_TENTH
-import static Denomination.TWO
+import static tdd.vendingMachine.domain.Denomination.FIVE
+import static tdd.vendingMachine.domain.Denomination.HALF
+import static tdd.vendingMachine.domain.Denomination.ONE
+import static tdd.vendingMachine.domain.Denomination.ONE_FIFTH
+import static tdd.vendingMachine.domain.Denomination.ONE_TENTH
+import static tdd.vendingMachine.domain.Denomination.TWO
 
 /**
  * @author kdkz
@@ -23,7 +25,7 @@ class HighestFirstMoneyChangeStrategySpec extends Specification {
 
     def "getRestInCoins should return properly counted rest with highest possible denominations"() {
         given:
-        def coins = [(FIVE):6, (TWO):3, (HALF):5, (ONE): 3, (ONE_FIFTH): 5, (ONE_TENTH):9]
+        def coins = [(FIVE): 6, (TWO): 3, (ONE): 3, (HALF): 5, (ONE_FIFTH): 5, (ONE_TENTH): 9]
         and:
         def amount = new BigDecimal(8.7);
 
@@ -31,12 +33,12 @@ class HighestFirstMoneyChangeStrategySpec extends Specification {
         def rest = changer.countRestInCoinsQuantity(amount, coins)
 
         then:
-        rest == [(FIVE): 1, (TWO): 1, (HALF): 3, (ONE_FIFTH): 1]
+        rest == [(FIVE): 1, (TWO): 1, (ONE): 1, (HALF): 1, (ONE_FIFTH): 1]
     }
 
     def "getRestInCoins should throw exception for amount that could not be changed"() {
         given:
-        def coins = [(FIVE):6, (TWO):3, (HALF):5, (ONE): 3, (ONE_FIFTH): 0, (ONE_TENTH):1]
+        def coins = [(FIVE): 6, (TWO): 3, (HALF): 5, (ONE): 3, (ONE_FIFTH): 0, (ONE_TENTH): 1]
         and:
         def amount = new BigDecimal(8.7);
 

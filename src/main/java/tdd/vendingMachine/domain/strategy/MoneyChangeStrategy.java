@@ -1,5 +1,6 @@
-package tdd.vendingMachine;
+package tdd.vendingMachine.domain.strategy;
 
+import tdd.vendingMachine.domain.Denomination;
 import tdd.vendingMachine.exception.MoneyChangeException;
 
 import java.math.BigDecimal;

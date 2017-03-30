@@ -1,6 +1,7 @@
-package tdd.vendingMachine
+package tdd.vendingMachine.domain
 
 import spock.lang.Specification
+import tdd.vendingMachine.domain.Product
 
 /**
  * @author kdkz

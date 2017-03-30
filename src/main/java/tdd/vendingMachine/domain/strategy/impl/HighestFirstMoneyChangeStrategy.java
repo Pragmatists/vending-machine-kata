@@ -1,7 +1,9 @@
-package tdd.vendingMachine;
+package tdd.vendingMachine.domain.strategy.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tdd.vendingMachine.domain.Denomination;
+import tdd.vendingMachine.domain.strategy.MoneyChangeStrategy;
 import tdd.vendingMachine.exception.MoneyChangeException;
 
 import java.math.BigDecimal;

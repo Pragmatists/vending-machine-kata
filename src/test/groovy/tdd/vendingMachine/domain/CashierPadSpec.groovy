@@ -1,9 +1,11 @@
-package tdd.vendingMachine
+package tdd.vendingMachine.domain
 
 import spock.lang.Specification
+import tdd.vendingMachine.domain.strategy.MoneyChangeStrategy
+import tdd.vendingMachine.domain.strategy.impl.HighestFirstMoneyChangeStrategy
 import tdd.vendingMachine.exception.MoneyChangeException
 
-import static tdd.vendingMachine.Denomination.*
+import static tdd.vendingMachine.domain.Denomination.*
 
 /**
  * @author kdkz
@@ -71,8 +73,13 @@ class CashierPadSpec extends Specification {
     }
 
     def "sumInsertedCoinsWithCoinsInCashier should return subtraction of coins in cashier pad and given rest coins"() {
+        given:
+        cashierPad.coinsInCashier = coinsQuantity
+        and:
+        cashierPad.insertedCoins = insertedCoins
+
         when:
-        def summedCoinsQuantity = cashierPad.sumInsertedCoinsWithCoinsInCashier(insertedCoins, coinsQuantity)
+        def summedCoinsQuantity = cashierPad.sumInsertedCoinsWithCoinsInCashier()
 
         then:
         summedCoinsQuantity == expectedCoins
@@ -85,12 +92,14 @@ class CashierPadSpec extends Specification {
     def "changeCashierState should change state of cashier pad by given inserted coins quantity and rest coins quantity"() {
         given:
         cashierPad.coinsInCashier = [(FIVE): 6, (TWO): 3, (HALF): 5, (ONE_FIFTH): 5, (ONE_TENTH): 9]
+        cashierPad.insertedCoins = insertedCoins
 
         when:
-        cashierPad.changeCashierState(insertedCoins, restCoins)
+        cashierPad.changeCashierState(restCoins)
 
         then:
         cashierPad.coinsInCashier == expectedCoins
+        cashierPad.insertedCoins.isEmpty()
 
         where:
         insertedCoins                    | restCoins                             | expectedCoins
@@ -99,15 +108,16 @@ class CashierPadSpec extends Specification {
 
     def "countRestInCoinsQuantity should return rest for given amount and current coins state"() {
         given:
+        cashierPad.insertedCoins = [(TWO): 3]
+        and:
         def amountToPay = new BigDecimal(5.5)
         and:
         def coinsInCashier = [(FIVE): 6, (TWO): 3, (HALF): 5, (ONE_FIFTH): 5, (ONE_TENTH): 9]
-        def insertedCoins = [(TWO): 3]
         and:
         def moneyChangeStrategy = new HighestFirstMoneyChangeStrategy()
 
         when:
-        def restCoins = cashierPad.countRestInCoinsQuantity(amountToPay, insertedCoins, coinsInCashier, moneyChangeStrategy)
+        def restCoins = cashierPad.countRestInCoinsQuantity(amountToPay, coinsInCashier, moneyChangeStrategy)
 
         then:
         restCoins == [(HALF): 1]
@@ -115,57 +125,82 @@ class CashierPadSpec extends Specification {
 
     def "countRestInCoinsQuantity should throw MoneyChangeException when moneyChangeStrategy throws exception"() {
         given:
+        cashierPad.insertedCoins = [(TWO): 3]
+        and:
         def amountToPay = new BigDecimal(5.5)
         and:
         def coinsInCashier = [(FIVE): 6, (TWO): 3, (HALF): 5, (ONE_FIFTH): 5, (ONE_TENTH): 9]
-        def insertedCoins = [(TWO): 3]
         and:
         def moneyChangeStrategy = Mock(MoneyChangeStrategy) {
             countRestInCoinsQuantity(*_) >> { throw new MoneyChangeException("error message") }
         }
 
         when:
-        def restCoins = cashierPad.countRestInCoinsQuantity(amountToPay, insertedCoins, coinsInCashier, moneyChangeStrategy)
+        def restCoins = cashierPad.countRestInCoinsQuantity(amountToPay, coinsInCashier, moneyChangeStrategy)
 
         then:
         thrown(MoneyChangeException)
         restCoins == null
     }
 
-    def "insertCoinsAndReturnChange should return valid rest and update cashier state" (){
+    def "insertCoinsAndReturnChange should return valid rest and update cashier state"() {
         given:
         cashierPad.coinsInCashier = [(FIVE): 6, (TWO): 3, (HALF): 5, (ONE_FIFTH): 5, (ONE_TENTH): 9]
         and:
         def amountToPay = new BigDecimal(5.5)
         and:
-        def insertedCoins = [(TWO): 3]
+        cashierPad.insertedCoins = [(TWO): 3]
         and:
         def moneyChangeStrategy = new HighestFirstMoneyChangeStrategy()
 
         when:
-        def restCoins = cashierPad.insertCoinsAndReturnChange(amountToPay, insertedCoins, moneyChangeStrategy)
+        def restCoins = cashierPad.payAndReturnChange(amountToPay, moneyChangeStrategy)
 
         then:
         restCoins == [(HALF): 1]
         cashierPad.coinsInCashier == [(FIVE): 6, (TWO): 6, (HALF): 4, (ONE_FIFTH): 5, (ONE_TENTH): 9]
     }
 
-    def "insertCoinsAndReturnChange should throw MoneyChangeException when money changer can not count the rest and cashier state should stay unchanged" (){
+    def "payAndReturnChange should throw MoneyChangeException when money changer can not count the rest and cashier state should stay unchanged"() {
         given:
         cashierPad.coinsInCashier = [(HALF): 1, (ONE_FIFTH): 5]
         and:
-        def amountToPay = new BigDecimal(1.5)
+        cashierPad.insertedCoins = [(FIVE): 1]
         and:
-        def insertedCoins = [(FIVE): 1]
+        def amountToPay = new BigDecimal(1.5)
         and:
         def moneyChangeStrategy = new HighestFirstMoneyChangeStrategy()
 
         when:
-        def restCoins = cashierPad.insertCoinsAndReturnChange(amountToPay, insertedCoins, moneyChangeStrategy)
+        def restCoins = cashierPad.payAndReturnChange(amountToPay, moneyChangeStrategy)
 
         then:
         thrown(MoneyChangeException)
         cashierPad.coinsInCashier == [(HALF): 1, (ONE_FIFTH): 5]
         restCoins == null
+    }
+
+    def "insertCoins should properly add coins to cashier pad and return proper amount"() {
+        given:
+        cashierPad.insertedCoins = insertedCoins
+
+        expect:
+        expectedAmount == cashierPad.insertCoins(denominationToInsert, quantityToInsert)
+
+        where:
+        insertedCoins | expectedAmount | denominationToInsert | quantityToInsert
+        [(FIVE): 1]   | 5.2            | ONE_FIFTH            | 1
+        [:]           | 0.7            | ONE_TENTH            | 7
+    }
+
+    def "returnInsertedCoins should clear current state of inserted coins"() {
+        given:
+        cashierPad.insertedCoins = [(FIVE): 1]
+
+        when:
+        cashierPad.returnInsertedCoins()
+
+        then:
+        cashierPad.insertedCoins.isEmpty()
     }
 }
