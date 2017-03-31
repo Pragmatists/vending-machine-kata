@@ -4,6 +4,7 @@ import spock.lang.Specification
 import tdd.vendingMachine.domain.strategy.MoneyChangeStrategy
 import tdd.vendingMachine.domain.strategy.impl.HighestFirstMoneyChangeStrategy
 import tdd.vendingMachine.exception.MoneyChangeException
+import tdd.vendingMachine.listener.VendingMachineNotifier
 
 import static tdd.vendingMachine.domain.Denomination.*
 
@@ -14,40 +15,12 @@ class CashierPadSpec extends Specification {
 
     private CashierPad cashierPad
 
+    private VendingMachineNotifier vendingMaichineNotifier
+
     def setup() {
-        cashierPad = new CashierPad()
-    }
-
-    def "getMoneyInCashier should return the whole amount of money in cash"() {
-        given:
-        cashierPad.coinsInCashier = coinsInCashier
-
-        when:
-        def amount = cashierPad.getMoneyInCashier()
-
-        then:
-        amount == BigDecimal.valueOf(amount)
-
-        where:
-        sum  | coinsInCashier
-        43.4 | [(FIVE): 6, (TWO): 3, (HALF): 5, (ONE): 3, (ONE_FIFTH): 5, (ONE_TENTH): 9]
-        42.4 | [(FIVE): 6, (TWO): 3, (HALF): 5, (ONE): 3, (ONE_TENTH): 9]
-        0    | [:]
-    }
-
-    def "getDenominationQuantity should return proper quantity for given denomination"() {
-        given:
-        cashierPad.coinsInCashier = coinsInCashier
-
-        when:
-        def quantity = cashierPad.getDenominationQuantity(denomination)
-        then:
-        quantity == expectedQuantity
-
-        where:
-        denomination | expectedQuantity | coinsInCashier
-        FIVE         | 6                | [(FIVE): 6, (TWO): 3, (HALF): 5, (ONE): 3, (ONE_FIFTH): 5, (ONE_TENTH): 9]
-        ONE_FIFTH    | 0                | [(FIVE): 6, (TWO): 3, (HALF): 5, (ONE): 3, (ONE_TENTH): 9]
+        def moneyChangeStrategy = new HighestFirstMoneyChangeStrategy()
+        vendingMaichineNotifier = Mock(VendingMachineNotifier)
+        cashierPad = new CashierPad(moneyChangeStrategy, vendingMaichineNotifier)
     }
 
     def "getAmountFromCoins returns amount from given coins quantity map"() {
@@ -113,11 +86,9 @@ class CashierPadSpec extends Specification {
         def amountToPay = new BigDecimal(5.5)
         and:
         def coinsInCashier = [(FIVE): 6, (TWO): 3, (HALF): 5, (ONE_FIFTH): 5, (ONE_TENTH): 9]
-        and:
-        def moneyChangeStrategy = new HighestFirstMoneyChangeStrategy()
 
         when:
-        def restCoins = cashierPad.countRestInCoinsQuantity(amountToPay, coinsInCashier, moneyChangeStrategy)
+        def restCoins = cashierPad.countRestInCoinsQuantity(amountToPay, coinsInCashier)
 
         then:
         restCoins == [(HALF): 1]
@@ -131,12 +102,12 @@ class CashierPadSpec extends Specification {
         and:
         def coinsInCashier = [(FIVE): 6, (TWO): 3, (HALF): 5, (ONE_FIFTH): 5, (ONE_TENTH): 9]
         and:
-        def moneyChangeStrategy = Mock(MoneyChangeStrategy) {
+        cashierPad.changeStrategy = Mock(MoneyChangeStrategy) {
             countRestInCoinsQuantity(*_) >> { throw new MoneyChangeException("error message") }
         }
 
         when:
-        def restCoins = cashierPad.countRestInCoinsQuantity(amountToPay, coinsInCashier, moneyChangeStrategy)
+        def restCoins = cashierPad.countRestInCoinsQuantity(amountToPay, coinsInCashier)
 
         then:
         thrown(MoneyChangeException)
@@ -150,11 +121,9 @@ class CashierPadSpec extends Specification {
         def amountToPay = new BigDecimal(5.5)
         and:
         cashierPad.insertedCoins = [(TWO): 3]
-        and:
-        def moneyChangeStrategy = new HighestFirstMoneyChangeStrategy()
 
         when:
-        def restCoins = cashierPad.payAndReturnChange(amountToPay, moneyChangeStrategy)
+        def restCoins = cashierPad.payAndReturnChange(amountToPay)
 
         then:
         restCoins == [(HALF): 1]
@@ -168,11 +137,9 @@ class CashierPadSpec extends Specification {
         cashierPad.insertedCoins = [(FIVE): 1]
         and:
         def amountToPay = new BigDecimal(1.5)
-        and:
-        def moneyChangeStrategy = new HighestFirstMoneyChangeStrategy()
 
         when:
-        def restCoins = cashierPad.payAndReturnChange(amountToPay, moneyChangeStrategy)
+        def restCoins = cashierPad.payAndReturnChange(amountToPay)
 
         then:
         thrown(MoneyChangeException)
@@ -202,5 +169,24 @@ class CashierPadSpec extends Specification {
 
         then:
         cashierPad.insertedCoins.isEmpty()
+    }
+
+    def "coinInserted should invoke notifyProductPrice on vendingMachineNotifier"() {
+        when:
+        cashierPad.coinInserted(FIVE, 1)
+
+        then:
+        1 * vendingMaichineNotifier.notifyAmountInserted(*_)
+    }
+
+    def "sufficientValueInserted should invoke notifyProductPrice on vendingMachineNotifier"() {
+        given:
+        cashierPad.insertedCoins = [(FIVE): 1]
+
+        when:
+        cashierPad.sufficientValueInserted(BigDecimal.valueOf(5))
+
+        then:
+        1 * vendingMaichineNotifier.notifyRestReturned(*_)
     }
 }

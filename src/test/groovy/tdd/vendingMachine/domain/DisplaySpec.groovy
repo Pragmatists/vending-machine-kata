@@ -1,7 +1,8 @@
 package tdd.vendingMachine.domain
 
 import spock.lang.Specification
-import tdd.vendingMachine.domain.display.Screen
+import tdd.vendingMachine.domain.display.Display
+import tdd.vendingMachine.domain.display.screen.Screen
 
 /**
  * @author kdkz
@@ -22,7 +23,7 @@ class DisplaySpec extends Specification {
         display.show(screen)
 
         then:
-        1 * screen.show()
+        1 * screen.getScreenContent()
     }
 
 }

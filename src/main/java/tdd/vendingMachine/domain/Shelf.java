@@ -58,14 +58,6 @@ public class Shelf {
         log.info("Product {} placed on the shelf. Product quantity is {}", product.getName(), quantity);
     }
 
-    public void putProductsOnShelf(String productName, int quantity) throws VendingException {
-        if (Product.getProductByName(productName) == EMPTY) {
-            log.error("Product with given name {} does not exist. Product is not set.", productName);
-            throw new VendingException("Product with given name does not exist.");
-        }
-        putProductsOnShelf(Product.getProductByName(productName), quantity);
-    }
-
     /**
      * Takes off product from shelf. If There is already no product on shelf VendingException will throw
      *
