@@ -44,9 +44,9 @@ The assignment
 5. Each product type has its own price.
 6. Machine has a display.
 7. If we select shelve number, display should show product price.
-8. You can buy products by putting money into machine. Machine accepts denominations 5, 2, 1, 0.5, 0.2, 0.1.
+8. You can buy products by putting denomination into machine. Machine accepts denominations 5, 2, 1, 0.5, 0.2, 0.1.
 9. After inserting a coin, display shows amount that must be added to cover product price.
-10. After selecting a shelve and inserting enough money we will get the product and the change (but machine has to have money to be able to return the change).
-11. After selecting a shelve and inserting insufficient money to buy a product, user has to press "Cancel" to get their money back.
-12. If machine does not have enough money to give the change it must show a warning message and return the money user has put, and it should not give the product.
-13. Machine can return change using only money that was put into it (or by someone at start or by people who bought goods). Machine cannot create it's own money!
+10. After selecting a shelve and inserting enough denomination we will get the product and the change (but machine has to have denomination to be able to return the change).
+11. After selecting a shelve and inserting insufficient denomination to buy a product, user has to press "Cancel" to get their denomination back.
+12. If machine does not have enough denomination to give the change it must show a warning message and return the denomination user has put, and it should not give the product.
+13. Machine can return change using only denomination that was put into it (or by someone at start or by people who bought goods). Machine cannot create it's own denomination!
