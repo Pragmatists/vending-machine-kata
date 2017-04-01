@@ -1,13 +1,11 @@
 package tdd.vendingMachine.domain
 
 import spock.lang.Specification
-import tdd.vendingMachine.domain.display.Display
 import tdd.vendingMachine.domain.display.ScreenFactory
-import tdd.vendingMachine.domain.display.screen.impl.*
+import tdd.vendingMachine.exception.MoneyChangeException
 import tdd.vendingMachine.listener.VendingMachineObserver
 
 import static tdd.vendingMachine.domain.Denomination.FIVE
-import static tdd.vendingMachine.domain.Denomination.TWO
 import static tdd.vendingMachine.domain.display.ScreenFactory.ScreenType.CANCEL_SCREEN
 import static tdd.vendingMachine.domain.display.ScreenFactory.ScreenType.INSERTED_COINS_STATUS_SCREEN
 import static tdd.vendingMachine.domain.display.ScreenFactory.ScreenType.PRODUCT_SOLD_SCREEN
@@ -34,7 +32,7 @@ class VendingMachineSpec extends Specification {
         vendingMachine.screenFactory = screenFactory
     }
 
-    def "clearContents should clear productPrice, currentInsertedAmount and invoke cancelButtonSelected method on observers"() {
+    def "clearContents should clear productPrice, currentInsertedAmount"() {
         given:
         vendingMachine.productPrice = new BigDecimal(5.5)
         and:
@@ -46,7 +44,6 @@ class VendingMachineSpec extends Specification {
         then:
         vendingMachine.productPrice == null
         vendingMachine.currentInsertedAmount == null
-        1 * observer.cancelButtonSelected()
     }
 
     def "tryBuyProduct should return proper boolean value for given arguments"() {
@@ -60,7 +57,7 @@ class VendingMachineSpec extends Specification {
 
         then:
         result == ecpectedResult
-        sufficientValueInsertedInvocation * observer.sufficientValueInserted(*_)
+        sufficientValueInsertedInvocation * observer.sufficientAmountInserted(*_)
 
         where:
         insertedAmount | productPrice | ecpectedResult | sufficientValueInsertedInvocation
@@ -139,31 +136,20 @@ class VendingMachineSpec extends Specification {
         vendingMachine.isSufficient(alreadyInsertedAmount)
 
         then:
-        selectShelfFirstScreen * vendingMachine.screenFactory.displayScreen(*_) >> {
-            arguments ->
-                assert arguments[0] == SELECT_SHELF_FIRST_SCREEN
-        }
-
+        sufficientAmountInsertedInvocation * observer.sufficientAmountInserted(*_)
         insertedCoinsStatusScreen * vendingMachine.screenFactory.displayScreen(*_) >> {
             arguments ->
                 assert arguments[0] == INSERTED_COINS_STATUS_SCREEN
         }
-
-        productSoldScreen * vendingMachine.screenFactory.displayScreen(*_) >> {
-            arguments ->
-                assert arguments[0] == PRODUCT_SOLD_SCREEN
-        }
-
         unableToCountRestScreen * vendingMachine.screenFactory.displayScreen(*_) >> {
             arguments ->
                 assert arguments[0] == UNABLE_TO_COUNT_REST_SCREEN
         }
 
         where:
-        productPrice | alreadyInsertedAmount | selectShelfFirstScreen | insertedCoinsStatusScreen | productSoldScreen | unableToCountRestScreen
-        null         | 5                     | 1                      | 0                         | 0                 | 0
-//        4.5          | 4                     | 1                      | 0                         | 0                 | 0
-//        2            | 1                     | 0                      | 1                         | 0                 | 0
-//        4.5          | 6                     | 0                      | 0                         | 1                 | 0
+        productPrice | alreadyInsertedAmount | insertedCoinsStatusScreen | unableToCountRestScreen | sufficientAmountInsertedInvocation
+        4.5          | 4                     | 1                         | 0                       | 0
+        4.5          | 6                     | 0                         | 0                       | 1
+        4.5          | 4.5                   | 0                         | 0                       | 1
     }
 }

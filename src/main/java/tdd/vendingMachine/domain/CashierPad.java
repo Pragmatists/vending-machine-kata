@@ -36,6 +36,40 @@ public class CashierPad implements VendingMachineObserver {
     }
 
     /**
+     * @see VendingMachineObserver#coinInserted(Denomination, Integer)
+     */
+    @Override
+    public void coinInserted(Denomination denomination, Integer integer) {
+        insertCoins(denomination, integer);
+        vendingMachineNotifier.notifyAmountInserted(getAmountFromCoins(insertedCoins));
+    }
+
+    /**
+     * @see VendingMachineObserver#shelfSelected(int)
+     */
+    @Override
+    public void shelfSelected(int shelfNumber) {
+        //not implemented
+    }
+
+    /**
+     * @see VendingMachineObserver#sufficientAmountInserted(BigDecimal)
+     */
+    @Override
+    public void sufficientAmountInserted(BigDecimal amountToPay) throws MoneyChangeException {
+        Map<Denomination, Integer> rest = payAndReturnChange(amountToPay);
+        vendingMachineNotifier.notifyRestReturned(rest, getAmountFromCoins(rest));
+    }
+
+    /**
+     * @see VendingMachineObserver#cancelButtonSelected()
+     */
+    @Override
+    public void cancelButtonSelected() {
+        returnInsertedCoins();
+    }
+
+    /**
      * Inserts coins to cashier pad and returns rest coins quantity. If rest coins quantity can not be counted
      * MoneyChangeException is thrown
      *
@@ -124,35 +158,5 @@ public class CashierPad implements VendingMachineObserver {
         return coinsQuantity.entrySet().stream()
             .map(moneyIntegerEntry -> moneyIntegerEntry.getKey().getDenomination().multiply(BigDecimal.valueOf(moneyIntegerEntry.getValue())))
             .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
-    }
-
-    @Override
-    public void coinInserted(Denomination denomination, Integer integer) {
-        insertCoins(denomination, integer);
-        vendingMachineNotifier.notifyAmountInserted(getAmountFromCoins(insertedCoins));
-    }
-
-    @Override
-    public void shelfSelected(int shelfNumber) {
-        //not implemented
-    }
-
-    @Override
-    public void sufficientValueInserted(BigDecimal amountToPay) throws MoneyChangeException {
-        Map<Denomination, Integer> rest = payAndReturnChange(amountToPay);
-        vendingMachineNotifier.notifyRestReturned(rest, getAmountFromCoins(rest));
-    }
-
-    @Override
-    public void cancelButtonSelected() {
-        returnInsertedCoins();
-    }
-
-    public Map<Denomination, Integer> getCoinsInCashier() {
-        return coinsInCashier;
-    }
-
-    public void setCoinsInCashier(Map<Denomination, Integer> coinsInCashier) {
-        this.coinsInCashier = coinsInCashier;
     }
 }

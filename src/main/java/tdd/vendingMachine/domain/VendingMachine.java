@@ -3,10 +3,8 @@ package tdd.vendingMachine.domain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tdd.vendingMachine.domain.display.ScreenFactory;
-import tdd.vendingMachine.domain.strategy.impl.HighestFirstMoneyChangeStrategy;
 import tdd.vendingMachine.exception.MoneyChangeException;
 import tdd.vendingMachine.exception.ShelfNotExistException;
-import tdd.vendingMachine.listener.VendingMachineNotifier;
 import tdd.vendingMachine.listener.VendingMachineObserver;
 
 import java.math.BigDecimal;
@@ -19,12 +17,13 @@ import static java.util.Collections.singletonList;
 import static tdd.vendingMachine.domain.display.ScreenFactory.ScreenType.*;
 
 /**
+ * Class represents Vending Machine terminal on which the client tries to make transactions.
+ *
  * @author kdkz
  */
 public class VendingMachine {
 
     private final static Logger log = LoggerFactory.getLogger(VendingMachine.class);
-
 
     private Set<VendingMachineObserver> observers = new HashSet<>();
 
@@ -34,18 +33,12 @@ public class VendingMachine {
 
     private BigDecimal currentInsertedAmount;
 
-    public void power() {
-        VendingMachineNotifier vendingMachineNotifier = new VendingMachineNotifier();
-        vendingMachineNotifier.setVendingMachine(this);
-
-        screenFactory = new ScreenFactory();
-        CashierPad cashierPad = new CashierPad(new HighestFirstMoneyChangeStrategy(), vendingMachineNotifier);
-        ShelfBox shelfBox = new ShelfBox(vendingMachineNotifier);
-
-        observers.add(cashierPad);
-        observers.add(shelfBox);
-    }
-
+    /**
+     * Inserts coins into Vending Machine
+     *
+     * @param denomination coin denomination
+     * @param quantity     coins quantity - For ease testing. On real world coins are inserted one by one
+     */
     public void insertCoins(Denomination denomination, Integer quantity) {
         log.debug("{} denomination inserted in quantity {}.", denomination, quantity);
         if (productPrice != null) {
@@ -56,6 +49,11 @@ public class VendingMachine {
         screenFactory.displayScreen(SELECT_SHELF_FIRST_SCREEN, null);
     }
 
+    /**
+     * Selects shelf with products in Vending Machine
+     *
+     * @param shelfNumber shelf number
+     */
     public void selectShelf(int shelfNumber) {
         try {
             log.debug("Shelf number {} selected.");
@@ -67,36 +65,57 @@ public class VendingMachine {
         }
     }
 
+    /**
+     * Cancels the transaction in Vending Machine
+     */
     public void pressCancelButton() {
         clearContents();
+        observers.forEach(VendingMachineObserver::cancelButtonSelected);
         log.debug("Cancel button selected. Already inserted coins in amount {} returned.", currentInsertedAmount);
         screenFactory.displayScreen(CANCEL_SCREEN, null);
     }
 
-    public void isSufficient(BigDecimal currentInsertedAmount) {
-        this.currentInsertedAmount = currentInsertedAmount;
+    /**
+     * Checks if already inserted amount of money is sufficient to buy a product.
+     *
+     * @param alreadyInsertedAmount already inserted amount
+     */
+    public void isSufficient(BigDecimal alreadyInsertedAmount) {
+        this.currentInsertedAmount = alreadyInsertedAmount;
         try {
             if (tryBuyProduct()) {
                 log.debug("Product sold!");
                 clearContents();
                 return;
             }
-            log.debug("{} already inserted. {} left.", currentInsertedAmount, productPrice.subtract(currentInsertedAmount));
+            log.debug("{} already inserted. {} left.", alreadyInsertedAmount, productPrice.subtract(alreadyInsertedAmount));
             screenFactory.displayScreen(
                 INSERTED_COINS_STATUS_SCREEN,
-                () -> singletonList(productPrice.subtract(currentInsertedAmount).toPlainString()));
+                () -> singletonList(productPrice.subtract(alreadyInsertedAmount).toPlainString()));
         } catch (MoneyChangeException e) {
             log.error("Failed to buy product. Vending machine does not have enough money to get the rest. {}", e.getMessage());
             screenFactory.displayScreen(UNABLE_TO_COUNT_REST_SCREEN, null);
         }
     }
 
-    public void returnRest(Map<Denomination, Integer> rest, BigDecimal amountFromCoins) {
+    /**
+     * Notifies correctly counted rest is returned.
+     *
+     * @param rest            returned rest in coins
+     * @param amountFromCoins rest amount
+     */
+    public void restReturned(Map<Denomination, Integer> rest, BigDecimal amountFromCoins) {
         log.debug("Returning rest {}", amountFromCoins);
         screenFactory.displayScreen(
             PRODUCT_SOLD_SCREEN, () -> asList(amountFromCoins.toPlainString(), rest.toString()));
     }
 
+    /**
+     * Notifies about selected product price
+     *
+     * @param shelfNumber  shelf number
+     * @param productPrice product price
+     */
     public void returnProductPrice(int shelfNumber, BigDecimal productPrice) {
         this.productPrice = productPrice;
         screenFactory.displayScreen(
@@ -104,22 +123,38 @@ public class VendingMachine {
             () -> asList(String.valueOf(shelfNumber), productPrice.toPlainString()));
     }
 
+    /**
+     * Clears temporary saved state about product price and already inserted amount
+     */
     private void clearContents() {
         productPrice = null;
         currentInsertedAmount = null;
-        observers.forEach(VendingMachineObserver::cancelButtonSelected);
     }
 
+    /**
+     * Tries to make transaction.
+     *
+     * @return true if transaction was made successfully, false otherwise
+     * @throws MoneyChangeException
+     */
     private boolean tryBuyProduct() throws MoneyChangeException {
         if (currentInsertedAmount.compareTo(productPrice) >= 0) {
             log.debug("Inserted amount match product price.");
             log.debug("Buying procedure started. Wait for counting rest.");
             for (VendingMachineObserver observer : observers) {
-                observer.sufficientValueInserted(productPrice);
+                observer.sufficientAmountInserted(productPrice);
             }
             log.debug("Buying procedure finished. Product and rest spent.");
             return true;
         }
         return false;
+    }
+
+    public void registerObserver(VendingMachineObserver observer) {
+        observers.add(observer);
+    }
+
+    public void adDisplayMechanism(ScreenFactory screenFactory) {
+        this.screenFactory = screenFactory;
     }
 }

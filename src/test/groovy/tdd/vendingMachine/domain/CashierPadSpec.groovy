@@ -184,7 +184,7 @@ class CashierPadSpec extends Specification {
         cashierPad.insertedCoins = [(FIVE): 1]
 
         when:
-        cashierPad.sufficientValueInserted(BigDecimal.valueOf(5))
+        cashierPad.sufficientAmountInserted(BigDecimal.valueOf(5))
 
         then:
         1 * vendingMaichineNotifier.notifyRestReturned(*_)
