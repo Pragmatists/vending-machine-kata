@@ -1,4 +1,4 @@
-package tdd.vendingMachine;
+package tdd.vendingmachine;
 
 public class VendingMachine {
 
