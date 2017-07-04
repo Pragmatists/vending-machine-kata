@@ -1,5 +1,6 @@
 package tdd.vendingmachine.domain;
 
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import tdd.vendingmachine.domain.dto.PriceDto;
 
@@ -7,44 +8,32 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 @ToString
-class Price {
+@EqualsAndHashCode
+class Price implements Money {
 
-    private final BigDecimal value;
+    private final MoneyAmount amount;
 
-    private Price(BigDecimal value) {
-        this.value = value;
-    }
-
-    /**
-     * Cannot use Lombok, because {@link java.math.BigDecimal#equals(Object) BigDecimal.equals()} method checks for
-     * scale equality, not only value.
-     * Thus, generating equals with {@link java.math.BigDecimal#compareTo(Object) BigDecimal.compareTo()}.
-      */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Price)) {
-            return false;
-        }
-
-        Price price = (Price) o;
-
-        return value.compareTo(price.value) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-        return value.hashCode();
+    private Price(MoneyAmount amount) {
+        this.amount = Objects.requireNonNull(amount);
     }
 
     static Price create(PriceDto priceDto) {
-        BigDecimal value = Objects.requireNonNull(priceDto.getValue());
-        return new Price(value);
+        MoneyAmount moneyAmount = new MoneyAmount(priceDto.getValue());
+        return new Price(moneyAmount);
     }
 
-    BigDecimal value() {
-        return value;
+    @Override
+    public BigDecimal value() {
+        return amount.value();
+    }
+
+    @Override
+    public Money add(Money money) {
+        return amount.add(money);
+    }
+
+    @Override
+    public Money subtract(Money money) {
+        return amount.subtract(money);
     }
 }

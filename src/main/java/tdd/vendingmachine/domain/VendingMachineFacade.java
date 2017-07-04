@@ -1,6 +1,9 @@
 package tdd.vendingmachine.domain;
 
+import tdd.vendingmachine.domain.dto.CoinDto;
 import tdd.vendingmachine.domain.dto.VendingMachineDto;
+
+import java.util.Collection;
 
 public class VendingMachineFacade {
 
@@ -24,5 +27,18 @@ public class VendingMachineFacade {
     public String readDisplay() {
         VendingMachine vendingMachine = vendingMachineRepository.get();
         return vendingMachine.showDisplay();
+    }
+
+    public void insertCoin(CoinDto coinDto) {
+        VendingMachine vendingMachine = vendingMachineRepository.get();
+        vendingMachine.insertCoin(coinDto);
+        vendingMachineRepository.save(vendingMachine);
+    }
+
+    public Collection<CoinDto> takeChange() {
+        VendingMachine vendingMachine = vendingMachineRepository.get();
+        Collection<CoinDto> change = vendingMachine.returnChange();
+        vendingMachineRepository.save(vendingMachine);
+        return change;
     }
 }

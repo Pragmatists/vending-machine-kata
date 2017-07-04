@@ -8,17 +8,19 @@ import static tdd.vendingmachine.testutility.ShelfTestBuilder.aShelf
 class VendingMachineTestBuilder {
 
     private Map<String, ShelfDto> shelvesByNumber
+    private Set<BigDecimal> acceptableDenominations
 
     private VendingMachineTestBuilder() {
         shelvesByNumber = ShelvesObjectMother.shelvesByNumber()
+        acceptableDenominations = [0.1, 0.2, 0.5, 1.0, 2.0, 5.0]
     }
 
     static VendingMachineTestBuilder aVendingMachine() {
-        new VendingMachineTestBuilder()
+        return new VendingMachineTestBuilder()
     }
     
     VendingMachineDto build() {
-        return new VendingMachineDto(new HashSet<>(shelvesByNumber.values()))
+        return new VendingMachineDto(new HashSet<>(shelvesByNumber.values()), acceptableDenominations)
     }
 
     VendingMachineTestBuilder containingShelfWithProductTypePriceValue(String shelfNumber, BigDecimal price) {
@@ -42,6 +44,15 @@ class VendingMachineTestBuilder {
                                         return newShelfDto
                                     }
         shelfDto.productCount = 0
+        return this
+    }
+    
+    VendingMachineTestBuilder containingShelf(String shelfNumber) {
+        return containingShelfWithProductTypePriceValue(shelfNumber, Randomizer.aPriceValue())
+    }
+    
+    VendingMachineTestBuilder notAcceptingDenomination(BigDecimal denomination) {
+        acceptableDenominations.remove(denomination)
         return this
     }
 }

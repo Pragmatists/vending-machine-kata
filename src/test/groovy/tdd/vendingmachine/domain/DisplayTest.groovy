@@ -39,21 +39,21 @@ class DisplayTest extends Specification {
             Price price = Price.create(PriceTestBuilder.aPrice()
                                                        .withValue(priceValue)
                                                        .build())
-            Display display = Display.price(price)
+            Display display = Display.money(price)
         when:
             String text = display.show()
         then:
             text == expectedText
         where:
-            priceValue     | expectedText
-            1.00           | '1.00'
-            1.0            | '1.00'
-            BigDecimal.ONE | '1.00'
-            2.45           | '2.45'
-            100.489        | '100.49'
-            4.4124         | '4.41'
-            6.054          | '6.05'
-            6.055          | '6.06'
-            6.056          | '6.06'
+            priceValue     || expectedText
+            1.00           || '1.00'
+            1.0            || '1.00'
+            BigDecimal.ONE || '1.00'
+            2.45           || '2.45'
+            100.489        || '100.49'
+            4.4124         || '4.41'
+            6.054          || '6.05'
+            6.055          || '6.06'
+            6.056          || '6.06'
     }
 }

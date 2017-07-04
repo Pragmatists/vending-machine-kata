@@ -10,6 +10,11 @@ class SelectedShelfSuccessfully implements SelectedShelf {
 
     @Override
     public Display display() {
-        return Display.price(shelf.price());
+        return Display.money(shelf.price());
+    }
+
+    @Override
+    public TransactionState newTransactionState() {
+        return TransactionState.shelfSelected(shelf);
     }
 }

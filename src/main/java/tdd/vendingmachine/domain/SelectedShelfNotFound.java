@@ -12,4 +12,9 @@ class SelectedShelfNotFound implements SelectedShelf {
     public Display display() {
         return Display.shelfNotFound(shelfNumber);
     }
+
+    @Override
+    public TransactionState newTransactionState() {
+        return TransactionState.clear();
+    }
 }

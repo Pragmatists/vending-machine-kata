@@ -8,8 +8,8 @@ import java.math.RoundingMode;
 @ToString
 class Display {
 
-    private static final int PRICE_SCALE = 2;
-    private static final RoundingMode PRICE_ROUNDING_MODE = RoundingMode.HALF_UP;
+    private static final int MONEY_SCALE = 2;
+    private static final RoundingMode MONEY_ROUNDING_MODE = RoundingMode.HALF_UP;
 
     private final String text;
 
@@ -33,13 +33,21 @@ class Display {
         return new Display("Empty shelf: " + format(shelfNumber));
     }
 
-    static Display price(Price price) {
-        return new Display(format(price));
+    static Display money(Money money) {
+        return new Display(format(money));
     }
 
-    private static String format(Price price) {
-        BigDecimal priceValue = price.value();
-        return priceValue.setScale(PRICE_SCALE, PRICE_ROUNDING_MODE)
+    static Display selectProductFirst() {
+        return new Display("Select product first");
+    }
+
+    static Display coinNotAcceptable() {
+        return new Display("Coin not acceptable");
+    }
+
+    private static String format(Money money) {
+        BigDecimal moneyValue = money.value();
+        return moneyValue.setScale(MONEY_SCALE, MONEY_ROUNDING_MODE)
                          .toString();
     }
 

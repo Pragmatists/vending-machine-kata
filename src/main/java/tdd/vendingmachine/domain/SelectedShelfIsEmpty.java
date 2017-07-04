@@ -12,4 +12,9 @@ class SelectedShelfIsEmpty implements SelectedShelf {
     public Display display() {
         return Display.emptyShelf(shelfNumber);
     }
+
+    @Override
+    public TransactionState newTransactionState() {
+        return TransactionState.clear();
+    }
 }
