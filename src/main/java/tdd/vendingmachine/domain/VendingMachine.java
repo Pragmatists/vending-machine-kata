@@ -50,18 +50,41 @@ class VendingMachine {
         return changeDispenser.dispense();
     }
 
-    interface VendingMachineState {
+    private void handleSelectingShelf(ShelfNumber shelfNumber) {
+        SelectedShelf selectedShelf = new ShelfSelector(shelves).select(shelfNumber);
+        display = selectedShelf.display();
+        transactionState = selectedShelf.newTransactionState();
+        state = new ShelfSelectedState();
+    }
+
+    private void handleInsertingCoin(Coin coin) {
+        if (isCoinNotAcceptable(coin)) {
+            handleNotAcceptableCoin(coin);
+            return;
+        }
+        transactionState = transactionState.add(coin);
+        display = Display.money(transactionState.amountLeftToPay());
+        state = new CoinInsertedState();
+    }
+
+    private boolean isCoinNotAcceptable(Coin coin) {
+        return !machineMoney.isCoinAcceptable(coin);
+    }
+
+    private void handleNotAcceptableCoin(Coin coin) {
+        display = Display.coinNotAcceptable();
+        changeDispenser.put(coin);
+    }
+
+    private interface VendingMachineState {
         void selectShelfNumber(ShelfNumber shelfNumber);
         void insertCoin(Coin coin);
     }
 
-    class IdleState implements VendingMachineState {
+    private class IdleState implements VendingMachineState {
         @Override
         public void selectShelfNumber(ShelfNumber shelfNumber) {
-            SelectedShelf selectedShelf = new ShelfSelector(shelves).select(shelfNumber);
-            display = selectedShelf.display();
-            transactionState = selectedShelf.newTransactionState();
-            state = new ShelfSelectedState();
+            handleSelectingShelf(shelfNumber);
         }
 
         @Override
@@ -72,7 +95,19 @@ class VendingMachine {
         }
     }
 
-    class ShelfSelectedState implements VendingMachineState {
+    private class ShelfSelectedState implements VendingMachineState {
+        @Override
+        public void selectShelfNumber(ShelfNumber shelfNumber) {
+            handleSelectingShelf(shelfNumber);
+        }
+
+        @Override
+        public void insertCoin(Coin coin) {
+            handleInsertingCoin(coin);
+        }
+    }
+
+    private class CoinInsertedState implements VendingMachineState {
         @Override
         public void selectShelfNumber(ShelfNumber shelfNumber) {
             // it does nothing
@@ -80,21 +115,7 @@ class VendingMachine {
 
         @Override
         public void insertCoin(Coin coin) {
-            if (isCoinNotAcceptable(coin)) {
-                handleNotAcceptableCoin(coin);
-                return;
-            }
-            transactionState = transactionState.add(coin);
-            display = Display.money(transactionState.amountLeftToPay());
-        }
-
-        private boolean isCoinNotAcceptable(Coin coin) {
-            return !machineMoney.isCoinAcceptable(coin);
-        }
-
-        private void handleNotAcceptableCoin(Coin coin) {
-            display = Display.coinNotAcceptable();
-            changeDispenser.put(coin);
+            handleInsertingCoin(coin);
         }
     }
 }

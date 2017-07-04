@@ -40,4 +40,9 @@ class Randomizer {
     static CoinDto aCoin() {
         return new CoinDto(randomFrom(coinDenominations))
     }
+    
+    static String aDifferentShelfNumber(String shelfNumber) {
+        String newShelfNumber = aShelfNumber()
+        return newShelfNumber != shelfNumber ? newShelfNumber : aDifferentShelfNumber(shelfNumber)
+    }
 }
