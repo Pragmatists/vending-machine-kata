@@ -7,9 +7,9 @@ import java.util.List;
  */
 public interface Account {
 
-    void makeDeposit(double coin);
+    void makeDeposit(double money);
 
-    void makeDeposit(List<Double> coins);
+    void makeDeposit(List<Double> money);
 
     List<Double> withdraw();
 

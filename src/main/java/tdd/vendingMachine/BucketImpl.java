@@ -7,8 +7,11 @@ import java.util.List;
 /**
  * @author Yevhen Sukhomud
  */
-public interface Bucket {
+public class BucketImpl implements Bucket {
 
-    void putInto(List<Double> money, Product product);
+    @Override
+    public void putInto(List<Double> money, Product product) {
+
+    }
 
 }

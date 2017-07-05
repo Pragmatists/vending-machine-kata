@@ -3,7 +3,7 @@ package tdd.vendingMachine;
 /**
  * @author Yevhen Sukhomud
  */
-public interface UserController {
+public interface UserPanel {
 
     void selectProduct(int shelveNum);
 

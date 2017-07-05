@@ -15,12 +15,13 @@ import static org.mockito.Mockito.verify;
 
 public class VendingMachineTest {
 
-    private Display display;
-    private Account account;
-    private Inventory inventory;
-    private UserController userController;
-    private CashHolder cashHolder;
-    private Bucket bucket;
+    private Display display = new LiquidCrystalDisplay();
+    private Account account = new CashAccount();
+    private Inventory inventory = new ShelveInventory();
+    private Bucket bucket = new BucketImpl();
+    private HardwareController hardwareController = new SccmController(display, inventory, account, bucket);
+    private UserPanel userPanel = new ButtonPanel(hardwareController);
+    private MoneyHolder moneyHolder = new CoinHolder(hardwareController);
 
     @Before
     public void setUp() throws Exception {
@@ -36,7 +37,7 @@ public class VendingMachineTest {
         inventory.put(product);
 
         // when
-        userController.selectProduct(1);
+        userPanel.selectProduct(1);
 
         // then
         verify(display).display("Price: " + price);
@@ -47,10 +48,10 @@ public class VendingMachineTest {
         // given
         Product product = new Product("cola", 5);
         inventory.put(product);
-        cashHolder.insertCoin(5);
+        moneyHolder.insert(5);
 
         // when
-        userController.selectProduct(1);
+        userPanel.selectProduct(1);
 
         // then
         verify(bucket).putInto(listWithCoins(5), product);
@@ -63,7 +64,7 @@ public class VendingMachineTest {
         inventory.put(product);
 
         // when
-        userController.selectProduct(1);
+        userPanel.selectProduct(1);
 
         // then
         verify(bucket, never()).putInto(any(), any());
@@ -75,7 +76,7 @@ public class VendingMachineTest {
         int shelveNum = 1;
 
         // when
-        userController.selectProduct(shelveNum);
+        userPanel.selectProduct(shelveNum);
 
         // then
         verify(display).display("There is no product with " + shelveNum + " index");
@@ -86,10 +87,10 @@ public class VendingMachineTest {
         // given
         Product product = new Product("cola", 5);
         inventory.put(product);
-        userController.selectProduct(1);
+        userPanel.selectProduct(1);
 
         // when
-        cashHolder.insertCoin(2);
+        moneyHolder.insert(2);
 
         // then
         verify(display).display("Please add : " + 3);
@@ -101,7 +102,7 @@ public class VendingMachineTest {
         double coin = 2;
 
         // when
-        cashHolder.insertCoin(coin);
+        moneyHolder.insert(coin);
 
         // then
         verify(display).display("Balance : " + coin);
@@ -113,10 +114,10 @@ public class VendingMachineTest {
         Product product = new Product("candy", 1);
         inventory.put(product);
         account.makeDeposit(listWithCoins(2, 2)); // for change
-        userController.selectProduct(1);
+        userPanel.selectProduct(1);
 
         // when
-        cashHolder.insertCoin(5);
+        moneyHolder.insert(5);
 
         // then
         verify(bucket).putInto(listWithCoins(2, 2), product);
@@ -129,7 +130,7 @@ public class VendingMachineTest {
         inventory.put(product);
 
         // when
-        cashHolder.insertCoin(5);
+        moneyHolder.insert(5);
 
         // then
         verify(bucket, never()).putInto(any(), product);
@@ -142,9 +143,9 @@ public class VendingMachineTest {
         inventory.put(product);
 
         // when
-        cashHolder.insertCoin(2);
-        cashHolder.insertCoin(2);
-        cashHolder.insertCoin(2);
+        moneyHolder.insert(2);
+        moneyHolder.insert(2);
+        moneyHolder.insert(2);
 
         // then
         verify(bucket).putInto(listWithCoins(2, 2, 2), null);
@@ -156,10 +157,10 @@ public class VendingMachineTest {
         // given
         Product product = new Product("cola", 5);
         inventory.put(product);
-        cashHolder.insertCoin(2);
+        moneyHolder.insert(2);
 
         // when
-        userController.cancel();
+        userPanel.cancel();
 
         // then
         verify(bucket).putInto(listWithCoins(2), null);
@@ -172,8 +173,8 @@ public class VendingMachineTest {
         inventory.put(product);
 
         // when
-        cashHolder.insertCoin(1);
-        cashHolder.insertCoin(2);
+        moneyHolder.insert(1);
+        moneyHolder.insert(2);
 
         // then
         verify(account).makeDeposit(2);
@@ -187,8 +188,8 @@ public class VendingMachineTest {
         inventory.put(insertingProduct);
 
         // when
-        userController.selectProduct(1);
-        cashHolder.insertCoin(1);
+        userPanel.selectProduct(1);
+        moneyHolder.insert(1);
 
         // then
         Product gettingProduct = verify(inventory).get(1);
