@@ -8,6 +8,7 @@ import tdd.vendingMachine.model.Product;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -177,6 +178,21 @@ public class VendingMachineTest {
         // then
         verify(account).makeDeposit(2);
         verify(account).makeDeposit(2);
+    }
+
+    @Test
+    public void gettingFromInventory_shouldGetProductFromInventory() {
+        // given
+        Product insertingProduct = new Product("cola", 5);
+        inventory.put(insertingProduct);
+
+        // when
+        userController.selectProduct(1);
+        cashHolder.insertCoin(1);
+
+        // then
+        Product gettingProduct = verify(inventory).get(1);
+        assertEquals(insertingProduct, gettingProduct);
     }
 
     private List<Double> listWithCoins(double... coins) {

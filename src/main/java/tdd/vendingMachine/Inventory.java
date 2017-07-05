@@ -7,7 +7,7 @@ import tdd.vendingMachine.model.Product;
  */
 public interface Inventory {
 
-    Product get();
+    Product get(int index);
 
     void put(Product product);
 
