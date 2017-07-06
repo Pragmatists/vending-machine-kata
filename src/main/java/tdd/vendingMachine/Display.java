@@ -7,4 +7,5 @@ public interface Display {
 
     void display(String info);
 
+
 }

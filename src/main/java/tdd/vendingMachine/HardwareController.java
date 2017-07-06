@@ -5,9 +5,9 @@ package tdd.vendingMachine;
  */
 public interface HardwareController {
 
-    void processSelectionProductFlow(int index);
+    void processSelection(int index);
 
-    void processTransferringPayment(double money);
+    void processPayment(double money);
 
     void cancel();
 

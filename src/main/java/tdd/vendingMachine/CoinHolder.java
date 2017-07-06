@@ -13,7 +13,7 @@ public class CoinHolder implements MoneyHolder {
 
     @Override
     public void insert(double money) {
-        hardwareController.processTransferringPayment(money);
+        hardwareController.processPayment(money);
     }
 
 }

@@ -13,7 +13,7 @@ public class ButtonPanel implements UserPanel {
 
     @Override
     public void selectProduct(int index) {
-        controller.processSelectionProductFlow(index);
+        controller.processSelection(index);
     }
 
     @Override

@@ -2,6 +2,7 @@ package tdd.vendingMachine.bdd;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Captor;
 import tdd.vendingMachine.*;
 import tdd.vendingMachine.model.Product;
 
@@ -10,23 +11,24 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class VendingMachineTest {
 
-    private Display display = new LiquidCrystalDisplay();
-    private Account account = new CashAccount();
-    private Inventory inventory = new ShelveInventory();
-    private Bucket bucket = new BucketImpl();
-    private HardwareController hardwareController = new SccmController(display, inventory, account, bucket);
-    private UserPanel userPanel = new ButtonPanel(hardwareController);
-    private MoneyHolder moneyHolder = new CoinHolder(hardwareController);
+    @Captor
+    private Display display = spy(new LiquidCrystalDisplay());
+    private Account account = spy(new CashAccount());
+    private Inventory inventory = spy(new ShelveInventory());
+    private Bucket bucket = spy(new BucketImpl());
+    private Memory memory = spy(new KingstonMemoryCard());
+    private HardwareController hardwareController = spy(new SccmController(display, inventory, account, bucket, memory));
+    private UserPanel userPanel = spy(new ButtonPanel(hardwareController));
+    private MoneyHolder moneyHolder = spy(new CoinHolder(hardwareController));
 
     @Before
     public void setUp() throws Exception {
         inventory.clean();
-        account.withdraw();
+        account.withdrawAll();
     }
 
     @Test
@@ -173,12 +175,12 @@ public class VendingMachineTest {
         inventory.put(product);
 
         // when
-        moneyHolder.insert(1);
-        moneyHolder.insert(2);
+        moneyHolder.insert(0.5);
+        moneyHolder.insert(0.2);
 
         // then
-        verify(account).makeDeposit(2);
-        verify(account).makeDeposit(2);
+        verify(account).makeDeposit(0.5);
+        verify(account).makeDeposit(0.2);
     }
 
     @Test

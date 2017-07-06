@@ -18,8 +18,23 @@ public class CashAccount implements Account {
     }
 
     @Override
-    public List<Double> withdraw() {
+    public List<Double> withdraw(double sum) {
         return null;
+    }
+
+    @Override
+    public List<Double> withdraw(List<Double> sum) {
+        return null;
+    }
+
+    @Override
+    public List<Double> withdrawAll() {
+        return null;
+    }
+
+    @Override
+    public boolean hasChange(double sum) {
+        return false;
     }
 
 }
