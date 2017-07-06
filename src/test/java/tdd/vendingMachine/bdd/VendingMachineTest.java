@@ -36,7 +36,7 @@ public class VendingMachineTest {
         // given
         double price = 5;
         Product product = new Product("cola", price);
-        inventory.put(product);
+        inventory.put(1, product);
 
         // when
         userPanel.selectProduct(1);
@@ -49,7 +49,7 @@ public class VendingMachineTest {
     public void selectProductWithEnoughMoney_shouldPutProductInBucket() {
         // given
         Product product = new Product("cola", 5);
-        inventory.put(product);
+        inventory.put(1, product);
         moneyHolder.insert(5);
 
         // when
@@ -63,7 +63,7 @@ public class VendingMachineTest {
     public void selectProductWithNotEnoughMoney_shouldNotPutProductInBucket() {
         // given
         Product product = new Product("cola", 5);
-        inventory.put(product);
+        inventory.put(1, product);
 
         // when
         userPanel.selectProduct(1);
@@ -88,7 +88,7 @@ public class VendingMachineTest {
     public void insertCoinSelectedProduct_shouldDisplayAmountThatMustBeAdded() {
         // given
         Product product = new Product("cola", 5);
-        inventory.put(product);
+        inventory.put(1, product);
         userPanel.selectProduct(1);
 
         // when
@@ -114,7 +114,7 @@ public class VendingMachineTest {
     public void insertCoinSelectedProductWithEnoughMoney_shouldPutProductAndChange() {
         // given
         Product product = new Product("candy", 1);
-        inventory.put(product);
+        inventory.put(1, product);
         account.makeDeposit(listWithCoins(2, 2)); // for change
         userPanel.selectProduct(1);
 
@@ -129,7 +129,7 @@ public class VendingMachineTest {
     public void insertCoinWithNotSelectedProduct_shouldNotPutProduct() {
         // given
         Product product = new Product("cola", 5);
-        inventory.put(product);
+        inventory.put(1, product);
 
         // when
         moneyHolder.insert(5);
@@ -142,7 +142,7 @@ public class VendingMachineTest {
     public void insertCoinNotEnoughMoneyForChange_shouldReturnInsertedCoins() {
         // given
         Product product = new Product("cola", 5);
-        inventory.put(product);
+        inventory.put(1, product);
 
         // when
         moneyHolder.insert(2);
@@ -158,7 +158,7 @@ public class VendingMachineTest {
     public void pressCancelDuringBuying_shouldGetMoneyBack() {
         // given
         Product product = new Product("cola", 5);
-        inventory.put(product);
+        inventory.put(1, product);
         moneyHolder.insert(2);
 
         // when
@@ -172,7 +172,7 @@ public class VendingMachineTest {
     public void makeDeposit_shouldMakeDepositAfterInsertingCoins() {
         // given
         Product product = new Product("cola", 5);
-        inventory.put(product);
+        inventory.put(1, product);
 
         // when
         moneyHolder.insert(0.5);
@@ -187,7 +187,7 @@ public class VendingMachineTest {
     public void gettingFromInventory_shouldGetProductFromInventory() {
         // given
         Product insertingProduct = new Product("cola", 5);
-        inventory.put(insertingProduct);
+        inventory.put(1, insertingProduct);
 
         // when
         userPanel.selectProduct(1);

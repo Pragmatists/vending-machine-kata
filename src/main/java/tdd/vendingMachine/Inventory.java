@@ -9,7 +9,8 @@ public interface Inventory {
 
     Product get(int index);
 
-    void put(Product product);
+    void put(int index, Product product);
 
     void clean();
+
 }
