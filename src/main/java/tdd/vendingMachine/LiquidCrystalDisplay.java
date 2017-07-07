@@ -7,7 +7,7 @@ public class LiquidCrystalDisplay implements Display {
 
     @Override
     public void display(String info) {
-
+        System.out.println(info);
     }
 
 }
