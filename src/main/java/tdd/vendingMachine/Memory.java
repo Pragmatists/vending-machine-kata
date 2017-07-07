@@ -17,9 +17,9 @@ public interface Memory {
 
     void clear();
 
-    void remember(Product product);
+    void remember(Product product, int index);
 
-    void remember(double product);
+    void remember(double money);
 
     boolean hasInsertedMoney();
 

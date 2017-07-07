@@ -30,12 +30,12 @@ public class KingstonMemoryCard implements Memory {
     }
 
     @Override
-    public void remember(Product product) {
+    public void remember(Product product, int index) {
 
     }
 
     @Override
-    public void remember(double product) {
+    public void remember(double money) {
 
     }
 

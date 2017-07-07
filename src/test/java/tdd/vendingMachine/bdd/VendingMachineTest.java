@@ -5,9 +5,7 @@ import org.junit.Test;
 import org.mockito.Captor;
 import tdd.vendingMachine.*;
 import tdd.vendingMachine.model.Product;
-
-import java.util.ArrayList;
-import java.util.List;
+import tdd.vendingMachine.util.CoinsHelper;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -56,7 +54,7 @@ public class VendingMachineTest {
         userPanel.selectProduct(1);
 
         // then
-        verify(bucket).putInto(listWithCoins(5), product);
+        verify(bucket).putInto(CoinsHelper.listWithCoins(5), product);
     }
 
     @Test
@@ -115,14 +113,14 @@ public class VendingMachineTest {
         // given
         Product product = new Product("candy", 1);
         inventory.put(1, product);
-        account.makeDeposit(listWithCoins(2, 2)); // for change
+        account.makeDeposit(CoinsHelper.listWithCoins(2, 2)); // for change
         userPanel.selectProduct(1);
 
         // when
         moneyHolder.insert(5);
 
         // then
-        verify(bucket).putInto(listWithCoins(2, 2), product);
+        verify(bucket).putInto(CoinsHelper.listWithCoins(2, 2), product);
     }
 
     @Test
@@ -150,7 +148,7 @@ public class VendingMachineTest {
         moneyHolder.insert(2);
 
         // then
-        verify(bucket).putInto(listWithCoins(2, 2, 2), null);
+        verify(bucket).putInto(CoinsHelper.listWithCoins(2, 2, 2), null);
         verify(display).display("Warning! Doesn't have change");
     }
 
@@ -165,7 +163,7 @@ public class VendingMachineTest {
         userPanel.cancel();
 
         // then
-        verify(bucket).putInto(listWithCoins(2), null);
+        verify(bucket).putInto(CoinsHelper.listWithCoins(2), null);
     }
 
     @Test
@@ -196,14 +194,6 @@ public class VendingMachineTest {
         // then
         Product gettingProduct = verify(inventory).get(1);
         assertEquals(insertingProduct, gettingProduct);
-    }
-
-    private List<Double> listWithCoins(double... coins) {
-        List<Double> result = new ArrayList<>(coins.length);
-        for (double coin : coins) {
-            result.add(coin);
-        }
-        return result;
     }
 
 }

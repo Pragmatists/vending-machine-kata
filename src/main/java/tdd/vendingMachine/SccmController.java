@@ -30,7 +30,7 @@ public class SccmController implements HardwareController {
             display.display("There is no product with " + index + " index");
             return;
         }
-        memory.remember(product);
+        memory.remember(product, index);
 
         if (isEnoughMoney()) {
             finishBaying();
