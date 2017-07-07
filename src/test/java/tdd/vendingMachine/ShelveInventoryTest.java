@@ -5,7 +5,7 @@ import org.junit.Test;
 import tdd.vendingMachine.exception.ShelveProductsShouldBeSimilarException;
 import tdd.vendingMachine.model.Product;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,10 +17,12 @@ import static org.junit.Assert.*;
 public class ShelveInventoryTest {
 
     private ShelveInventory inventory;
+    private List<Product> products = new ArrayList<>();
 
     @Before
     public void setUp() throws Exception {
         inventory = new ShelveInventory(new HashMap<>()); // set empty inventory
+        products.clear();
     }
 
     @Test
@@ -38,7 +40,8 @@ public class ShelveInventoryTest {
         // given
         HashMap<Integer, List<Product>> shelves = new HashMap<>();
         Product insertedProduct = new Product("chupa-chups", 2);
-        shelves.put(1, Collections.singletonList(insertedProduct));
+        products.add(insertedProduct);
+        shelves.put(1, products);
         inventory = new ShelveInventory(shelves);
         // when
         Product gotProduct = inventory.get(1);
@@ -50,7 +53,8 @@ public class ShelveInventoryTest {
     public void getNotExistingProduct_shouldReturnNull() throws Exception {
         // given
         HashMap<Integer, List<Product>> shelves = new HashMap<>();
-        shelves.put(1, Collections.singletonList(new Product("chupa-chups", 2)));
+        products.add(new Product("chupa-chups", 2));
+        shelves.put(1, products);
         inventory = new ShelveInventory(shelves);
         // when
         Product product = inventory.get(2);
@@ -146,7 +150,8 @@ public class ShelveInventoryTest {
         int index = 1;
         // given
         HashMap<Integer, List<Product>> shelves = new HashMap<>();
-        shelves.put(index, Collections.singletonList(new Product("chupa-chups", 2)));
+        products.add(new Product("chupa-chups", 2));
+        shelves.put(index, products);
         inventory = new ShelveInventory(shelves);
         // when
         inventory.clean();
