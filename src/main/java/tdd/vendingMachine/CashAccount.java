@@ -33,7 +33,7 @@ public class CashAccount implements Account {
     }
 
     @Override
-    public boolean hasChange(double sum) {
+    public boolean hasThisMoney(double sum) {
         return false;
     }
 

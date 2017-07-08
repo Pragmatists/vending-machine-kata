@@ -85,10 +85,10 @@ public class SccmController implements HardwareController {
     }
 
     private void withChange(double change) {
-        if (account.hasChange(change)) {
+        if (account.hasThisMoney(change)) {
             bucket.putInto(account.withdraw(change), inventory.get(memory.productIndex()));
         } else {
-            display.display("Warning! Doesn't have change");
+            display.display("Warning! Machine doesn't have change");
             bucket.putInto(account.withdraw(memory.insertedMoney()), null);
         }
     }

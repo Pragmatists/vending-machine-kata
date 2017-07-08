@@ -17,6 +17,6 @@ public interface Account {
 
     List<Double> withdrawAll();
 
-    boolean hasChange(double sum);
+    boolean hasThisMoney(double sum);
 
 }
