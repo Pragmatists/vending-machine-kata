@@ -51,7 +51,9 @@ class VendingMachine {
     }
 
     Collection<CoinDto> returnChange() {
-        return changeDispenser.dispense();
+        Collection<CoinDto> dispensedChange = changeDispenser.dispense();
+        changeDispenser = ChangeDispenser.empty();
+        return dispensedChange;
     }
 
     Collection<ProductDto> giveProducts() {
@@ -124,7 +126,7 @@ class VendingMachine {
         public void insertCoin(Coin coin) {
             display = Display.selectProductFirst();
             transactionState = TransactionState.clear();
-            changeDispenser.put(coin);
+            changeDispenser = changeDispenser.put(coin);
         }
 
         @Override
@@ -165,7 +167,7 @@ class VendingMachine {
         public void cancel() {
             Coins transactionCoins = transactionState.coins();
             machineMoney = machineMoney.remove(transactionCoins);
-            changeDispenser.put(transactionCoins);
+            changeDispenser = changeDispenser.put(transactionCoins);
             clear();
         }
     }

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @ToString
 class ProductDispenser {
 
-    private List<ProductType> productTypes;
+    private final List<ProductType> productTypes;
 
     private ProductDispenser(List<ProductType> productTypes) {
         this.productTypes = Collections.unmodifiableList(Objects.requireNonNull(productTypes));

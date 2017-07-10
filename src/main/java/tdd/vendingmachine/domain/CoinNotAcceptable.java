@@ -46,7 +46,6 @@ class CoinNotAcceptable implements CoinInserted {
 
     @Override
     public ChangeDispenser changeDispenser() {
-        changeDispenser.put(coin);
-        return changeDispenser;
+        return changeDispenser.put(coin);
     }
 }

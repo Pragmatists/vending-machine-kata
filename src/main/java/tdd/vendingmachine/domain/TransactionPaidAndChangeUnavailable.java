@@ -46,7 +46,6 @@ class TransactionPaidAndChangeUnavailable implements CoinInserted {
     @Override
     public ChangeDispenser changeDispenser() {
         Coins transactionCoins = transactionState.coins();
-        changeDispenser.put(transactionCoins);
-        return changeDispenser;
+        return changeDispenser.put(transactionCoins);
     }
 }

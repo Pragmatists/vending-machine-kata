@@ -4,13 +4,12 @@ import lombok.ToString;
 import tdd.vendingmachine.domain.dto.CoinDto;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 @ToString
 class ChangeDispenser {
 
-    private Coins coins;
+    private final Coins coins;
 
     private ChangeDispenser(Coins coins) {
         this.coins = Objects.requireNonNull(coins);
@@ -24,17 +23,15 @@ class ChangeDispenser {
         return new ChangeDispenser(changeDispenser.coins);
     }
 
-    void put(Coin coin) {
-        coins = coins.add(coin);
+    ChangeDispenser put(Coin coin) {
+        return new ChangeDispenser(coins.add(coin));
     }
 
-    void put(Coins changeCoins) {
-        coins = coins.add(changeCoins);
+    ChangeDispenser put(Coins changeCoins) {
+        return new ChangeDispenser(coins.add(changeCoins));
     }
 
     Collection<CoinDto> dispense() {
-        List<CoinDto> dispensedCoins = coins.toDto();
-        coins = Coins.empty();
-        return dispensedCoins;
+        return coins.toDto();
     }
 }

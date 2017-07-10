@@ -48,7 +48,6 @@ class TransactionPaidAndChangeAvailable implements CoinInserted {
 
     @Override
     public ChangeDispenser changeDispenser() {
-        changeDispenser.put(change.coins());
-        return changeDispenser;
+        return changeDispenser.put(change.coins());
     }
 }
