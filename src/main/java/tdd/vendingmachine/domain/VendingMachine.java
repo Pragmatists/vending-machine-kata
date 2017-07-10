@@ -79,6 +79,16 @@ class VendingMachine {
         state = stateFrom(transactionState.phase());
     }
 
+    void cancel() {
+        state.cancel();
+    }
+
+    private void clear() {
+        display = Display.empty();
+        transactionState = TransactionState.clear();
+        state = stateFrom(transactionState.phase());
+    }
+
     private VendingMachineState stateFrom(TransactionPhase transactionPhase) {
         return new VendingMachineStateFactory().createFrom(transactionPhase);
     }
@@ -86,6 +96,7 @@ class VendingMachine {
     private interface VendingMachineState {
         void selectShelfNumber(ShelfNumber shelfNumber);
         void insertCoin(Coin coin);
+        void cancel();
     }
 
     private class VendingMachineStateFactory {
@@ -115,6 +126,11 @@ class VendingMachine {
             transactionState = TransactionState.clear();
             changeDispenser.put(coin);
         }
+
+        @Override
+        public void cancel() {
+            // do nothing
+        }
     }
 
     private class ShelfSelectedState implements VendingMachineState {
@@ -127,17 +143,30 @@ class VendingMachine {
         public void insertCoin(Coin coin) {
             handleInsertingCoin(coin);
         }
+
+        @Override
+        public void cancel() {
+            clear();
+        }
     }
 
     private class CoinInsertedState implements VendingMachineState {
         @Override
         public void selectShelfNumber(ShelfNumber shelfNumber) {
-            // it does nothing
+            // do nothing
         }
 
         @Override
         public void insertCoin(Coin coin) {
             handleInsertingCoin(coin);
+        }
+
+        @Override
+        public void cancel() {
+            Coins transactionCoins = transactionState.coins();
+            machineMoney = machineMoney.remove(transactionCoins);
+            changeDispenser.put(transactionCoins);
+            clear();
         }
     }
 }

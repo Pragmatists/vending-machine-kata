@@ -49,4 +49,10 @@ public class VendingMachineFacade {
         vendingMachineRepository.save(vendingMachine);
         return products;
     }
+
+    public void cancel() {
+        VendingMachine vendingMachine = vendingMachineRepository.get();
+        vendingMachine.cancel();
+        vendingMachineRepository.save(vendingMachine);
+    }
 }
