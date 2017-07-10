@@ -23,7 +23,7 @@ class Denominations {
                                                         .collect(Collectors.toSet()));
     }
 
-    boolean contains(Denomination denomination) {
+    boolean contain(Denomination denomination) {
         return denominations.contains(denomination);
     }
 }

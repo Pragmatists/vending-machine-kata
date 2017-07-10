@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -11,4 +12,5 @@ import java.util.Set;
 public class VendingMachineDto {
     private Set<ShelfDto> shelves;
     private Set<BigDecimal> acceptableDenominations;
+    private List<CoinDto> coins;
 }

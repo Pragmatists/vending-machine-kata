@@ -16,11 +16,15 @@ class ProductCount {
 
     private static void assertCountGreaterThanZero(int count) {
         if (count < 0) {
-            throw new IllegalArgumentException("Product count must be greater than 0, but is: " + count);
+            throw new IllegalArgumentException("Product count must be at least 0, but is: " + count);
         }
     }
 
     boolean isZero() {
         return count == 0;
+    }
+
+    ProductCount decrement() {
+        return new ProductCount(count - 1);
     }
 }

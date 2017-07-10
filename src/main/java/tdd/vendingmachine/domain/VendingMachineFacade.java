@@ -1,6 +1,7 @@
 package tdd.vendingmachine.domain;
 
 import tdd.vendingmachine.domain.dto.CoinDto;
+import tdd.vendingmachine.domain.dto.ProductDto;
 import tdd.vendingmachine.domain.dto.VendingMachineDto;
 
 import java.util.Collection;
@@ -40,5 +41,12 @@ public class VendingMachineFacade {
         Collection<CoinDto> change = vendingMachine.returnChange();
         vendingMachineRepository.save(vendingMachine);
         return change;
+    }
+
+    public Collection<ProductDto> takeProducts() {
+        VendingMachine vendingMachine = vendingMachineRepository.get();
+        Collection<ProductDto> products = vendingMachine.giveProducts();
+        vendingMachineRepository.save(vendingMachine);
+        return products;
     }
 }

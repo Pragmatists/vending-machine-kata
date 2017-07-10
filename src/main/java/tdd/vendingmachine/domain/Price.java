@@ -27,13 +27,23 @@ class Price implements Money {
         return amount.value();
     }
 
-    @Override
-    public Money add(Money money) {
-        return amount.add(money);
+    boolean isMetWith(Money money) {
+        return priceAmountMinusPayment(money).isEqualOrBelowZero();
     }
 
-    @Override
-    public Money subtract(Money money) {
+    Money amountLeftToPayAfterPaying(Money money) {
+        return isMetWith(money) ? Money.zero() : priceAmountMinusPayment(money);
+    }
+
+    Money amountOfChangeAfterPaying(Money money) {
+        return isMetWith(money) ? paymentMinusPriceAmount(money) : Money.zero();
+    }
+
+    private Money priceAmountMinusPayment(Money money) {
         return amount.subtract(money);
+    }
+
+    private Money paymentMinusPriceAmount(Money money) {
+        return money.subtract(amount);
     }
 }

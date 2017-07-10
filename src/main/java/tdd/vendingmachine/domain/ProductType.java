@@ -2,6 +2,7 @@ package tdd.vendingmachine.domain;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import tdd.vendingmachine.domain.dto.ProductDto;
 import tdd.vendingmachine.domain.dto.ProductTypeDto;
 
 import java.util.Objects;
@@ -26,5 +27,9 @@ class ProductType {
 
     Price price() {
         return price;
+    }
+
+    ProductDto toDto() {
+        return new ProductDto(name);
     }
 }

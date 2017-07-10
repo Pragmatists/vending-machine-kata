@@ -45,6 +45,10 @@ class Display {
         return new Display("Coin not acceptable");
     }
 
+    static Display changeCannotBeGiven() {
+        return new Display("No change");
+    }
+
     private static String format(Money money) {
         BigDecimal moneyValue = money.value();
         return moneyValue.setScale(MONEY_SCALE, MONEY_ROUNDING_MODE)
