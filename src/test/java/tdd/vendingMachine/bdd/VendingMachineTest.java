@@ -156,6 +156,18 @@ public class VendingMachineTest {
     }
 
     @Test
+    public void insertNotAcceptable_shouldReturnInsertedCoins() {
+        // given
+        int notAcceptableDenomination = 1000;
+
+        // when
+        moneyHolder.insert(notAcceptableDenomination);
+
+        // then
+        verify(bucket).putInto(notAcceptableDenomination);
+    }
+
+    @Test
     public void pressCancelDuringBuying_shouldGetMoneyBack() {
         // given
         Product product = new Product("cola", 500);

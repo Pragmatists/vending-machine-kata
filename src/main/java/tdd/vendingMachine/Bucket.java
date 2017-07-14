@@ -11,4 +11,6 @@ public interface Bucket {
 
     void putInto(List<Integer> money, Product product);
 
+    void putInto(Integer money);
+
 }

@@ -13,4 +13,9 @@ public class BucketImpl implements Bucket {
     public void putInto(List<Integer> money, Product product) {
     }
 
+    @Override
+    public void putInto(Integer money) {
+
+    }
+
 }

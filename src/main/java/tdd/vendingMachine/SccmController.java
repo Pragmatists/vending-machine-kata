@@ -3,7 +3,10 @@ package tdd.vendingMachine;
 import tdd.vendingMachine.exception.NotEnoughMoneyException;
 import tdd.vendingMachine.model.Product;
 
+import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static tdd.vendingMachine.util.CoinsCalculator.calculateChange;
 import static tdd.vendingMachine.util.CoinsCalculator.calculateSum;
@@ -18,8 +21,15 @@ public class SccmController implements HardwareController {
     private Account account;
     private Bucket bucket;
     private Memory memory;
+    private PropertyReader propertyReader = new PropertyReader();
+    private Set<Integer> acceptableDenominations = new HashSet<>();
 
     public SccmController(Display display, Inventory inventory, Account account, Bucket bucket, Memory memory) {
+        try {
+            acceptableDenominations = propertyReader.readAcceptableDenominations();
+        } catch (IOException e) {
+            throw new IllegalStateException();
+        }
         this.display = display;
         this.inventory = inventory;
         this.account = account;
@@ -56,6 +66,10 @@ public class SccmController implements HardwareController {
 
     @Override
     public void processPayment(Integer money) {
+        if (!acceptableDenominations.contains(money)) {
+            bucket.putInto(money);
+            return;
+        }
         account.makeDeposit(money);
         memory.remember(money);
         if (memory.hasSelectedProduct()) {
