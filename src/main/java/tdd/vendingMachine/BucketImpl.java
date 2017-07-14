@@ -10,8 +10,7 @@ import java.util.List;
 public class BucketImpl implements Bucket {
 
     @Override
-    public void putInto(List<Double> money, Product product) {
-
+    public void putInto(List<Integer> money, Product product) {
     }
 
 }

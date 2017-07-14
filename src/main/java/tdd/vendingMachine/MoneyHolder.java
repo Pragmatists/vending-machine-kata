@@ -5,6 +5,6 @@ package tdd.vendingMachine;
  */
 public interface MoneyHolder {
 
-    void insert(double money);
+    void insert(Integer coin);
 
 }

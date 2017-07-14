@@ -1,8 +1,12 @@
 package tdd.vendingMachine;
 
+import tdd.vendingMachine.exception.NotEnoughMoneyException;
 import tdd.vendingMachine.model.Product;
 
 import java.util.List;
+
+import static tdd.vendingMachine.util.CoinsCalculator.calculateChange;
+import static tdd.vendingMachine.util.CoinsCalculator.calculateSum;
 
 /**
  * @author Yevhen Sukhomud
@@ -25,28 +29,33 @@ public class SccmController implements HardwareController {
 
     @Override
     public void processSelection(int index) {
-        Product product = inventory.get(index);
-        if (product == null) {
-            display.display("There is no product with " + index + " index");
-            return;
-        }
-        memory.remember(product, index);
+        try {
+            Product product = inventory.get(index);
+            if (product == null) {
+                display.display("There is no product with " + index + " index");
+                return;
+            }
+            memory.remember(product, index);
 
-        if (isEnoughMoney()) {
-            finishBaying();
-            return;
-        }
+            if (isEnoughMoney()) {
+                finishBaying();
+                return;
+            }
 
-        if (memory.hasInsertedMoney()) {
-            display.display("Please add : " + howMuchLeft());
-        } else {
-            display.display("Price: " + product.price());
+            if (memory.hasInsertedMoney()) {
+                display.display("Please add : " + howMuchLeft());
+            } else {
+                display.display("Price: " + product.price());
+            }
+        } catch (NotEnoughMoneyException ex) {
+            display.display("Warning! Doesn't have change");
+            bucket.putInto(account.withdraw(memory.insertedMoney()), null);
         }
 
     }
 
     @Override
-    public void processPayment(double money) {
+    public void processPayment(Integer money) {
         account.makeDeposit(money);
         memory.remember(money);
         if (memory.hasSelectedProduct()) {
@@ -57,7 +66,7 @@ public class SccmController implements HardwareController {
             display.display("Please add : " + howMuchLeft());
             return;
         }
-        display.display("Balance : " + getSum(memory.insertedMoney()));
+        display.display("Balance : " + calculateSum(memory.insertedMoney()));
     }
 
     @Override
@@ -68,11 +77,10 @@ public class SccmController implements HardwareController {
     private void finishBaying() {
         putProductAndChangeIntoBucket();
         memory.clear();
-        display.display("Thanks!");
     }
 
     private void putProductAndChangeIntoBucket() {
-        double change = memory.price() - getSum(memory.insertedMoney());
+        Integer change = calculateChange(calculateSum(memory.insertedMoney()), memory.price());
         if (needChange(change)) {
             withChange(change);
         } else {
@@ -81,32 +89,24 @@ public class SccmController implements HardwareController {
     }
 
     private void withoutChange() {
-        bucket.putInto(null, inventory.get(memory.productIndex()));
+        bucket.putInto(null, inventory.getAndDelete(memory.productIndex()));
     }
 
-    private void withChange(double change) {
-        if (account.hasThisMoney(change)) {
-            bucket.putInto(account.withdraw(change), inventory.get(memory.productIndex()));
-        } else {
-            display.display("Warning! Machine doesn't have change");
-            bucket.putInto(account.withdraw(memory.insertedMoney()), null);
-        }
+    private void withChange(Integer change) {
+        List<Integer> withdraw = account.withdraw(change);
+        bucket.putInto(withdraw, inventory.getAndDelete(memory.productIndex()));
     }
 
-    private boolean needChange(double change) {
+    private boolean needChange(Integer change) {
         return change > 0;
     }
 
-    private double getSum(List<Double> money) {
-        return money.stream().mapToDouble(Double::doubleValue).sum();
-    }
-
     private boolean isEnoughMoney() {
-        return getSum(memory.insertedMoney()) >= memory.price();
+        return calculateSum(memory.insertedMoney()) >= memory.price();
     }
 
-    private double howMuchLeft() {
-        return memory.price() - getSum(memory.insertedMoney());
+    private Integer howMuchLeft() {
+        return memory.price() - calculateSum(memory.insertedMoney());
     }
 
 }

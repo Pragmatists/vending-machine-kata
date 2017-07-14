@@ -7,7 +7,6 @@ import tdd.vendingMachine.*;
 import tdd.vendingMachine.model.Product;
 import tdd.vendingMachine.util.CoinsHelper;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -32,7 +31,7 @@ public class VendingMachineTest {
     @Test
     public void selectProduct_shouldDisplayPrice() {
         // given
-        double price = 5;
+        Integer price = 500;
         Product product = new Product("cola", price);
         inventory.put(1, product);
 
@@ -46,21 +45,21 @@ public class VendingMachineTest {
     @Test
     public void selectProductWithEnoughMoney_shouldPutProductInBucket() {
         // given
-        Product product = new Product("cola", 5);
+        Product product = new Product("cola", 500);
         inventory.put(1, product);
-        moneyHolder.insert(5);
+        moneyHolder.insert(500);
 
         // when
         userPanel.selectProduct(1);
 
         // then
-        verify(bucket).putInto(CoinsHelper.listWithCoins(5), product);
+        verify(bucket).putInto(null, product);
     }
 
     @Test
     public void selectProductWithNotEnoughMoney_shouldNotPutProductInBucket() {
         // given
-        Product product = new Product("cola", 5);
+        Product product = new Product("cola", 500);
         inventory.put(1, product);
 
         // when
@@ -85,21 +84,21 @@ public class VendingMachineTest {
     @Test
     public void insertCoinSelectedProduct_shouldDisplayAmountThatMustBeAdded() {
         // given
-        Product product = new Product("cola", 5);
+        Product product = new Product("cola", 500);
         inventory.put(1, product);
         userPanel.selectProduct(1);
 
         // when
-        moneyHolder.insert(2);
+        moneyHolder.insert(200);
 
         // then
-        verify(display).display("Please add : " + 3);
+        verify(display).display("Please add : 300");
     }
 
     @Test
     public void insertCoinNotSelectedProduct_shouldDisplayBalance() {
         // given
-        double coin = 2;
+        Integer coin = 200;
 
         // when
         moneyHolder.insert(coin);
@@ -111,89 +110,92 @@ public class VendingMachineTest {
     @Test
     public void insertCoinSelectedProductWithEnoughMoney_shouldPutProductAndChange() {
         // given
-        Product product = new Product("candy", 1);
+        Product product = new Product("candy", 100);
         inventory.put(1, product);
-        account.makeDeposit(CoinsHelper.listWithCoins(2, 2)); // for change
+        account.makeDeposit(CoinsHelper.listWithCoins(200, 200)); // for change
         userPanel.selectProduct(1);
 
         // when
-        moneyHolder.insert(5);
+        moneyHolder.insert(500);
 
         // then
-        verify(bucket).putInto(CoinsHelper.listWithCoins(2, 2), product);
+        verify(bucket).putInto(CoinsHelper.listWithCoins(200, 200), product);
     }
 
     @Test
     public void insertCoinWithNotSelectedProduct_shouldNotPutProduct() {
         // given
-        Product product = new Product("cola", 5);
+        Product product = new Product("cola", 500);
         inventory.put(1, product);
 
         // when
-        moneyHolder.insert(5);
+        moneyHolder.insert(500);
 
         // then
-        verify(bucket, never()).putInto(any(), product);
+        verify(bucket, never()).putInto(any(), eq(product));
     }
 
     @Test
     public void insertCoinNotEnoughMoneyForChange_shouldReturnInsertedCoins() {
         // given
-        Product product = new Product("cola", 5);
+        Product product = new Product("cola", 500);
         inventory.put(1, product);
 
         // when
-        moneyHolder.insert(2);
-        moneyHolder.insert(2);
-        moneyHolder.insert(2);
+        moneyHolder.insert(200);
+        moneyHolder.insert(200);
+        moneyHolder.insert(200);
+        userPanel.selectProduct(1);
 
         // then
-        verify(bucket).putInto(CoinsHelper.listWithCoins(2, 2, 2), null);
+        verify(bucket).putInto(CoinsHelper.listWithCoins(200, 200, 200), null);
+        verify(display).display("Balance : 200");
+        verify(display).display("Balance : 400");
+        verify(display).display("Balance : 600");
         verify(display).display("Warning! Doesn't have change");
     }
 
     @Test
     public void pressCancelDuringBuying_shouldGetMoneyBack() {
         // given
-        Product product = new Product("cola", 5);
+        Product product = new Product("cola", 500);
         inventory.put(1, product);
-        moneyHolder.insert(2);
+        moneyHolder.insert(200);
 
         // when
         userPanel.cancel();
 
         // then
-        verify(bucket).putInto(CoinsHelper.listWithCoins(2), null);
+        verify(bucket).putInto(CoinsHelper.listWithCoins(200), null);
     }
 
     @Test
     public void makeDeposit_shouldMakeDepositAfterInsertingCoins() {
         // given
-        Product product = new Product("cola", 5);
+        Product product = new Product("cola", 500);
         inventory.put(1, product);
 
         // when
-        moneyHolder.insert(0.5);
-        moneyHolder.insert(0.2);
+        moneyHolder.insert(500);
+        moneyHolder.insert(200);
 
         // then
-        verify(account).makeDeposit(0.5);
-        verify(account).makeDeposit(0.2);
+        verify(account).makeDeposit(500);
+        verify(account).makeDeposit(200);
     }
 
     @Test
     public void gettingFromInventory_shouldGetProductFromInventory() {
         // given
-        Product insertingProduct = new Product("cola", 5);
+        Product insertingProduct = new Product("cola", 500);
         inventory.put(1, insertingProduct);
 
         // when
         userPanel.selectProduct(1);
-        moneyHolder.insert(1);
+        moneyHolder.insert(500);
 
         // then
-        Product gettingProduct = verify(inventory).get(1);
-        assertEquals(insertingProduct, gettingProduct);
+        verify(inventory).getAndDelete(1);
     }
 
 }

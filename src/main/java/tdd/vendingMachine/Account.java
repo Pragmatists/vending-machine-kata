@@ -7,16 +7,14 @@ import java.util.List;
  */
 public interface Account {
 
-    void makeDeposit(double money);
+    void makeDeposit(Integer money);
 
-    void makeDeposit(List<Double> money);
+    void makeDeposit(List<Integer> money);
 
-    List<Double> withdraw(double sum);
+    List<Integer> withdraw(Integer sumToWithdraw);
 
-    List<Double> withdraw(List<Double> sum);
+    List<Integer> withdraw(List<Integer> moneyToWithdraw);
 
-    List<Double> withdrawAll();
-
-    boolean hasThisMoney(double sum);
+    List<Integer> withdrawAll();
 
 }

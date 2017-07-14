@@ -33,26 +33,26 @@ public class KingstonMemoryCardTest {
     @Test
     public void price_shouldRememberPrice() throws Exception {
         // given
-        int price = 2;
+        Integer price = 2;
         Product product = new Product("gum", price);
         // when
         memory.remember(product, 1);
         // then
-        assertEquals(price, memory.price(), 0);
+        assertEquals(price, memory.price());
     }
 
     @Test
     public void clear_shouldClearAllDataInMemory() throws Exception {
         // given
         memory.remember(new Product("gum", 2), 1);
-        memory.remember(0.5);
+        memory.remember(5);
         // when
         memory.clear();
         // then
         assertFalse(memory.hasSelectedProduct());
         assertFalse(memory.hasInsertedMoney());
         assertTrue(memory.insertedMoney().isEmpty());
-        assertEquals(0, memory.price(), 0);
+        assertEquals(Integer.valueOf(0), memory.price());
     }
 
     @Test
@@ -68,18 +68,18 @@ public class KingstonMemoryCardTest {
     @Test
     public void rememberProductPrice_shouldStorePriceInMemory() throws Exception {
         // given
-        int price = 2;
+        Integer price = 2;
         Product product = new Product("gum", price);
         // when
         memory.remember(product, 1);
         // then
-        assertEquals(price, memory.price(), 0);
+        assertEquals(price, memory.price());
     }
 
     @Test
     public void rememberMoney_shouldRememberRememberedMoney() throws Exception {
         // when
-        memory.remember(0.1);
+        memory.remember(1);
         // then
         assertTrue(memory.hasInsertedMoney());
     }
@@ -87,17 +87,21 @@ public class KingstonMemoryCardTest {
     @Test
     public void rememberMoney_shouldStoreAllRememberedMoney() throws Exception {
         // when
-        memory.remember(0.1);
-        memory.remember(0.1);
-        memory.remember(0.2);
+        memory.remember(1);
+        memory.remember(1);
+        memory.remember(2);
         // then
-        assertEquals(CoinsHelper.listWithCoins(0.1, 0.1, 0.2), memory.insertedMoney());
+        assertEquals(CoinsHelper.listWithCoins(
+            1,
+            1,
+            2),
+            memory.insertedMoney());
     }
 
     @Test
     public void hasInsertedMoney_shouldReturnTrueWhenRemembered() throws Exception {
         // given
-        double coin = 1;
+        Integer coin = 1;
         // when
         memory.remember(coin);
         // then

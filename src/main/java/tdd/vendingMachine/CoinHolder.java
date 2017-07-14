@@ -12,8 +12,8 @@ public class CoinHolder implements MoneyHolder {
     }
 
     @Override
-    public void insert(double money) {
-        hardwareController.processPayment(money);
+    public void insert(Integer coin) {
+        hardwareController.processPayment(coin);
     }
 
 }

@@ -12,7 +12,7 @@ public class KingstonMemoryCard implements Memory {
 
     private Product product;
     private int index = 0;
-    private List<Double> money = new ArrayList<>();
+    private List<Integer> money = new ArrayList<>();
 
     @Override
     public int productIndex() {
@@ -20,12 +20,12 @@ public class KingstonMemoryCard implements Memory {
     }
 
     @Override
-    public List<Double> insertedMoney() {
+    public List<Integer> insertedMoney() {
         return new ArrayList<>(money);
     }
 
     @Override
-    public double price() {
+    public Integer price() {
         if (product == null) {
             return 0;
         }
@@ -46,7 +46,7 @@ public class KingstonMemoryCard implements Memory {
     }
 
     @Override
-    public void remember(double money) {
+    public void remember(Integer money) {
         this.money.add(money);
     }
 

@@ -86,9 +86,9 @@ public class ShelveInventoryTest {
         inventory.put(index, insertedProduct1);
         inventory.put(index, insertedProduct2);
         // then
-        Product gotProduct1 = inventory.get(index);
-        Product gotProduct2 = inventory.get(index);
-        Product gotProduct3 = inventory.get(index);
+        Product gotProduct1 = inventory.getAndDelete(index);
+        Product gotProduct2 = inventory.getAndDelete(index);
+        Product gotProduct3 = inventory.getAndDelete(index);
         assertNotNull(gotProduct1);
         assertNotNull(gotProduct2);
         assertNull(gotProduct3);

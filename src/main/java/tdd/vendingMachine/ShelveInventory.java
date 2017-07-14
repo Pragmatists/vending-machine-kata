@@ -25,24 +25,32 @@ public class ShelveInventory implements Inventory {
         if (products == null || products.isEmpty()) {
             return null;
         }
+        return products.stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public Product getAndDelete(int index) {
+        List<Product> products = shelve.get(index);
+        if (products == null || products.isEmpty()) {
+            return null;
+        }
         Iterator<Product> iterator = products.iterator();
         Product product = iterator.next();
         iterator.remove();
         return product;
-
     }
 
     @Override
     public void put(int index, Product product) {
         List<Product> products = shelve.getOrDefault(index, new ArrayList<>());
-        if (hasNotTheSameTypeOnShelve(product, products)) {
+        if (notTheSameTypeOnShelve(product, products)) {
             throw new ShelveProductsShouldBeSimilarException();
         }
         products.add(product);
         shelve.put(index, products);
     }
 
-    private boolean hasNotTheSameTypeOnShelve(Product product, List<Product> products) {
+    private boolean notTheSameTypeOnShelve(Product product, List<Product> products) {
         return !products.isEmpty() && !products.contains(product);
     }
 

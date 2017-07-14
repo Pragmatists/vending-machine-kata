@@ -7,7 +7,7 @@ public interface HardwareController {
 
     void processSelection(int index);
 
-    void processPayment(double money);
+    void processPayment(Integer money);
 
     void cancel();
 

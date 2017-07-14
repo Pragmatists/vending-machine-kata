@@ -2,12 +2,13 @@ package tdd.vendingMachine;
 
 import org.junit.Before;
 import org.junit.Test;
-import tdd.vendingMachine.exception.DoesNotHaveCoinException;
+import tdd.vendingMachine.exception.NotEnoughMoneyException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Yevhen Sukhomud
@@ -27,79 +28,79 @@ public class CashAccountTest {
         account.makeDeposit(1);
         account.makeDeposit(2);
         // then
-        List<Double> withdraw = account.withdraw(3);
+        List<Integer> withdraw = account.withdraw(3);
         assertEquals(2, withdraw.size());
-        assertTrue(withdraw.contains(1d));
-        assertTrue(withdraw.contains(2d));
+        assertTrue(withdraw.contains(1));
+        assertTrue(withdraw.contains(2));
     }
 
     @Test
     public void makeMultiDepositAndWithdraw_shouldWithdrawAskedMoney() throws Exception {
         // given
-        List<Double> coins = new ArrayList<>();
-        coins.add(1d);
-        coins.add(1d);
-        coins.add(3d);
+        List<Integer> coins = new ArrayList<>();
+        coins.add(1);
+        coins.add(1);
+        coins.add(3);
         // when
         account.makeDeposit(coins);
-        List<Double> withdraw = account.withdraw(2);
+        List<Integer> withdraw = account.withdraw(2);
         // then
-        assertTrue(withdraw.get(0) == 1d);
-        assertTrue(withdraw.get(1) == 1d);
+        assertTrue(withdraw.get(0).equals(1));
+        assertTrue(withdraw.get(1).equals(1));
     }
 
     @Test
     public void withdrawSpecificCoins_shouldWithdrawAskedMoney() throws Exception {
         // given
-        List<Double> coinsInAccount = new ArrayList<>();
-        coinsInAccount.add(1d);
-        coinsInAccount.add(2d);
-        coinsInAccount.add(3d);
-        List<Double> coinsToWithdraw = new ArrayList<>();
-        coinsToWithdraw.add(2d);
-        coinsToWithdraw.add(3d);
+        List<Integer> coinsInAccount = new ArrayList<>();
+        coinsInAccount.add(1);
+        coinsInAccount.add(2);
+        coinsInAccount.add(3);
+        List<Integer> coinsToWithdraw = new ArrayList<>();
+        coinsToWithdraw.add(2);
+        coinsToWithdraw.add(3);
         account.makeDeposit(coinsInAccount);
         // when
-        List<Double> withdraw = account.withdraw(coinsToWithdraw);
+        List<Integer> withdraw = account.withdraw(coinsToWithdraw);
         // then
-        assertTrue(withdraw.contains(2d));
-        assertTrue(withdraw.contains(3d));
+        assertTrue(withdraw.contains(2));
+        assertTrue(withdraw.contains(3));
     }
 
-    @Test(expected = DoesNotHaveCoinException.class)
-    public void withdrawSpecificCoinsWhichIsNotPresent_shouldThrowDoesNotCoinException() throws Exception {
+    @Test(expected = NotEnoughMoneyException.class)
+    public void withdrawSpecificCoinsWhichIsNotPresent_shouldThrowNotEnoughMoneyException() throws Exception {
         // given
-        List<Double> coinsInAccount = new ArrayList<>();
-        coinsInAccount.add(1d);
-        coinsInAccount.add(2d);
-        coinsInAccount.add(3d);
-        List<Double> coinsToWithdraw = new ArrayList<>();
-        coinsToWithdraw.add(5D);
+        List<Integer> coinsInAccount = new ArrayList<>();
+        coinsInAccount.add(1);
+        coinsInAccount.add(2);
+        coinsInAccount.add(3);
+        List<Integer> coinsToWithdraw = new ArrayList<>();
+        coinsToWithdraw.add(5);
         account.makeDeposit(coinsInAccount);
         // when
-        account.withdraw(coinsToWithdraw);
+        List<Integer> withdraw = account.withdraw(coinsToWithdraw);
         // then
-        // throw DoesNotHaveCoinException
+        // expected NotEnoughMoneyException
     }
 
-    @Test(expected = DoesNotHaveCoinException.class)
-    public void withdrawEmptyDeposit_shouldReturnEmptyList() throws Exception {
+    @Test(expected = NotEnoughMoneyException.class)
+    public void withdrawEmptyDeposit_shouldThrowNotEnoughMoneyException() throws Exception {
         // given
         // account is empty
         // when
-        account.withdraw(1);
+        List<Integer> withdraw = account.withdraw(1);
         // then
-        // throw DoesNotHaveCoinException
+        // expected NotEnoughMoneyException
     }
 
-    @Test(expected = DoesNotHaveCoinException.class)
-    public void withdrawNotExistingCoins_shouldThrowDoesNotCoinException() throws Exception {
+    @Test(expected = NotEnoughMoneyException.class)
+    public void withdrawNotExistingCoins_shouldThrowNotEnoughMoneyException() throws Exception {
         // given
         account.makeDeposit(5);
         // when
-        account.withdraw(1);
+        List<Integer> withdraw = account.withdraw(1);
         // then
-        // throw DoesNotHaveCoinException
+        // expected NotEnoughMoneyException
     }
 
     @Test
@@ -108,11 +109,11 @@ public class CashAccountTest {
         account.makeDeposit(2);
         account.makeDeposit(3);
         // when
-        List<Double> withdraw = account.withdrawAll();
+        List<Integer> withdraw = account.withdrawAll();
         // then
         assertTrue(withdraw.size() == 2);
-        assertTrue(withdraw.contains(2d));
-        assertTrue(withdraw.contains(3d));
+        assertTrue(withdraw.contains(2));
+        assertTrue(withdraw.contains(3));
     }
 
     @Test
@@ -120,41 +121,9 @@ public class CashAccountTest {
         // given
         // account is empty
         // when
-        List<Double> withdraw = account.withdrawAll();
+        List<Integer> withdraw = account.withdrawAll();
         // then
         assertTrue(withdraw.isEmpty());
-    }
-
-    @Test
-    public void hasChangeHasNotCoin_shouldReturnFalse() throws Exception {
-        // given
-        // account is empty
-        // when
-        boolean hasChange = account.hasThisMoney(5);
-        // then
-        assertFalse(hasChange);
-    }
-
-    @Test
-    public void hasChangeHasNotProperCoins_shouldReturnFalse() throws Exception {
-        // given
-        account.makeDeposit(1);
-        account.makeDeposit(1);
-        // when
-        boolean hasChange = account.hasThisMoney(5);
-        // then
-        assertFalse(hasChange);
-    }
-
-    @Test
-    public void hasChangeHasProperCoins_shouldReturnTrue() throws Exception {
-        // given
-        account.makeDeposit(2);
-        account.makeDeposit(1);
-        // when
-        boolean hasChange = account.hasThisMoney(3);
-        // then
-        assertTrue(hasChange);
     }
 
 }

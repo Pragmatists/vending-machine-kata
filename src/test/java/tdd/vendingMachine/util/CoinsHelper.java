@@ -1,6 +1,7 @@
 package tdd.vendingMachine.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -8,11 +9,9 @@ import java.util.List;
  */
 public class CoinsHelper {
 
-    public static List<Double> listWithCoins(double... coins) {
-        List<Double> result = new ArrayList<>(coins.length);
-        for (double coin : coins) {
-            result.add(coin);
-        }
+    public static List<Integer> listWithCoins(Integer... coins) {
+        List<Integer> result = new ArrayList<>(coins.length);
+        Collections.addAll(result, coins);
         return result;
     }
 

@@ -6,14 +6,14 @@ package tdd.vendingMachine.model;
 public class Product {
 
     private final String name;
-    private final double price;
+    private final Integer price;
 
-    public Product(String name, double price) {
+    public Product(String name, Integer price) {
         this.name = name;
         this.price = price;
     }
 
-    public double price() {
+    public Integer price() {
         return price;
     }
 
@@ -28,16 +28,13 @@ public class Product {
 
         Product product = (Product) o;
 
-        return Double.compare(product.price, price) == 0 && name.equals(product.name);
+        return name.equals(product.name) && price.equals(product.price);
     }
 
     @Override
     public int hashCode() {
-        int result;
-        long temp;
-        result = name.hashCode();
-        temp = Double.doubleToLongBits(price);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        int result = name.hashCode();
+        result = 31 * result + price.hashCode();
         return result;
     }
 

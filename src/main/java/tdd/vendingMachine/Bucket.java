@@ -9,6 +9,6 @@ import java.util.List;
  */
 public interface Bucket {
 
-    void putInto(List<Double> money, Product product);
+    void putInto(List<Integer> money, Product product);
 
 }

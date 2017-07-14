@@ -11,15 +11,15 @@ public interface Memory {
 
     int productIndex();
 
-    List<Double> insertedMoney();
+    List<Integer> insertedMoney();
 
-    double price();
+    Integer price();
 
     void clear();
 
     void remember(Product product, int index);
 
-    void remember(double money);
+    void remember(Integer money);
 
     boolean hasInsertedMoney();
 
