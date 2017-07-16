@@ -13,7 +13,7 @@ public interface Account {
 
     List<Integer> withdraw(Integer sumToWithdraw);
 
-    List<Integer> withdraw(List<Integer> moneyToWithdraw);
+    List<Integer> withdraw(List<Integer> denominationToWithdraw);
 
     List<Integer> withdrawAll();
 

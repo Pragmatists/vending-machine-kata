@@ -17,7 +17,7 @@ public class CashAccount implements Account {
 
     @Override
     public void makeDeposit(Integer money) {
-        add(money);
+        addToBalance(money);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class CashAccount implements Account {
             }
         }
         if (sumToWithdraw == 0) {
-            subtractFromCashHolder(result);
+            subtractFromBalance(result);
             return result;
         } else {
             throw new NotEnoughMoneyException();
@@ -50,16 +50,16 @@ public class CashAccount implements Account {
     }
 
     @Override
-    public List<Integer> withdraw(List<Integer> moneyToWithdraw) {
+    public List<Integer> withdraw(List<Integer> denominationToWithdraw) {
         List<Integer> result = new ArrayList<>();
-        moneyToWithdraw.forEach(denomination -> {
+        denominationToWithdraw.forEach(denomination -> {
             Integer quantity = cashHolder.get(denomination);
             if (quantity == null) {
                 throw new NotEnoughMoneyException();
             }
             result.add(denomination);
         });
-        subtractFromCashHolder(result);
+        subtractFromBalance(result);
         return result;
     }
 
@@ -72,7 +72,7 @@ public class CashAccount implements Account {
         return result;
     }
 
-    private void subtractFromCashHolder(List<Integer> denominationsToSubtract) {
+    private void subtractFromBalance(List<Integer> denominationsToSubtract) {
         denominationsToSubtract
             .forEach(denomination -> {
                 int denominationQuantity = cashHolder.get(denomination);
@@ -81,7 +81,7 @@ public class CashAccount implements Account {
         balance -= calculateSum(denominationsToSubtract);
     }
 
-    private void add(Integer denomination) {
+    private void addToBalance(Integer denomination) {
         Integer quantity = cashHolder.getOrDefault(denomination, 0);
         cashHolder.put(denomination, quantity + 1);
         balance += denomination;

@@ -5,7 +5,6 @@ import tdd.vendingMachine.model.Product;
 
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static tdd.vendingMachine.util.CoinsCalculator.calculateChange;
@@ -21,12 +20,13 @@ public class SccmController implements HardwareController {
     private Account account;
     private Bucket bucket;
     private Memory memory;
-    private PropertyReader propertyReader = new PropertyReader();
+    private PropertyReader propertyReader;
     private Set<Integer> acceptableDenominations = new HashSet<>();
 
     public SccmController(Display display, Inventory inventory, Account account, Bucket bucket, Memory memory) {
         try {
             acceptableDenominations = propertyReader.readAcceptableDenominations();
+            propertyReader = new PropertyReader();
         } catch (IOException e) {
             throw new IllegalStateException();
         }
@@ -96,19 +96,10 @@ public class SccmController implements HardwareController {
     private void putProductAndChangeIntoBucket() {
         Integer change = calculateChange(calculateSum(memory.insertedMoney()), memory.price());
         if (needChange(change)) {
-            withChange(change);
+            bucket.putInto(account.withdraw(change), inventory.getAndDelete(memory.productIndex()));
         } else {
-            withoutChange();
+            bucket.putInto(null, inventory.getAndDelete(memory.productIndex()));
         }
-    }
-
-    private void withoutChange() {
-        bucket.putInto(null, inventory.getAndDelete(memory.productIndex()));
-    }
-
-    private void withChange(Integer change) {
-        List<Integer> withdraw = account.withdraw(change);
-        bucket.putInto(withdraw, inventory.getAndDelete(memory.productIndex()));
     }
 
     private boolean needChange(Integer change) {
