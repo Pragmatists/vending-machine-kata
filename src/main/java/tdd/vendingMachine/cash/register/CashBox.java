@@ -93,6 +93,9 @@ public class CashBox extends HashMap<Double, CashBoxPocket> implements ICashBox 
         BigDecimal stillNeedToReturn = createBigDecimalWithPrecision(valueToReturn);
         for (Coin supportedCoinsValue : supportedCoinsValues) {
             Double coinValue = supportedCoinsValue.getValue();
+            System.out.println("sdajdasd");
+            System.out.println("sdajdasd");
+            System.out.println("sdajdasd");
             int neededCoinsForCurrentDenomination = stillNeedToReturn.divide(createBigDecimalWithPrecision(coinValue)).intValue();
             stillNeedToReturn = stillNeedToReturn.subtract(getMaxValueWhichIsPossibleInCoinDenomination(neededCoinsForCurrentDenomination, coinValue));
             if (stillNeedToReturn.doubleValue() <= 0) {
